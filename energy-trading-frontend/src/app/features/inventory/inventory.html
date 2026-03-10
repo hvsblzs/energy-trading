@@ -1,0 +1,67 @@
+<div class="min-h-screen bg-gray-950 p-6">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-white">Készlet</h1>
+      <p class="text-gray-400 text-sm mt-1">Cégünk aktuális nyersanyag készletei</p>
+    </div>
+
+    <!-- Loading -->
+    @if (isLoading) {
+      <div class="flex items-center justify-center h-64">
+        <div class="text-gray-400 text-sm">Betöltés...</div>
+      </div>
+    }
+
+    <!-- Üres állapot -->
+    @if (!isLoading && inventoryItems.length === 0) {
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 p-12 text-center">
+        <p class="text-gray-400 text-lg font-medium mb-2">Nincs készlet</p>
+        <p class="text-gray-600 text-sm">Vásároljon nyersanyagot a Marketplace-en!</p>
+      </div>
+    }
+
+    <!-- Inventory kártyák -->
+    @if (!isLoading && inventoryItems.length > 0) {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (item of inventoryItems; track item.data.id) {
+          <div
+            class="relative rounded-2xl border p-6 overflow-hidden h-48 flex flex-col justify-between"
+            [style.border-color]="item.color + '40'"
+            [style.background-color]="'#111827'"
+            [style.background]="'linear-gradient(135deg, ' + item.colorLight + ' 0%, #111827 60%)'">
+
+            <!-- Header -->
+            <div class="flex items-center justify-between">
+              <h2 class="text-white font-semibold text-lg">{{ item.data.resourceTypeName }}</h2>
+              <span class="text-xs font-semibold px-2 py-1 rounded-full"
+                [style.color]="item.color"
+                [style.background-color]="item.colorLight">
+                {{ item.data.resourceTypeUnit }}
+              </span>
+            </div>
+
+            <!-- Mennyiség -->
+            <div class="flex items-end gap-2">
+              <span class="text-5xl font-bold" [style.color]="item.color">
+                {{ item.displayValue | number:'1.0-0' }}
+              </span>
+              <span class="text-gray-400 text-lg mb-1">{{ item.data.resourceTypeUnit }}</span>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex items-center justify-between">
+              <span class="text-gray-500 text-xs">Raktáron</span>
+              <span class="text-xs font-medium" [style.color]="item.color">
+                {{ item.data.quantity | number:'1.0-2' }} {{ item.data.resourceTypeUnit }}
+              </span>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</div>

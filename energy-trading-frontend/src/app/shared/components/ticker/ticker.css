@@ -1,0 +1,21 @@
+.ticker-wrapper{
+    width: 100%;
+    overflow: hidden; 
+}
+
+.ticker-content{
+    display: inline-flex;
+    white-space: nowrap;
+    animation: ticker-scroll 100s linear infinite;
+    color: #9ca3af;
+    font-size: 0.875rem;
+}
+
+.ticker-item{
+    padding: 0 1rem;
+}
+
+@keyframes ticker-scroll{
+    0% {transform: translateX(0); }
+    100% {transform: translateX(-50%); }
+}

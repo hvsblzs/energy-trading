@@ -1,0 +1,23 @@
+<div class="bg-gray-900 border-b border-gray-800 overflow-hidden py-2">
+    <div class="ticker-wrapper">
+        <div class="ticker-content">
+            @for (transaction of transactions; track transaction.id) {
+                <span class="ticker-item">
+                    <span class="text-gray-600 mx-2">●</span>
+                    <span [class]="isBuy(transaction) ? 'text-green-400' : 'text-red-400'">
+                        {{ formatTicker(transaction) }}
+                    </span>
+                </span>
+            }
+            <!-- Duplikálva a folyamatos scrollhoz -->
+                @for (transaction of transactions; track transaction.id) {
+                <span class="ticker-item">
+                    <span class="text-gray-600 mx-2">●</span>
+                    <span [class]="isBuy(transaction) ? 'text-green-400' : 'text-red-400'">
+                        {{ formatTicker(transaction) }}
+                    </span>
+                </span>
+            }
+        </div>
+    </div>
+</div>

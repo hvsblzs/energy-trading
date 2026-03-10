@@ -1,0 +1,1 @@
+ALTER TABLE resource_types ADD COLUMN color VARCHAR(7) NOT NULL DEFAULT '#10b981';

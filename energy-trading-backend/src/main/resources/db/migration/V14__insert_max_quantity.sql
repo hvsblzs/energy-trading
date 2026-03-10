@@ -1,0 +1,1 @@
+ALTER TABLE central_storage ADD COLUMN max_quantity DECIMAL(19,4) NOT NULL DEFAULT 10000;

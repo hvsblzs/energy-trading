@@ -1,0 +1,74 @@
+<nav class="bg-gray-900 border-b border-gray-800 px-6 py-4">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+
+    <!-- Logo / Cím -->
+    <div class="flex items-center gap-3">
+      <img src="energy-logo.png" alt="Energy Trading" class="h-8">
+      <span class="text-white font-bold text-lg">Energy Trading</span>
+    </div>
+
+    <div class="flex items-center gap-6">
+      <a routerLink="/marketplace" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">
+        Marketplace
+      </a>
+      <a routerLink="/price-history" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">
+        Árváltozások
+      </a>
+      @if (!isAdmin() && !isDispatcher()) {
+        <a routerLink="/inventory" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">
+            Készlet
+        </a>
+      }
+      @if (isAdmin() || isDispatcher()) {
+        <a routerLink="/trade-offers" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">
+          Trade Requests
+        </a>
+        <a routerLink="/companies" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">
+          Cégek
+        </a>
+        <a routerLink="/users" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">
+          Felhasználók
+        </a>
+      }
+    </div>
+
+    <!-- Jobb oldal -->
+    <div class="flex items-center gap-4">
+
+      <!-- Kredit balance - csak COMPANY_USER-nek -->
+      @if (currentUser && isCompanyUser()) {
+        <div class="flex items-center gap-2 bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5">
+          <span class="text-yellow-400 text-xs">💰</span>
+          <span class="text-white text-sm font-semibold">{{ currentUser.creditBalance | number:'1.0-2' }}</span>
+          <span class="text-gray-400 text-xs">kredit</span>
+        </div>
+      }
+
+      <!-- Kredit balance - dispatcher/admin -->
+      @if (currentUser && isDispatcher()) {
+        <div class="flex items-center gap-2 bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5">
+          <span class="text-yellow-400 text-xs">💰</span>
+          <span class="text-white text-sm font-semibold">{{ currentUser.creditBalance | number:'1.0-2' }}</span>
+          <span class="text-gray-400 text-xs">kredit</span>
+        </div>
+      }
+
+      @if (currentUser && isCompanyUser()) {
+        <div class="text-xs font-semibold px-3 py-1 rounded-l text-gray-400">
+          {{ currentUser.username }}
+        </div>
+      }
+
+      <!-- Role badge -->
+      <a routerLink="/profile" class="text-xs font-semibold px-3 py-1 rounded-full"
+        [class]="isAdmin() ? 'bg-purple-900 text-purple-300' : isDispatcher() ? 'bg-blue-900 text-blue-300' : 'bg-green-900 text-green-300'">
+        {{ getRole() }}
+      </a>
+
+      <button (click)="logout()" class="text-gray-400 hover:text-red-400 transition-colors text-sm font-medium">
+        Kijelentkezés
+      </button>
+    </div>
+
+  </div>
+</nav>

@@ -1,0 +1,1 @@
+ALTER TABLE users ADD COLUMN credit_balance DECIMAL(19,4) NULL;

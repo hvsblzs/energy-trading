@@ -1,0 +1,543 @@
+<div class="min-h-screen bg-gray-950 p-6">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-white">Marketplace</h1>
+        <p class="text-gray-400 text-sm mt-1">Kereskedj és kövesd a központi tároló készleteit</p>
+      </div>
+      @if (isDispatcher) {
+        <button
+          (click)="openPriceModal()"
+          class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Árak kezelése
+        </button>
+      }
+    </div>
+    
+
+    <!-- Loading -->
+    @if (isLoading) {
+      <div class="flex items-center justify-center h-64">
+        <div class="text-gray-400 text-sm">Betöltés...</div>
+      </div>
+    }
+
+    @if (!isLoading) {
+
+      <!-- Storage kártyák -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        @for (item of storageItems; track item.data.resourceType) {
+          <div
+            class="relative rounded-2xl border p-6 overflow-hidden h-48 flex flex-col justify-between"
+            [style.border-color]="item.color + '40'"
+            [style.background-color]="'#111827'"
+            [ngStyle]="getGradientStyle(item)">
+
+            @if (item.percentage <= 10) {
+              <div class="absolute top-3 right-3 bg-red-900 border border-red-700 text-red-300 text-xs font-semibold px-2 py-1 rounded-full">
+                ⚠ Low Inventory
+              </div>
+            }
+
+            <div class="flex items-center justify-between">
+              <h2 class="text-white font-semibold text-lg">{{ item.data.resourceType }}</h2>
+              <span class="text-xs font-semibold px-2 py-1 rounded-full"
+                [style.color]="item.color"
+                [style.background-color]="item.colorLight">
+                {{ item.data.unit }}
+              </span>
+            </div>
+
+            <div class="flex items-end gap-2">
+              <span class="text-5xl font-bold" [style.color]="item.color">
+                {{ item.displayValue | number:'1.0-0' }}
+              </span>
+              <span class="text-gray-400 text-lg mb-1">{{ item.data.unit }}</span>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <span class="text-gray-500 text-xs">Max: {{ item.data.maxQuantity | number:'1.0-0' }} {{ item.data.unit }}</span>
+              <span class="text-xs font-semibold" [style.color]="item.color">{{ item.percentage }}%</span>
+            </div>
+
+            @if (isDispatcher) {
+              <div class="flex gap-2 mt-3">
+                <button
+                  (click)="openAddQuantityModal(item)"
+                  class="flex-1 px-2 py-1.5 bg-gray-800/80 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-lg transition-colors border border-gray-700">
+                  + Feltöltés
+                </button>
+                <button
+                  (click)="openMaxQuantityModal(item)"
+                  class="flex-1 px-2 py-1.5 bg-gray-800/80 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-lg transition-colors border border-gray-700">
+                  ↑ Max kapacitás
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Trading szekció - csak COMPANY_USER-nek -->
+      @if (isCompanyUser) {
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+
+          <!-- Bal: Trading window -->
+          <div class="lg:col-span-2 bg-gray-900 rounded-2xl border border-gray-800 p-6">
+            <h2 class="text-white font-semibold text-lg mb-6">Request Trade</h2>
+
+            <div class="space-y-5">
+
+              <!-- Resource type dropdown -->
+              <div class="relative">
+                <label class="block text-gray-400 text-sm mb-2">Resource Type</label>
+                <button
+                  (click)="dropdownOpen = !dropdownOpen"
+                  class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between focus:outline-none focus:border-blue-500 transition-colors">
+                  <span>{{ selectedResource?.resourceTypeName }} ({{ selectedResource?.resourceTypeUnit }})</span>
+                  <span class="text-gray-400">▾</span>
+                </button>
+                @if (dropdownOpen) {
+                  <div class="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg overflow-hidden z-10">
+                    @for (resource of availableResources; track resource.id) {
+                      <button
+                        (click)="selectResource(resource); dropdownOpen = false"
+                        class="w-full px-4 py-3 text-left text-sm hover:bg-gray-700 transition-colors flex items-center gap-2"
+                        [style.color]="resource.resourceTypeColor">
+                        {{ resource.resourceTypeName }} ({{ resource.resourceTypeUnit }})
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+
+              <!-- BUY / SELL toggle -->
+              <div>
+                <label class="block text-gray-400 text-sm mb-2">Order Type</label>
+                <div class="flex gap-3">
+                  <button
+                    (click)="offerType = 'BUY'; onOfferTypeChange()"
+                    class="flex-1 py-3 rounded-lg font-semibold text-sm transition-colors"
+                    [class]="offerType === 'BUY'
+                      ? 'bg-green-700 text-white border border-green-600'
+                      : 'bg-gray-800 text-gray-400 border border-gray-700 hover:border-gray-600'">
+                    BUY
+                  </button>
+                  <button
+                    (click)="offerType = 'SELL'; onOfferTypeChange()"
+                    class="flex-1 py-3 rounded-lg font-semibold text-sm transition-colors"
+                    [class]="offerType === 'SELL'
+                      ? 'bg-red-700 text-white border border-red-600'
+                      : 'bg-gray-800 text-gray-400 border border-gray-700 hover:border-gray-600'">
+                    SELL
+                  </button>
+                </div>
+              </div>
+
+              <!-- Mennyiség -->
+              <div>
+                <label class="block text-gray-400 text-sm mb-2">Quantity</label>
+                <div class="relative">
+                  <input
+                    type="number"
+                    [(ngModel)]="quantity"
+                    (ngModelChange)="onQuantityChange()"
+                    min="0"
+                    placeholder="Mennyiség"
+                    class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors"/>
+                  <span class="absolute right-4 top-3 text-gray-500 text-sm">
+                    {{ selectedResource?.resourceTypeUnit }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Ár -->
+              <div class="bg-gray-800 rounded-lg px-4 py-3 flex items-center justify-between">
+                <span class="text-gray-400 text-sm">
+                  Price per unit:
+                  <span class="text-white font-medium">
+                    {{ offerType === 'BUY' ? (currentPrice?.sellPrice | number:'1.0-2') : (currentPrice?.buyPrice | number:'1.0-2') }} credits
+                  </span>
+                </span>
+                <span class="text-white font-bold text-lg">
+                  {{ calculatedPrice | number:'1.0-2' }} credits
+                </span>
+              </div>
+
+              <!-- Submit gomb -->
+              <button
+                (click)="showConfirmModal = true"
+                [disabled]="isSubmitting || !isQuantityValid"
+                class="w-full py-3 rounded-lg font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                [class]="offerType === 'BUY'
+                  ? 'bg-green-700 hover:bg-green-600 text-white'
+                  : 'bg-red-700 hover:bg-red-600 text-white'">
+                {{ isSubmitting ? 'Submitting...' : 'Request Trade' }}
+              </button>
+
+            </div>
+          </div>
+
+          <!-- Jobb: Live preview -->
+          <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
+            <div class="flex flex-col justify-between gap-4">
+              <h2 class="text-white font-semibold text-lg mb-6">Live Preview</h2>
+
+              <!-- Central Storage Preview -->
+              @for (item of previewItems; track item.data.resourceType) {
+                <h3 class="text-white font-medium text-sm">Központi készlet</h3>
+                <div
+                  class="relative rounded-xl border p-4 overflow-hidden flex flex-col justify-between h-36"
+                  [style.border-color]="item.color + '40'"
+                  [style.background-color]="'#111827'"
+                  [ngStyle]="getGradientStyle(item)">
+
+                  <div class="flex items-center justify-between">
+                    <span class="text-white font-medium text-sm">{{ item.data.resourceType }}</span>
+                    <span class="text-xs font-semibold" [style.color]="item.color">{{ item.percentage }}%</span>
+                  </div>
+
+                  <div class="flex items-end gap-1">
+                    <span class="text-3xl font-bold" [style.color]="item.color">
+                      {{ item.displayValue | number:'1.0-0' }}
+                    </span>
+                    <span class="text-gray-400 text-sm mb-1">{{ item.data.unit }}</span>
+                  </div>
+
+                </div>
+              }
+
+              <!-- Cég inventory -->
+              @for (inv of companyInventory; track inv.id) {
+                @if (inv.resourceTypeName === selectedResource?.resourceTypeName) {
+                  <h3 class="text-white font-medium text-sm">Cég készlet</h3>
+                  <div
+                    class="relative rounded-xl border p-4 overflow-hidden flex flex-col justify-between h-36"
+                    [style.border-color]="inv.resourceTypeColor + '40'"
+                    [style.background]="'linear-gradient(135deg, ' + inv.resourceTypeColor + '20' + ' 0%, #111827 60%)'">
+
+                    <div class="flex items-center justify-between">
+                      <span class="text-white font-medium text-sm">{{inv.resourceTypeName}}</span>
+                      <span class="text-xs font-semibold px-2 py-0.5 rounded-full"
+                        [style.color]="inv.resourceTypeColor"
+                        [style.background-color]="inv.resourceTypeColor + '26'">
+                        
+                        {{ inv.resourceTypeUnit }}
+                      </span>
+                    </div>
+
+                    <div class="flex items-center justify-center flex-1 gap-2">
+                      <span class="text-5xl font-bold" [style.color]="inv.resourceTypeColor">
+                        {{ companyInventoryAnimated[inv.resourceTypeName] | number:'1.0-0' }}
+                      </span>
+                      <span class="text-gray-400 text-sm mt-2">{{ inv.resourceTypeUnit }}</span>
+                    </div>
+
+                  </div>
+                }
+              }
+            </div>
+          </div>
+
+        </div>
+      }
+
+      <!-- Statisztika szekció -->
+      <div class="mb-10">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-white font-semibold text-lg">Statisztikák</h2>
+          <div class="flex gap-2">
+            <button
+              (click)="onPeriodChange('DAILY')"
+              class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              [class]="statsPeriod === 'DAILY'
+                ? 'bg-blue-700 text-white'
+                : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700'">
+              Napi
+            </button>
+            <button
+              (click)="onPeriodChange('WEEKLY')"
+              class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              [class]="statsPeriod === 'WEEKLY'
+                ? 'bg-blue-700 text-white'
+                : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700'">
+              Heti
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-32">
+          @if (stats) {
+
+            <div class="flex flex-col items-center justify-center bg-gray-900 rounded-2xl border border-gray-800 p-6">
+              <p class="text-gray-400 text-sm mb-2">Összes kredit mozgás</p>
+              <p class="text-3xl font-bold text-white">
+                {{ stats.totalCreditVolume | number:'1.0-2' }}
+                <span class="text-gray-500 text-lg font-normal">kredit</span>
+              </p>
+            </div>
+
+            @for (stat of stats.resourceStats; track stat.resourceType) {
+              <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
+                <p class="text-gray-400 text-sm mb-4">{{ stat.resourceType }}</p>
+                <div class="space-y-3">
+                  <div>
+                    <p class="text-gray-500 text-xs mb-1">Összes kereskedett mennyiség</p>
+                    <p class="text-2xl font-bold text-white">{{ stat.totalQuantity | number:'1.0-2' }}
+                      <span class="text-gray-500 text-sm font-normal">{{ stat.unit }}</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500 text-xs mb-1">Összes kredit érték</p>
+                    <p class="text-xl font-bold text-white">
+                      {{ stat.totalCredit | number:'1.0-2' }}
+                      <span class="text-gray-500 text-sm font-normal">kredit</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            }
+
+            @if (stats.resourceStats.length === 0) {
+              <div class="col-span-3 bg-gray-900 rounded-2xl border border-gray-800 p-6 text-center">
+                <p class="text-gray-500 text-sm">Nem volt tranzakció ebben a periódusban.</p>
+              </div>
+            }
+
+          }
+        </div>
+      </div>
+
+    }
+
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+@if (showConfirmModal) {
+  <div class="fixed inset-0 backdrop-blur-sm bg-black/40 flex items-center justify-center z-40">
+    <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 w-full max-w-md mx-4">
+
+      <h3 class="text-white font-bold text-lg mb-4">Confirm Trade</h3>
+
+      <div class="bg-gray-800 rounded-lg p-4 mb-6 space-y-2">
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-400">Resource:</span>
+          <span class="text-white font-medium">{{ selectedResource?.resourceTypeName }}</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-400">Order Type:</span>
+          <span class="font-semibold" [class]="offerType === 'BUY' ? 'text-green-400' : 'text-red-400'">{{ offerType }}</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-400">Quantity:</span>
+          <span class="text-white font-medium">{{ quantity }} {{ selectedResource?.resourceTypeUnit }}</span>
+        </div>
+        <div class="flex justify-between text-sm border-t border-gray-700 pt-2 mt-2">
+          <span class="text-gray-400">Total Price:</span>
+          <span class="text-white font-bold">{{ calculatedPrice | number:'1.0-2' }} credits</span>
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <button
+          (click)="showConfirmModal = false"
+          class="flex-1 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold text-sm transition-colors border border-gray-700">
+          Cancel
+        </button>
+        <button
+          (click)="submitTrade()"
+          class="flex-1 py-3 rounded-lg font-semibold text-sm transition-colors"
+          [class]="offerType === 'BUY' ? 'bg-green-700 hover:bg-green-600 text-white' : 'bg-red-700 hover:bg-red-600 text-white'">
+          Confirm
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<!-- PRICE MODAL -->
+@if (showPriceModal) {
+  <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md">
+
+      <div class="flex items-center justify-between p-6 border-b border-gray-800">
+        <h2 class="text-white font-semibold">Árak kezelése</h2>
+        <button (click)="showPriceModal = false" class="text-gray-500 hover:text-gray-300 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-6 flex flex-col gap-4">
+
+        <!-- Dropdown -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-gray-400 text-xs">Nyersanyag</label>
+          <select
+            class="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"
+            (change)="dispatcherService.selectPriceResource(dispatcherService.allPrices[$any($event.target).selectedIndex])">
+            @for (price of dispatcherService.allPrices; track price.resourceType) {
+              <option [value]="price.resourceType">{{ price.resourceType }}</option>
+            }
+          </select>
+        </div>
+
+        @if (dispatcherService.selectedPriceResource) {
+          <div class="bg-gray-800 rounded-xl p-4 flex flex-col gap-3">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-gray-400 text-xs">Központi vétel ár:</label>
+              <input
+                [(ngModel)]="dispatcherService.priceForm[dispatcherService.selectedPriceResource.resourceType].buyPrice"
+                type="number"
+                min="0"
+                class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-gray-400 text-xs">Központi eladási ár:</label>
+              <input
+                [(ngModel)]="dispatcherService.priceForm[dispatcherService.selectedPriceResource.resourceType].sellPrice"
+                type="number"
+                min="0"
+                class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
+            </div>
+          </div>
+        }
+
+      </div>
+
+      <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-800">
+        <button
+          (click)="showPriceModal = false"
+          class="px-4 py-2 text-gray-400 hover:text-white text-sm transition-colors">
+          Mégse
+        </button>
+        <button
+          (click)="savePrices()"
+          [disabled]="dispatcherService.isSubmitting"
+          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors">
+          {{ dispatcherService.isSubmitting ? 'Mentés...' : 'Mentés' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<!-- ADD QUANTITY MODAL -->
+@if (showAddQuantityModal) {
+  <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-sm">
+
+      <div class="flex items-center justify-between p-6 border-b border-gray-800">
+        <div>
+          <h2 class="text-white font-semibold">Feltöltés</h2>
+          <p class="text-gray-500 text-xs mt-0.5">{{ selectedStorageItem?.data.resourceType }}</p>
+        </div>
+        <button (click)="showAddQuantityModal = false" class="text-gray-500 hover:text-gray-300 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-6 flex flex-col gap-4">
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-gray-400">Jelenlegi készlet:</span>
+          <span class="text-white font-medium">{{ selectedStorageItem?.data.quantity | number:'1.0-0' }} {{ selectedStorageItem?.data.unit }}</span>
+        </div>
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-gray-400">Max kapacitás:</span>
+          <span class="text-white font-medium">{{ selectedStorageItem?.data.maxQuantity | number:'1.0-0' }} {{ selectedStorageItem?.data.unit }}</span>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-gray-400 text-xs">Hozzáadandó mennyiség</label>
+          <div class="relative">
+            <input
+              [(ngModel)]="addQuantityForm"
+              type="number"
+              min="0"
+              placeholder="0"
+              class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
+            <span class="absolute right-4 top-2.5 text-gray-500 text-sm">{{ selectedStorageItem?.data.unit }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-800">
+        <button
+          (click)="showAddQuantityModal = false"
+          class="px-4 py-2 text-gray-400 hover:text-white text-sm transition-colors">
+          Mégse
+        </button>
+        <button
+          (click)="submitAddQuantity()"
+          [disabled]="dispatcherService.isSubmitting || !addQuantityForm"
+          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors">
+          {{ dispatcherService.isSubmitting ? 'Feltöltés...' : 'Feltöltés' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<!-- MAX QUANTITY MODAL -->
+@if (showMaxQuantityModal) {
+  <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-sm">
+
+      <div class="flex items-center justify-between p-6 border-b border-gray-800">
+        <div>
+          <h2 class="text-white font-semibold">Max kapacitás módosítása</h2>
+          <p class="text-gray-500 text-xs mt-0.5">{{ selectedStorageItem?.data.resourceType }}</p>
+        </div>
+        <button (click)="showMaxQuantityModal = false" class="text-gray-500 hover:text-gray-300 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-6 flex flex-col gap-4">
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-gray-400">Jelenlegi max:</span>
+          <span class="text-white font-medium">{{ selectedStorageItem?.data.maxQuantity | number:'1.0-0' }} {{ selectedStorageItem?.data.unit }}</span>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-gray-400 text-xs">Új maximum kapacitás</label>
+          <div class="relative">
+            <input
+              [(ngModel)]="maxQuantityForm"
+              type="number"
+              min="0"
+              class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
+            <span class="absolute right-4 top-2.5 text-gray-500 text-sm">{{ selectedStorageItem?.data.unit }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-800">
+        <button
+          (click)="showMaxQuantityModal = false"
+          class="px-4 py-2 text-gray-400 hover:text-white text-sm transition-colors">
+          Mégse
+        </button>
+        <button
+          (click)="submitMaxQuantity()"
+          [disabled]="dispatcherService.isSubmitting || !maxQuantityForm"
+          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors">
+          {{dispatcherService.isSubmitting ? 'Mentés...' : 'Mentés' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
