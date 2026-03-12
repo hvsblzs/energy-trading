@@ -6,6 +6,7 @@ import { routes } from './app.routes';
 import { provideToastr } from 'ngx-toastr';
 
 
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
@@ -15,6 +16,7 @@ export const appConfig: ApplicationConfig = {
       timeOut: 3000,
       positionClass: 'toast-bottom-right',
       preventDuplicates: true,
-    })
+      toastClass: 'ngx-toastr'
+    }),
   ]
 };

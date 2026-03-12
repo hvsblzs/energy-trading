@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, Host } from '@angular/core';
 import { DecimalPipe, NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CentralStorageService } from '../../core/services/central-storage.service';
@@ -12,6 +12,15 @@ import { WebSocketService } from '../../core/services/websocket.service';
 import { UserService } from '../../core/services/user.service';
 import { TradingService } from '../../core/services/trading.service';
 import { DispatcherService } from '../../core/services/dispatcher.service';
+import { ModalService } from '../../core/services/modal.service';
+import { ConfirmDeleteModalComponent } from '../../shared/components/modals/confirm-delete-modal/confirm-delete-modal';
+import { CreateResourceModalComponent } from '../../shared/components/modals/create-resource-modal/create-resource-modal';
+import { PriceModalComponent } from '../../shared/components/modals/price-modal/price-modal';
+import { AddQuantityModalComponent } from '../../shared/components/modals/add-quantity-modal/add-quantity-modal';
+import { MaxQuantityModalComponent } from '../../shared/components/modals/max-quantity-modal/max-quantity-modal';
+import { ConfirmTradeModalComponent } from '../../shared/components/modals/confirm-trade-modal/confirm-trade-modal';
+import { HostListener } from '@angular/core';
+import { LucideAngularModule, TriangleAlert, Trash2, Plus, CircleDollarSign } from 'lucide-angular';
 
 interface StorageItem {
   data: any;
@@ -23,13 +32,20 @@ interface StorageItem {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [DecimalPipe, NgStyle, FormsModule],
+  imports: [DecimalPipe, NgStyle, FormsModule, LucideAngularModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
+  // Icons
+  readonly TriangleAlert = TriangleAlert;
+  readonly Trash2 = Trash2;
+  readonly Plus = Plus;
+  readonly CircleDollarSign = CircleDollarSign;
+
   private companyId: number | null = null;
+  hoveredButton: string | null = null;
 
   // ── Storage ──────────────────────────────────────────────
   storageItems: StorageItem[] = [];
@@ -45,8 +61,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   quantity: string = '';
   currentPrice: any = null;
   isSubmitting: boolean = false;
-  showConfirmModal: boolean = false;
   dropdownOpen: boolean = false;
+  resourceSearch: string = '';
 
   // ── Stats ────────────────────────────────────────────────
   stats: any = null;
@@ -61,12 +77,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   // ── Dispatcher ───────────────────────────────────────────
   isDispatcher: boolean = false;
-  showPriceModal: boolean = false;
-  showAddQuantityModal: boolean = false;
-  showMaxQuantityModal: boolean = false;
-  selectedStorageResourceType: string = '';
-  addQuantityForm: string = '';
-  maxQuantityForm: string = '';
+
+  // ── Storage pagination + keresés ──────────────────────────
+  storageSearch: string = '';
+  storagePage: number = 0;
+  storagePageSize: number = 6;
 
   constructor(
     private centralStorageService: CentralStorageService,
@@ -80,6 +95,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private userService: UserService,
     public tradingService: TradingService,
     public dispatcherService: DispatcherService,
+    private modalService: ModalService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -100,13 +116,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.quantity = '';
       this.cdr.detectChanges();
     });
-
-    const userId = this.authService.getUserId();
-    if (userId) {
-      this.webSocketService.subscribe(`/topic/credits/${userId}`, (message) => {
-        this.userService.updateCreditBalance(parseFloat(message.creditBalance));
-      });
-    }
   }
 
   // ── Resource types ────────────────────────────────────────
@@ -136,36 +145,38 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // ── Storage ───────────────────────────────────────────────
   loadData() {
     this.isLoading = true;
-    this.storageItems = [];
     this.animationIntervals.forEach(i => clearInterval(i));
     this.animationIntervals = [];
-
-    this.centralStorageService.getAllStorage().subscribe({
-      next: (items) => {
-        items.forEach((item: any) => {
-          const config = this.resourceTypeMap.get(item.resourceType) ?? {
-            label: item.resourceType,
-            color: '#10b981',
-            colorLight: 'rgba(16, 185, 129, 0.15)'
-          };
-          this.storageItems.push({
-            data: item,
-            displayValue: 0,
-            percentage: 0,
-            color: config.color,
-            colorLight: config.colorLight
+    this.storageItems = [];
+    
+    setTimeout(() => {
+      this.centralStorageService.getAllStorage().subscribe({
+        next: (items) => {
+          items.forEach((item: any) => {
+            const config = this.resourceTypeMap.get(item.resourceType) ?? {
+              label: item.resourceType,
+              color: '#10b981',
+              colorLight: 'rgba(16, 185, 129, 0.15)'
+            };
+            this.storageItems.push({
+              data: item,
+              displayValue: 0,
+              percentage: 0,
+              color: config.color,
+              colorLight: config.colorLight
+            });
+            this.animateValue(this.storageItems.length - 1, item.quantity, item.maxQuantity);
           });
-          this.animateValue(this.storageItems.length - 1, item.quantity, item.maxQuantity);
-        });
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error(err);
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      }
-    });
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error(err);
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
+    }, 100);
   }
 
   animateValue(index: number, targetValue: number, maxQuantity: number) {
@@ -256,6 +267,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.tradingService.getCalculatedPrice(this.offerType, this.currentPrice, this.quantity);
   }
 
+  openConfirmTradeModal() {
+    const ref = this.modalService.open(ConfirmTradeModalComponent, {
+      resourceTypeName: this.selectedResource?.resourceTypeName,
+      resourceTypeUnit: this.selectedResource?.resourceTypeUnit,
+      offerType: this.offerType,
+      quantity: this.quantity,
+      calculatedPrice: this.calculatedPrice
+    });
+    ref.closed.subscribe(result => {
+      if (result === 'confirmed') {
+        this.submitTrade();
+      }
+    });
+  }
+
   onOfferTypeChange() { this.updatePreview(); }
   onQuantityChange() { this.updatePreview(); }
 
@@ -269,7 +295,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       parseFloat(this.quantity)
     ).subscribe({
       next: () => {
-        this.showConfirmModal = false;
         this.toastService.success('Cserekérelem sikeresen elküldve!');
         this.quantity = '';
         this.isSubmitting = false;
@@ -280,7 +305,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.toastService.error(err.error?.error ?? 'Hiba történt a kereskedés során!');
-        this.showConfirmModal = false;
         this.isSubmitting = false;
         this.tradingService.isSubmitting = false;
         this.loadData();
@@ -288,6 +312,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  get filteredResources(): any[] {
+    if (!this.resourceSearch) return this.availableResources;
+    return this.availableResources.filter(r =>
+      r.resourceTypeName.toLowerCase().startsWith(this.resourceSearch.toLowerCase())
+    );
+  }
+
+  @HostListener('document:click')
+  closeDropdowns(){
+    if(this.dropdownOpen){
+      this.dropdownOpen = false;
+      this.resourceSearch = '';
+    }
   }
 
   // ── Stats ─────────────────────────────────────────────────
@@ -445,91 +484,92 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   // ── Dispatcher ────────────────────────────────────────────
   openPriceModal() {
-    this.showPriceModal = true;
-    this.dispatcherService.loadAllPrices().subscribe({
-      next: (prices) => {
-        this.dispatcherService.initPriceForm(prices);
-        this.cdr.detectChanges();
-      },
-      error: (err) => console.error(err)
-    });
-  }
-
-  savePrices() {
-    const obs = this.dispatcherService.savePrice();
-    if (!obs) return;
-    this.dispatcherService.isSubmitting = true;
-    obs.subscribe({
-      next: () => {
+    const ref = this.modalService.open(PriceModalComponent);
+    ref.closed.subscribe(result => { 
+      if(result === 'saved'){
         this.toastService.success('Ár sikeresen frissítve!');
-        this.showPriceModal = false;
-        this.dispatcherService.isSubmitting = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        this.toastService.error(err.error?.error ?? 'Hiba történt!');
-        this.dispatcherService.isSubmitting = false;
-        this.cdr.detectChanges();
+        this.loadData();
       }
-    });
+    })
   }
 
   openAddQuantityModal(item: any) {
-    this.selectedStorageResourceType = item.data.resourceType;
-    this.addQuantityForm = '';
-    this.showAddQuantityModal = true;
-  }
-
-  submitAddQuantity() {
-    if (!this.selectedStorageItem || !this.addQuantityForm) return;
-    this.dispatcherService.isSubmitting = true;
-    this.dispatcherService.addQuantity(
-      this.selectedStorageItem.data.resourceType,
-      parseFloat(this.addQuantityForm)
-    ).subscribe({
-      next: () => {
+    const ref = this.modalService.open(AddQuantityModalComponent, {
+      resourceType: item.data.resourceType,
+      unit: item.data.unit,
+      quantity: item.data.quantity,
+      maxQuantity: item.data.maxQuantity
+    });
+    ref.closed.subscribe(result => {
+      if(result === 'added'){
         this.toastService.success('Mennyiség sikeresen hozzáadva!');
-        this.showAddQuantityModal = false;
-        this.dispatcherService.isSubmitting = false;
         this.loadData();
-      },
-      error: (err) => {
-        this.toastService.error(err.error?.error ?? 'Hiba történt!');
-        this.dispatcherService.isSubmitting = false;
-        this.cdr.detectChanges();
       }
     });
   }
 
   openMaxQuantityModal(item: any) {
-    this.selectedStorageResourceType = item.data.resourceType;
-    this.maxQuantityForm = item.data.maxQuantity.toString();
-    this.showMaxQuantityModal = true;
-  }
-
-  submitMaxQuantity() {
-    if (!this.selectedStorageItem || !this.maxQuantityForm) return;
-    this.dispatcherService.isSubmitting = true;
-    this.dispatcherService.updateMaxQuantity(
-      this.selectedStorageItem.data.resourceType,
-      parseFloat(this.maxQuantityForm)
-    ).subscribe({
-      next: () => {
+    const ref = this.modalService.open(MaxQuantityModalComponent, {
+      resourceType: item.data.resourceType,
+      unit: item.data.unit,
+      maxQuantity: item.data.maxQuantity
+    });
+    ref.closed.subscribe(result => {
+      if (result === 'updated') {
         this.toastService.success('Maximum kapacitás sikeresen frissítve!');
-        this.showMaxQuantityModal = false;
-        this.dispatcherService.isSubmitting = false;
         this.loadData();
-      },
-      error: (err) => {
-        this.toastService.error(err.error?.error ?? 'Hiba történt!');
-        this.dispatcherService.isSubmitting = false;
-        this.cdr.detectChanges();
       }
     });
   }
 
-  get selectedStorageItem(): any {
-    return this.storageItems.find(i => i.data.resourceType === this.selectedStorageResourceType) ?? null;
+  // ── Resource type létrehozás / törlés ───────────────────────────────────────────
+  openCreateResourceModal(){
+    const ref = this.modalService.open(CreateResourceModalComponent);
+    ref.closed.subscribe(result => {
+      if (result === 'created') {
+        this.loadResourceTypes();
+      }
+    });
+  }
+
+  openDeleteResourceModal(item: any){
+    const ref = this.modalService.open(ConfirmDeleteModalComponent, {
+      title: 'Nyersanyag törlése',
+      itemName: item.data.resourceType,
+      message: 'nyersanyagot? Ez a művelet nem visszavonható, minden kapcsolódó adat törlődik.'
+    });
+    ref.closed.subscribe(result => {
+      if (result === 'confirmed') {
+        this.resourceTypeService.deleteResourceType(item.data.resourceTypeId).subscribe({
+          next: () => {
+            this.toastService.success('Nyersanyag sikeresen törölve!');
+            this.loadResourceTypes();
+          },
+          error: (err) => this.toastService.error(err.error?.error ?? 'Hiba történt!')
+        });
+      }
+    });
+  }
+
+  // ── Storage pagination + keresés ──────────────────────────
+  get filteredStorageItems(): StorageItem[] {
+    if(!this.storageSearch) return this.storageItems;
+    return this.storageItems.filter(item => 
+      item.data.resourceType.toLowerCase().startsWith(this.storageSearch.toLowerCase())
+    );
+  }
+
+  get paginatedStorageItems(): StorageItem[] {
+    const start = this.storagePage * this.storagePageSize;
+    return this.filteredStorageItems.slice(start, start + this.storagePageSize);
+  }
+
+  get storageTotalPages(): number{
+    return Math.ceil(this.filteredStorageItems.length / this.storagePageSize);
+  }
+
+  onStorageSearch(){
+    this.storagePage = 0;
   }
 
   // ── Helpers ───────────────────────────────────────────────

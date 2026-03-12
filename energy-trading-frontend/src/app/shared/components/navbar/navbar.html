@@ -2,9 +2,11 @@
   <div class="max-w-7xl mx-auto flex items-center justify-between">
 
     <!-- Logo / Cím -->
-    <div class="flex items-center gap-3">
-      <img src="energy-logo.png" alt="Energy Trading" class="h-8">
-      <span class="text-white font-bold text-lg">Energy Trading</span>
+    <div>
+      <a routerLink="/home" class="flex items-center gap-3">
+        <lucide-icon [img]="Zap" class="text-indigo-400"></lucide-icon>
+        <span class="text-white font-bold text-lg">Energy Trading</span>
+      </a>
     </div>
 
     <div class="flex items-center gap-6">
@@ -38,7 +40,7 @@
       <!-- Kredit balance - csak COMPANY_USER-nek -->
       @if (currentUser && isCompanyUser()) {
         <div class="flex items-center gap-2 bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5">
-          <span class="text-yellow-400 text-xs">💰</span>
+          <lucide-icon [img]="CircleDollarSign" class="w-4 h-4 text-yellow-400"></lucide-icon>
           <span class="text-white text-sm font-semibold">{{ currentUser.creditBalance | number:'1.0-2' }}</span>
           <span class="text-gray-400 text-xs">kredit</span>
         </div>
@@ -47,7 +49,7 @@
       <!-- Kredit balance - dispatcher/admin -->
       @if (currentUser && isDispatcher()) {
         <div class="flex items-center gap-2 bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5">
-          <span class="text-yellow-400 text-xs">💰</span>
+          <lucide-icon [img]="CircleDollarSign" class="w-4 h-4 text-yellow-400"></lucide-icon>
           <span class="text-white text-sm font-semibold">{{ currentUser.creditBalance | number:'1.0-2' }}</span>
           <span class="text-gray-400 text-xs">kredit</span>
         </div>
@@ -62,7 +64,7 @@
       <!-- Role badge -->
       <a routerLink="/profile" class="text-xs font-semibold px-3 py-1 rounded-full"
         [class]="isAdmin() ? 'bg-purple-900 text-purple-300' : isDispatcher() ? 'bg-blue-900 text-blue-300' : 'bg-green-900 text-green-300'">
-        {{ getRole() }}
+        {{ getRole() === 'ADMIN' ? 'Admin' : getRole() === 'DISPATCHER' ? 'Diszpécser' : 'Felhasználó' }}
       </a>
 
       <button (click)="logout()" class="text-gray-400 hover:text-red-400 transition-colors text-sm font-medium">

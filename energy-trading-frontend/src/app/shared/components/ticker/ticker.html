@@ -1,6 +1,6 @@
 <div class="bg-gray-900 border-b border-gray-800 overflow-hidden py-2">
     <div class="ticker-wrapper">
-        <div class="ticker-content">
+        <div class="ticker-content" #tickerContent>
             @for (transaction of transactions; track transaction.id) {
                 <span class="ticker-item">
                     <span class="text-gray-600 mx-2">●</span>

@@ -101,6 +101,7 @@ public class CentralStorageService {
         CentralStorageResponse response = new CentralStorageResponse();
         response.setId(centralStorage.getId());
         response.setResourceType(centralStorage.getResourceType().getName());
+        response.setResourceTypeId(centralStorage.getResourceType().getId());
         response.setQuantity(centralStorage.getQuantity());
         response.setUnit(centralStorage.getResourceType().getUnit());
         response.setMaxQuantity(centralStorage.getMaxQuantity());

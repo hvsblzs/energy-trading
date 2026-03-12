@@ -36,7 +36,7 @@ public class DispatcherBalanceService {
             Optional<Pricing> pricing = pricingRepository
                     .findTopByResourceTypeOrderByCreatedAtDesc(storage.getResourceType());
             if(pricing.isPresent()){
-                totalValue = totalValue.add(storage.getQuantity().multiply(pricing.get().getSellPrice()));
+                totalValue = totalValue.add(storage.getQuantity().multiply(pricing.get().getBuyPrice()));
             }
         }
 

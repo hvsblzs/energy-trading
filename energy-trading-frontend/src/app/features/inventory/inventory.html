@@ -22,17 +22,49 @@
       </div>
     }
 
-    <!-- Inventory kártyák -->
     @if (!isLoading && inventoryItems.length > 0) {
+
+      <!-- Kereső + pagination -->
+      <div class="flex items-center justify-between mb-4">
+        <div class="relative">
+          <input
+            [(ngModel)]="inventorySearch"
+            (ngModelChange)="onInventorySearch()"
+            type="text"
+            placeholder="Keresés..."
+            class="bg-gray-900 border border-gray-800 rounded-xl pl-9 pr-4 py-2 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors w-64"/>
+          <svg class="w-4 h-4 text-gray-500 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+        @if (inventoryTotalPages > 1) {
+          <div class="flex items-center gap-2">
+            <button
+              (click)="inventoryPage = inventoryPage - 1"
+              [disabled]="inventoryPage === 0"
+              class="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-lg text-gray-400 text-sm disabled:opacity-40 hover:bg-gray-800 transition-colors">
+              ←
+            </button>
+            <span class="text-gray-500 text-sm">{{ inventoryPage + 1 }} / {{ inventoryTotalPages }}</span>
+            <button
+              (click)="inventoryPage = inventoryPage + 1"
+              [disabled]="inventoryPage >= inventoryTotalPages - 1"
+              class="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-lg text-gray-400 text-sm disabled:opacity-40 hover:bg-gray-800 transition-colors">
+              →
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Inventory kártyák -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @for (item of inventoryItems; track item.data.id) {
+        @for (item of paginatedInventoryItems; track item.data.id) {
           <div
             class="relative rounded-2xl border p-6 overflow-hidden h-48 flex flex-col justify-between"
             [style.border-color]="item.color + '40'"
             [style.background-color]="'#111827'"
             [style.background]="'linear-gradient(135deg, ' + item.colorLight + ' 0%, #111827 60%)'">
 
-            <!-- Header -->
             <div class="flex items-center justify-between">
               <h2 class="text-white font-semibold text-lg">{{ item.data.resourceTypeName }}</h2>
               <span class="text-xs font-semibold px-2 py-1 rounded-full"
@@ -42,7 +74,6 @@
               </span>
             </div>
 
-            <!-- Mennyiség -->
             <div class="flex items-end gap-2">
               <span class="text-5xl font-bold" [style.color]="item.color">
                 {{ item.displayValue | number:'1.0-0' }}
@@ -50,7 +81,6 @@
               <span class="text-gray-400 text-lg mb-1">{{ item.data.resourceTypeUnit }}</span>
             </div>
 
-            <!-- Footer -->
             <div class="flex items-center justify-between">
               <span class="text-gray-500 text-xs">Raktáron</span>
               <span class="text-xs font-medium" [style.color]="item.color">

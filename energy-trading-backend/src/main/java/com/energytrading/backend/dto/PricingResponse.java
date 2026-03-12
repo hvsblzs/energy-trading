@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class PricingResponse {
     private Long id;
     private String resourceType;
+    private String resourceTypeColor;
     private BigDecimal buyPrice;
     private BigDecimal sellPrice;
     private Long setByUserId;

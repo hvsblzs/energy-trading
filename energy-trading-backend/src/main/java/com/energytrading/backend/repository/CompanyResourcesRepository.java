@@ -12,4 +12,5 @@ public interface CompanyResourcesRepository extends JpaRepository<CompanyResourc
     Optional<CompanyResources> findByCompanyAndResourceType(Company company, ResourceType resourceType);
     List<CompanyResources> findByCompany(Company company);
     List<CompanyResources> findByCompanyAndIsActiveTrue(Company company);
+    List<CompanyResources> findByResourceType(ResourceType resourceType);
 }

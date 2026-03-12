@@ -1,0 +1,92 @@
+<div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md">
+
+  <div class="flex items-center justify-between p-6 border-b border-gray-800">
+    <div>
+      <h2 class="text-white font-semibold">Nyersanyagok</h2>
+      <p class="text-gray-500 text-xs mt-0.5">{{ data.companyName }}</p>
+    </div>
+    <button (click)="close()" class="text-gray-500 hover:text-gray-300 transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="p-6 flex flex-col gap-3">
+
+    <!-- Kereső + pagination -->
+    <div class="flex items-center justify-between gap-2">
+      <div class="relative flex-1">
+        <input
+          [(ngModel)]="resourceSearch"
+          (ngModelChange)="onResourceSearch()"
+          type="text"
+          placeholder="Keresés..."
+          class="w-full bg-gray-800 border border-gray-700 rounded-xl pl-9 pr-4 py-2 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
+        <svg class="w-4 h-4 text-gray-500 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+      @if (resourceTotalPages > 1) {
+        <div class="flex items-center gap-1">
+          <button
+            (click)="resourcePage = resourcePage - 1"
+            [disabled]="resourcePage === 0"
+            class="px-2.5 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 text-sm disabled:opacity-40 hover:bg-gray-700 transition-colors">
+            ←
+          </button>
+          <span class="text-gray-500 text-sm px-1">{{ resourcePage + 1 }}/{{ resourceTotalPages }}</span>
+          <button
+            (click)="resourcePage = resourcePage + 1"
+            [disabled]="resourcePage >= resourceTotalPages - 1"
+            class="px-2.5 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 text-sm disabled:opacity-40 hover:bg-gray-700 transition-colors">
+            →
+          </button>
+        </div>
+      }
+    </div>
+
+    <!-- Lista -->
+    @if (isLoading) {
+      <div class="flex items-center justify-center h-24">
+        <div class="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }
+    @if (!isLoading) {
+      @if (filteredResourceTypes.length === 0) {
+        <div class="text-center text-gray-500 text-sm py-4">Nincs találat</div>
+      }
+      @for (resourceType of paginatedResourceTypes; track resourceType.id) {
+        <div
+          class="flex items-center justify-between p-3 rounded-xl border transition-colors"
+          [style.border-color]="hasResource(resourceType.name) ? resourceType.color + '40' : '#374151'"
+          [style.background-color]="hasResource(resourceType.name) ? resourceType.color + '15' : '#111827'">
+          <div class="flex items-center gap-3">
+            <div class="w-3 h-3 rounded-full" [style.background-color]="resourceType.color"></div>
+            <div>
+              <p class="text-white text-sm font-medium">{{ resourceType.name }}</p>
+              <p class="text-gray-500 text-xs">{{ resourceType.unit }}</p>
+            </div>
+          </div>
+          <button
+            (click)="toggleResource(resourceType)"
+            class="px-3 py-1 text-xs font-medium rounded-lg transition-colors"
+            [class]="hasResource(resourceType.name)
+              ? 'bg-red-500/15 hover:bg-red-500/25 text-red-400'
+              : 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400'">
+            {{ hasResource(resourceType.name) ? 'Eltávolít' : 'Hozzáad' }}
+          </button>
+        </div>
+      }
+    }
+
+  </div>
+
+  <div class="flex items-center justify-end p-6 border-t border-gray-800">
+    <button (click)="close()"
+      class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl transition-colors">
+      Kész
+    </button>
+  </div>
+
+</div>

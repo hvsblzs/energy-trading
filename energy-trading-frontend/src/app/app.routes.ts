@@ -47,12 +47,17 @@ export const routes: Routes = [
         data: { roles: ['ADMIN', 'DISPATCHER'] }
     },
     {
+        path: 'home',
+        loadComponent: () => import('./features/home/home').then(m => m.HomeComponent),
+        canActivate: [authGuard]
+    },
+    {
         path: '',
-        redirectTo: 'marketplace',
+        redirectTo: 'home',
         pathMatch: 'full'
     },
     {
         path: '**',
-        redirectTo: 'marketplace'
+        redirectTo: 'home'
     }
 ];

@@ -2,6 +2,7 @@ package com.energytrading.backend.service;
 
 import com.energytrading.backend.dto.PricingRequest;
 import com.energytrading.backend.dto.PricingResponse;
+import com.energytrading.backend.exception.BusinessException;
 import com.energytrading.backend.exception.ResourceNotFoundException;
 import com.energytrading.backend.model.Pricing;
 import com.energytrading.backend.model.ResourceType;
@@ -11,6 +12,7 @@ import com.energytrading.backend.repository.ResourceTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -42,6 +44,12 @@ public class PricingService {
     public PricingResponse setPrice(PricingRequest request, User currentUser){
         ResourceType resourceType = resourceTypeRepository.findByName(request.getResourceType())
                 .orElseThrow(() -> new ResourceNotFoundException("Resource type not found: " + request.getResourceType()));
+
+        // Price check
+        if(request.getBuyPrice().compareTo(BigDecimal.ZERO) <= 0 || request.getSellPrice().compareTo(BigDecimal.ZERO) <= 0){
+            throw new BusinessException("Az ár csak pozitív szám lehet!");
+        }
+
         Pricing pricing = Pricing.builder()
                 .resourceType(resourceType)
                 .buyPrice(request.getBuyPrice())
@@ -59,6 +67,7 @@ public class PricingService {
         PricingResponse response = new PricingResponse();
         response.setId(pricing.getId());
         response.setResourceType(pricing.getResourceType().getName());
+        response.setResourceTypeColor(pricing.getResourceType().getColor());
         response.setBuyPrice(pricing.getBuyPrice());
         response.setSellPrice(pricing.getSellPrice());
         response.setSetByUserId(pricing.getSetByUser().getId());

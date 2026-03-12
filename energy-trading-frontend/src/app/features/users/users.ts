@@ -3,14 +3,18 @@ import { DatePipe } from '@angular/common';
 import { UserService } from '../../core/services/user.service';
 import { ToastService } from '../../core/services/toast.service';
 import { AuthService } from '../../core/services/auth.service';
+import { LucideAngularModule, User } from 'lucide-angular';
 
 @Component({
   selector: 'app-users',
-  imports: [DatePipe],
+  imports: [DatePipe, LucideAngularModule],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })
 export class UsersComponent implements OnInit {
+
+  // Icons
+  readonly User = User;
 
   users: any[] = [];
   isLoading: boolean = true;

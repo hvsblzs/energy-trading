@@ -13,4 +13,12 @@ export class ResourceTypeService {
     getAllResourceTypes() {
         return this.http.get<any[]>(`${this.apiUrl}/resource-types`);
     }
+
+    createResourceType(request: any){
+        return this.http.post<any>(`${this.apiUrl}/resource-types`, request);
+    }
+
+    deleteResourceType(id: number) {
+        return this.http.delete(`${this.apiUrl}/resource-types/${id}`);
+    }
 }

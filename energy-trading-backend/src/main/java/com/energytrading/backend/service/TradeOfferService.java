@@ -60,6 +60,11 @@ public class TradeOfferService {
                 .findByResourceType(resourceType)
                 .orElseThrow(() -> new BusinessException("Nincs ilyen nyersanyag a központi tárolóban!"));
 
+        // Price check
+        if(request.getQuantity().compareTo(BigDecimal.ZERO) <= 0){
+            throw new BusinessException("A mennyiség csak pozitív szám lehet!");
+        }
+
         // BUY validáció
         if(request.getOfferType() == OfferType.BUY){
             if(currentUser.getCompany().getCreditBalance().compareTo(totalPrice) < 0){
@@ -207,6 +212,11 @@ public class TradeOfferService {
                 "companyId", company.getId(),
                 "creditBalance", company.getCreditBalance()
         ));
+
+        webSocketService.sendCreditUpdate(dispatcher.getId(), Map.of(
+                "creditBalance", dispatcher.getCreditBalance()
+        ));
+        System.out.println("Sending credit update to dispatcher id: " + dispatcher.getId());
 
         webSocketService.sendTradeOfferUpdate(Map.of(
                 "action", "APPROVED",

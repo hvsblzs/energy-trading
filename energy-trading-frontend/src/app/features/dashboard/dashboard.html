@@ -8,14 +8,20 @@
         <p class="text-gray-400 text-sm mt-1">Kereskedj és kövesd a központi tároló készleteit</p>
       </div>
       @if (isDispatcher) {
-        <button
-          (click)="openPriceModal()"
-          class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          Árak kezelése
-        </button>
+        <div class="flex items-center gap-2">
+          <button
+            (click)="openCreateResourceModal()"
+            class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-xl transition-colors">
+            <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
+            Új nyersanyag
+          </button>
+          <button
+            (click)="openPriceModal()"
+            class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl transition-colors">
+            <lucide-icon [img]="CircleDollarSign" class="w-4 h-4"></lucide-icon>
+            Árak kezelése
+          </button>
+        </div>
       }
     </div>
     
@@ -29,9 +35,41 @@
 
     @if (!isLoading) {
 
+      <!-- Kereső -->
+      <div class="flex items-center justify-between mb-4">
+        <div class="relative">
+          <input
+            [(ngModel)]="storageSearch"
+            (ngModelChange)="onStorageSearch()"
+            type="text"
+            placeholder="Keresés..."
+            class="bg-gray-900 border border-gray-800 rounded-xl pl-9 pr-4 py-2 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors w-64"/>
+          <svg class="w-4 h-4 text-gray-500 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+        @if (storageTotalPages > 1) {
+          <div class="flex items-center gap-2">
+            <button
+              (click)="storagePage = storagePage - 1"
+              [disabled]="storagePage === 0"
+              class="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-lg text-gray-400 text-sm disabled:opacity-40 hover:bg-gray-800 transition-colors">
+              ←
+            </button>
+            <span class="text-gray-500 text-sm">{{ storagePage + 1 }} / {{ storageTotalPages }}</span>
+            <button
+              (click)="storagePage = storagePage + 1"
+              [disabled]="storagePage >= storageTotalPages - 1"
+              class="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-lg text-gray-400 text-sm disabled:opacity-40 hover:bg-gray-800 transition-colors">
+              →
+            </button>
+          </div>
+        }
+      </div>
+
       <!-- Storage kártyák -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-        @for (item of storageItems; track item.data.resourceType) {
+        @for (item of paginatedStorageItems; track item.data.resourceType) {
           <div
             class="relative rounded-2xl border p-6 overflow-hidden h-48 flex flex-col justify-between"
             [style.border-color]="item.color + '40'"
@@ -39,8 +77,9 @@
             [ngStyle]="getGradientStyle(item)">
 
             @if (item.percentage <= 10) {
-              <div class="absolute top-3 right-3 bg-red-900 border border-red-700 text-red-300 text-xs font-semibold px-2 py-1 rounded-full">
-                ⚠ Low Inventory
+              <div class="absolute top-3 right-3 bg-red-900 border border-red-700 text-red-300 text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1">
+                <lucide-icon [img]="TriangleAlert" class="w-3 h-3"></lucide-icon>
+                Low Inventory
               </div>
             }
 
@@ -60,8 +99,8 @@
               <span class="text-gray-400 text-lg mb-1">{{ item.data.unit }}</span>
             </div>
 
-            <div class="flex items-center justify-between">
-              <span class="text-gray-500 text-xs">Max: {{ item.data.maxQuantity | number:'1.0-0' }} {{ item.data.unit }}</span>
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-xs" [style.color]="item.color">Max: {{ item.data.maxQuantity | number:'1.0-0' }} {{ item.data.unit }}</span>
               <span class="text-xs font-semibold" [style.color]="item.color">{{ item.percentage }}%</span>
             </div>
 
@@ -69,13 +108,26 @@
               <div class="flex gap-2 mt-3">
                 <button
                   (click)="openAddQuantityModal(item)"
-                  class="flex-1 px-2 py-1.5 bg-gray-800/80 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-lg transition-colors border border-gray-700">
+                  (mouseenter)="hoveredButton = 'add-' + item.data.resourceTypeId"
+                  (mouseleave)="hoveredButton = null"
+                  class="flex-1 px-2 py-1.5 text-gray-300 text-xs font-medium rounded-lg transition-colors border"
+                  [style.background-color]="hoveredButton === 'add-' + item.data.resourceTypeId ? item.color + '99' : item.colorLight"
+                  [style.border-color]="item.color + '60'">
                   + Feltöltés
                 </button>
                 <button
                   (click)="openMaxQuantityModal(item)"
-                  class="flex-1 px-2 py-1.5 bg-gray-800/80 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-lg transition-colors border border-gray-700">
+                  (mouseenter)="hoveredButton = 'max-' + item.data.resourceTypeId"
+                  (mouseleave)="hoveredButton = null"
+                  class="flex-1 px-2 py-1.5 text-gray-300 text-xs font-medium rounded-lg transition-colors border"
+                  [style.background-color]="hoveredButton === 'max-' + item.data.resourceTypeId ? item.color + '99' : item.colorLight"
+                  [style.border-color]="item.color + '60'">
                   ↑ Max kapacitás
+                </button>
+                <button
+                  (click)="openDeleteResourceModal(item)"
+                  class="px-2 py-1.5 bg-red-500/15 hover:bg-red-500/25 text-red-400 text-xs font-medium rounded-lg transition-colors border border-red-500/30">
+                  <lucide-icon [img]="Trash2" class="w-3.5 h-3.5"></lucide-icon>
                 </button>
               </div>
             }
@@ -89,27 +141,43 @@
 
           <!-- Bal: Trading window -->
           <div class="lg:col-span-2 bg-gray-900 rounded-2xl border border-gray-800 p-6">
-            <h2 class="text-white font-semibold text-lg mb-6">Request Trade</h2>
+            <h2 class="text-white font-semibold text-lg mb-6">Kereskedés</h2>
 
             <div class="space-y-5">
 
               <!-- Resource type dropdown -->
               <div class="relative">
-                <label class="block text-gray-400 text-sm mb-2">Resource Type</label>
-                <button
-                  (click)="dropdownOpen = !dropdownOpen"
-                  class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between focus:outline-none focus:border-blue-500 transition-colors">
-                  <span>{{ selectedResource?.resourceTypeName }} ({{ selectedResource?.resourceTypeUnit }})</span>
-                  <span class="text-gray-400">▾</span>
-                </button>
+                <label class="block text-gray-400 text-sm mb-2">Nyersanyag</label>
+                <div
+                  class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between cursor-pointer focus-within:border-blue-500 transition-colors"
+                  (click)="dropdownOpen = true; $event.stopPropagation()">
+                  @if (!dropdownOpen) {
+                    <div class="flex items-center gap-2">
+                      <div class="w-2.5 h-2.5 rounded-full" [style.background-color]="selectedResource.resourceTypeColor"></div>
+                      <span>{{ selectedResource?.resourceTypeName }}</span>
+                    </div>
+                  } @else {
+                    <input
+                      [(ngModel)]="resourceSearch"
+                      type="text"
+                      placeholder="Keresés..."
+                      class="bg-transparent text-white text-sm focus:outline-none w-full"
+                      (click)="$event.stopPropagation()"
+                      autofocus/>
+                  }
+                  <span class="text-gray-400 ml-2">▾</span>
+                </div>
                 @if (dropdownOpen) {
-                  <div class="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg overflow-hidden z-10">
-                    @for (resource of availableResources; track resource.id) {
+                  <div class="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg overflow-hidden z-10" (click)="$event.stopPropagation()">
+                    @if (filteredResources.length === 0) {
+                      <div class="px-4 py-3 text-gray-500 text-sm">Nincs találat</div>
+                    }
+                    @for (resource of filteredResources; track resource.id) {
                       <button
-                        (click)="selectResource(resource); dropdownOpen = false"
-                        class="w-full px-4 py-3 text-left text-sm hover:bg-gray-700 transition-colors flex items-center gap-2"
-                        [style.color]="resource.resourceTypeColor">
-                        {{ resource.resourceTypeName }} ({{ resource.resourceTypeUnit }})
+                        (click)="selectResource(resource); dropdownOpen = false; resourceSearch = ''"
+                        class="w-full px-4 py-3 text-white text-left text-sm hover:bg-gray-700 transition-colors flex items-center gap-2">
+                        <div class="w-2.5 h-2.5 rounded-full" [style.background-color]="resource.resourceTypeColor"></div>
+                        {{ resource.resourceTypeName }}
                       </button>
                     }
                   </div>
@@ -118,7 +186,7 @@
 
               <!-- BUY / SELL toggle -->
               <div>
-                <label class="block text-gray-400 text-sm mb-2">Order Type</label>
+                <label class="block text-gray-400 text-sm mb-2">Típus</label>
                 <div class="flex gap-3">
                   <button
                     (click)="offerType = 'BUY'; onOfferTypeChange()"
@@ -141,7 +209,7 @@
 
               <!-- Mennyiség -->
               <div>
-                <label class="block text-gray-400 text-sm mb-2">Quantity</label>
+                <label class="block text-gray-400 text-sm mb-2">Mennyiség</label>
                 <div class="relative">
                   <input
                     type="number"
@@ -159,7 +227,7 @@
               <!-- Ár -->
               <div class="bg-gray-800 rounded-lg px-4 py-3 flex items-center justify-between">
                 <span class="text-gray-400 text-sm">
-                  Price per unit:
+                  Egységár:
                   <span class="text-white font-medium">
                     {{ offerType === 'BUY' ? (currentPrice?.sellPrice | number:'1.0-2') : (currentPrice?.buyPrice | number:'1.0-2') }} credits
                   </span>
@@ -171,7 +239,7 @@
 
               <!-- Submit gomb -->
               <button
-                (click)="showConfirmModal = true"
+                (click)="openConfirmTradeModal()"
                 [disabled]="isSubmitting || !isQuantityValid"
                 class="w-full py-3 rounded-lg font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 [class]="offerType === 'BUY'
@@ -186,7 +254,7 @@
           <!-- Jobb: Live preview -->
           <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
             <div class="flex flex-col justify-between gap-4">
-              <h2 class="text-white font-semibold text-lg mb-6">Live Preview</h2>
+              <h2 class="text-white font-semibold text-lg mb-6">Előnézet</h2>
 
               <!-- Central Storage Preview -->
               @for (item of previewItems; track item.data.resourceType) {
@@ -317,227 +385,3 @@
 
   </div>
 </div>
-
-<!-- CONFIRM MODAL -->
-@if (showConfirmModal) {
-  <div class="fixed inset-0 backdrop-blur-sm bg-black/40 flex items-center justify-center z-40">
-    <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 w-full max-w-md mx-4">
-
-      <h3 class="text-white font-bold text-lg mb-4">Confirm Trade</h3>
-
-      <div class="bg-gray-800 rounded-lg p-4 mb-6 space-y-2">
-        <div class="flex justify-between text-sm">
-          <span class="text-gray-400">Resource:</span>
-          <span class="text-white font-medium">{{ selectedResource?.resourceTypeName }}</span>
-        </div>
-        <div class="flex justify-between text-sm">
-          <span class="text-gray-400">Order Type:</span>
-          <span class="font-semibold" [class]="offerType === 'BUY' ? 'text-green-400' : 'text-red-400'">{{ offerType }}</span>
-        </div>
-        <div class="flex justify-between text-sm">
-          <span class="text-gray-400">Quantity:</span>
-          <span class="text-white font-medium">{{ quantity }} {{ selectedResource?.resourceTypeUnit }}</span>
-        </div>
-        <div class="flex justify-between text-sm border-t border-gray-700 pt-2 mt-2">
-          <span class="text-gray-400">Total Price:</span>
-          <span class="text-white font-bold">{{ calculatedPrice | number:'1.0-2' }} credits</span>
-        </div>
-      </div>
-
-      <div class="flex gap-3">
-        <button
-          (click)="showConfirmModal = false"
-          class="flex-1 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold text-sm transition-colors border border-gray-700">
-          Cancel
-        </button>
-        <button
-          (click)="submitTrade()"
-          class="flex-1 py-3 rounded-lg font-semibold text-sm transition-colors"
-          [class]="offerType === 'BUY' ? 'bg-green-700 hover:bg-green-600 text-white' : 'bg-red-700 hover:bg-red-600 text-white'">
-          Confirm
-        </button>
-      </div>
-
-    </div>
-  </div>
-}
-
-<!-- PRICE MODAL -->
-@if (showPriceModal) {
-  <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md">
-
-      <div class="flex items-center justify-between p-6 border-b border-gray-800">
-        <h2 class="text-white font-semibold">Árak kezelése</h2>
-        <button (click)="showPriceModal = false" class="text-gray-500 hover:text-gray-300 transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
-
-      <div class="p-6 flex flex-col gap-4">
-
-        <!-- Dropdown -->
-        <div class="flex flex-col gap-1.5">
-          <label class="text-gray-400 text-xs">Nyersanyag</label>
-          <select
-            class="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"
-            (change)="dispatcherService.selectPriceResource(dispatcherService.allPrices[$any($event.target).selectedIndex])">
-            @for (price of dispatcherService.allPrices; track price.resourceType) {
-              <option [value]="price.resourceType">{{ price.resourceType }}</option>
-            }
-          </select>
-        </div>
-
-        @if (dispatcherService.selectedPriceResource) {
-          <div class="bg-gray-800 rounded-xl p-4 flex flex-col gap-3">
-            <div class="flex flex-col gap-1.5">
-              <label class="text-gray-400 text-xs">Központi vétel ár:</label>
-              <input
-                [(ngModel)]="dispatcherService.priceForm[dispatcherService.selectedPriceResource.resourceType].buyPrice"
-                type="number"
-                min="0"
-                class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-gray-400 text-xs">Központi eladási ár:</label>
-              <input
-                [(ngModel)]="dispatcherService.priceForm[dispatcherService.selectedPriceResource.resourceType].sellPrice"
-                type="number"
-                min="0"
-                class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
-            </div>
-          </div>
-        }
-
-      </div>
-
-      <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-800">
-        <button
-          (click)="showPriceModal = false"
-          class="px-4 py-2 text-gray-400 hover:text-white text-sm transition-colors">
-          Mégse
-        </button>
-        <button
-          (click)="savePrices()"
-          [disabled]="dispatcherService.isSubmitting"
-          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors">
-          {{ dispatcherService.isSubmitting ? 'Mentés...' : 'Mentés' }}
-        </button>
-      </div>
-
-    </div>
-  </div>
-}
-
-<!-- ADD QUANTITY MODAL -->
-@if (showAddQuantityModal) {
-  <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-sm">
-
-      <div class="flex items-center justify-between p-6 border-b border-gray-800">
-        <div>
-          <h2 class="text-white font-semibold">Feltöltés</h2>
-          <p class="text-gray-500 text-xs mt-0.5">{{ selectedStorageItem?.data.resourceType }}</p>
-        </div>
-        <button (click)="showAddQuantityModal = false" class="text-gray-500 hover:text-gray-300 transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
-
-      <div class="p-6 flex flex-col gap-4">
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-gray-400">Jelenlegi készlet:</span>
-          <span class="text-white font-medium">{{ selectedStorageItem?.data.quantity | number:'1.0-0' }} {{ selectedStorageItem?.data.unit }}</span>
-        </div>
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-gray-400">Max kapacitás:</span>
-          <span class="text-white font-medium">{{ selectedStorageItem?.data.maxQuantity | number:'1.0-0' }} {{ selectedStorageItem?.data.unit }}</span>
-        </div>
-        <div class="flex flex-col gap-1.5">
-          <label class="text-gray-400 text-xs">Hozzáadandó mennyiség</label>
-          <div class="relative">
-            <input
-              [(ngModel)]="addQuantityForm"
-              type="number"
-              min="0"
-              placeholder="0"
-              class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
-            <span class="absolute right-4 top-2.5 text-gray-500 text-sm">{{ selectedStorageItem?.data.unit }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-800">
-        <button
-          (click)="showAddQuantityModal = false"
-          class="px-4 py-2 text-gray-400 hover:text-white text-sm transition-colors">
-          Mégse
-        </button>
-        <button
-          (click)="submitAddQuantity()"
-          [disabled]="dispatcherService.isSubmitting || !addQuantityForm"
-          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors">
-          {{ dispatcherService.isSubmitting ? 'Feltöltés...' : 'Feltöltés' }}
-        </button>
-      </div>
-
-    </div>
-  </div>
-}
-
-<!-- MAX QUANTITY MODAL -->
-@if (showMaxQuantityModal) {
-  <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-sm">
-
-      <div class="flex items-center justify-between p-6 border-b border-gray-800">
-        <div>
-          <h2 class="text-white font-semibold">Max kapacitás módosítása</h2>
-          <p class="text-gray-500 text-xs mt-0.5">{{ selectedStorageItem?.data.resourceType }}</p>
-        </div>
-        <button (click)="showMaxQuantityModal = false" class="text-gray-500 hover:text-gray-300 transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
-
-      <div class="p-6 flex flex-col gap-4">
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-gray-400">Jelenlegi max:</span>
-          <span class="text-white font-medium">{{ selectedStorageItem?.data.maxQuantity | number:'1.0-0' }} {{ selectedStorageItem?.data.unit }}</span>
-        </div>
-        <div class="flex flex-col gap-1.5">
-          <label class="text-gray-400 text-xs">Új maximum kapacitás</label>
-          <div class="relative">
-            <input
-              [(ngModel)]="maxQuantityForm"
-              type="number"
-              min="0"
-              class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
-            <span class="absolute right-4 top-2.5 text-gray-500 text-sm">{{ selectedStorageItem?.data.unit }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-800">
-        <button
-          (click)="showMaxQuantityModal = false"
-          class="px-4 py-2 text-gray-400 hover:text-white text-sm transition-colors">
-          Mégse
-        </button>
-        <button
-          (click)="submitMaxQuantity()"
-          [disabled]="dispatcherService.isSubmitting || !maxQuantityForm"
-          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors">
-          {{dispatcherService.isSubmitting ? 'Mentés...' : 'Mentés' }}
-        </button>
-      </div>
-
-    </div>
-  </div>
-}

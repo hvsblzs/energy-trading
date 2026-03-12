@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { DecimalPipe, NgStyle } from '@angular/common';
 import { CompanyInventoryService } from '../../core/services/company-inventory.service';
 import { ResourceTypeService } from '../../core/services/resource-type.service';
+import { FormsModule } from '@angular/forms';
 
 interface InventoryItem {
   data: any;
@@ -12,7 +13,7 @@ interface InventoryItem {
 
 @Component({
   selector: 'app-inventory',
-  imports: [DecimalPipe],
+  imports: [FormsModule, DecimalPipe],
   templateUrl: './inventory.html',
   styleUrl: './inventory.css'
 })
@@ -22,6 +23,11 @@ export class InventoryComponent implements OnInit, OnDestroy {
   isLoading: boolean = true;
   private animationIntervals: any[] = [];
   private resourceTypeMap: Map<string, any> = new Map();
+
+  // ── Pagination + keresés ──────────────────────────────────
+  inventorySearch: string = '';
+  inventoryPage: number = 0;
+  inventoryPageSize: number = 9;
 
   constructor(
     private companyInventoryService: CompanyInventoryService,
@@ -115,5 +121,26 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.animationIntervals.forEach(i => clearInterval(i));
+  }
+
+  // ── Pagination + keresés ──────────────────────────────────
+  get filteredInventoryItems(): InventoryItem[] {
+    if(!this.inventorySearch) return this.inventoryItems;
+    return this.inventoryItems.filter(item =>
+      item.data.resourceTypeName.toLowerCase().startsWith(this.inventorySearch.toLowerCase())
+    );
+  }
+
+  get paginatedInventoryItems(): InventoryItem[] {
+    const start = this.inventoryPage * this.inventoryPageSize;
+    return this.filteredInventoryItems.slice(start, start + this.inventoryPageSize);
+  }
+
+  get inventoryTotalPages(): number {
+    return Math.ceil(this.filteredInventoryItems.length / this.inventoryPageSize);
+  }
+
+  onInventorySearch(){
+    this.inventoryPage = 0;
   }
 }

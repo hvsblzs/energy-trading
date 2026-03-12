@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { TransactionService } from '../../../core/services/transaction.service';
 
 @Component({
@@ -6,27 +6,46 @@ import { TransactionService } from '../../../core/services/transaction.service';
   imports: [],
   templateUrl: './ticker.html',
   styleUrl: './ticker.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TickerComponent implements OnInit, OnDestroy {
+export class TickerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   transactions: any[] = [];
   private refreshInterval: any;
+  @ViewChild('tickerContent') tickerContent!: ElementRef;
 
-  constructor(private transactionService: TransactionService){}
+  constructor(
+    private transactionService: TransactionService,
+    private cdr: ChangeDetectorRef
+  ){}
 
   ngOnInit(): void {
     this.loadTransactions();
-    // 30 másodpercenként frissül
     this.refreshInterval = setInterval(() => this.loadTransactions(), 30000);
+  }
+
+  ngAfterViewInit(): void {
+    this.updateTickerSpeed();
   }
 
   loadTransactions(){
     this.transactionService.getRecentTransactions().subscribe({
       next: (data) => {
         this.transactions = data;
+        this.cdr.markForCheck();
+        setTimeout(() => this.updateTickerSpeed(), 50);
       },
       error: (err) => console.error(err)
     });
+  }
+
+  updateTickerSpeed(){
+    if(!this.tickerContent) return;
+    const el = this.tickerContent.nativeElement;
+    const contentWidth = el.scrollWidth / 2; // felére osztjuk mert duplikált
+    const pixelsPerSecond = 80; // fix sebesség px/s
+    const duration = contentWidth / pixelsPerSecond;
+    el.style.animationDuration = `${duration}s`;
   }
 
   formatTicker(transaction: any): string{
@@ -43,5 +62,4 @@ export class TickerComponent implements OnInit, OnDestroy {
       clearInterval(this.refreshInterval);
     }
   }
-
 }

@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class CentralStorageResponse {
     private Long id;
     private String resourceType;
+    private Long resourceTypeId;
     private BigDecimal quantity;
     private String unit;
     private BigDecimal maxQuantity;
