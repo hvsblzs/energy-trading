@@ -3,6 +3,7 @@ package com.energytrading.backend.controller;
 import com.energytrading.backend.dto.CompanyRequest;
 import com.energytrading.backend.dto.CompanyResponse;
 import com.energytrading.backend.dto.CompanyWithUserRequest;
+import com.energytrading.backend.dto.PageResponse;
 import com.energytrading.backend.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
@@ -21,8 +22,15 @@ public class CompanyController {
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('DISPATCHER')")
     @GetMapping
-    public ResponseEntity<List<CompanyResponse>> getAllCompanies(){
-        return ResponseEntity.ok(companyService.getAllCompanies());
+    public ResponseEntity<PageResponse<CompanyResponse>> getAllCompanies(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sort,
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(required = false) Boolean active
+    ) {
+        return ResponseEntity.ok(companyService.getAllCompanies(page, size, sort, direction, search, active));
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('DISPATCHER')")

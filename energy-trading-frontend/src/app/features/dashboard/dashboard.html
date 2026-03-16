@@ -240,7 +240,7 @@
               <!-- Submit gomb -->
               <button
                 (click)="openConfirmTradeModal()"
-                [disabled]="isSubmitting || !isQuantityValid"
+                [disabled]="isSubmitting || !isQuantityValid || !isTradePreviewValid"
                 class="w-full py-3 rounded-lg font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 [class]="offerType === 'BUY'
                   ? 'bg-green-700 hover:bg-green-600 text-white'
@@ -255,6 +255,13 @@
           <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
             <div class="flex flex-col justify-between gap-4">
               <h2 class="text-white font-semibold text-lg mb-6">Előnézet</h2>
+
+              @if (previewValidationMessage) {
+                <div class="flex items-start gap-2 rounded-lg border border-red-700 bg-red-900/30 px-3 py-2">
+                  <lucide-icon [img]="TriangleAlert" class="w-4 h-4 text-red-400 mt-0.5"></lucide-icon>
+                  <p class="text-red-300 text-xs leading-5">{{ previewValidationMessage }}</p>
+                </div>
+              }
 
               <!-- Central Storage Preview -->
               @for (item of previewItems; track item.data.resourceType) {

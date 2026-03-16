@@ -73,6 +73,11 @@ public class CentralStorageService {
         CentralStorage centralStorage = centralStorageRepository.findByResourceType(resourceType)
                 .orElseThrow(() -> new ResourceNotFoundException("Central storage not found for: " + resourceTypeName));
 
+        // Amount check
+        if(amount.compareTo(BigDecimal.ZERO) <= 0){
+            throw new BusinessException("A mennyiség csak pozitív szám lehet!");
+        }
+
         BigDecimal newQuantity = centralStorage.getQuantity().add(amount);
         if(newQuantity.compareTo(centralStorage.getMaxQuantity()) > 0){
             throw new BusinessException("A mennyiség meghaladná a maximális kapacitást!");

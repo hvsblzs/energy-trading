@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, HostListener } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { CompanyService } from '../../core/services/company.service';
 import { ToastService } from '../../core/services/toast.service';
@@ -8,11 +8,14 @@ import { ConfirmDeleteModalComponent } from '../../shared/components/modals/conf
 import { CreateCompanyModalComponent } from '../../shared/components/modals/create-company-modal/create-company-modal';
 import { EditCompanyModalComponent } from '../../shared/components/modals/edit-company-modal/edit-company-modal';
 import { ResourceAssignmentModalComponent } from '../../shared/components/modals/resource-assignment-modal/resource-assignment-modal';
+import { AddUserModalComponent } from '../../shared/components/modals/add-user-modal/add-user-modal';
+import { CompanyUsersModalComponent } from '../../shared/components/modals/company-users-modal/company-users-modal';
 import { LucideAngularModule, Plus, Building2, Phone, MapPin, CircleDollarSign} from 'lucide-angular';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-companies',
-  imports: [DecimalPipe, LucideAngularModule],
+  imports: [FormsModule, DecimalPipe, LucideAngularModule],
   templateUrl: './companies.html',
   styleUrl: './companies.css'
 })
@@ -24,6 +27,19 @@ export class CompaniesComponent implements OnInit {
   readonly Phone = Phone;
   readonly MapPin = MapPin;
   readonly CircleDollarSign = CircleDollarSign;
+
+  // Pagination + szűrés + rendezés
+  page: number = 0;
+  pageSize: number = 10;
+  totalPages: number = 0;
+  totalElements: number = 0;
+  search: string = '';
+  sortField: string = 'name';
+  sortDirection: string = 'asc';
+  activeFilter: boolean | null = null;
+  filterDropdownOpen: boolean = false;
+  sortDropdownOpen: boolean = false;
+  openMenuId: number | null = null;
 
   companies: any[] = [];
   isLoading: boolean = true;
@@ -39,14 +55,23 @@ export class CompaniesComponent implements OnInit {
 
   ngOnInit() {
     this.isAdmin = this.authService.getRole() === 'ADMIN';
+    this.isLoading = true;
     this.loadCompanies();
   }
 
   loadCompanies() {
-    this.isLoading = true;
-    this.companyService.getAllCompanies().subscribe({
-      next: (companies) => {
-        this.companies = companies;
+    this.companyService.getAllCompanies({
+      page: this.page,
+      size: this.pageSize,
+      sort: this.sortField,
+      direction: this.sortDirection,
+      search: this.search,
+      active: this.activeFilter
+    }).subscribe({
+      next: (data) => {
+        this.companies = data.content;
+        this.totalPages = data.totalPages;
+        this.totalElements = data.totalElements;
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -89,9 +114,17 @@ export class CompaniesComponent implements OnInit {
     });
   }
 
+  // Add user
+  openAddUserModal(company: any){
+    this.modalService.open(AddUserModalComponent, {
+      companyId: company.id,
+      companyName: company.name
+    });
+  }
+
   // Activate/Deactivate
   toggleActive(company: any) {
-    if (company.active) {
+    if (company.isActive) {
       this.companyService.deactivateCompany(company.id).subscribe({
         next: () => {
           this.toastService.success('Cég deaktiválva!');
@@ -133,5 +166,54 @@ export class CompaniesComponent implements OnInit {
         });
       }
     });
+  }
+
+  // Search + sort
+  onSearch(){
+    this.page = 0;
+    this.loadCompanies();
+  }
+
+  setSort(field: string, direction: string){
+    this.sortField = field;
+    this.sortDirection = direction;
+    this.page = 0;
+    this.sortDropdownOpen = false;
+    this.loadCompanies();
+  }
+
+  setActiveFilter(value: boolean | null){
+    this.activeFilter = this.activeFilter === value ? null : value;
+    this.page = 0;
+    this.loadCompanies();
+  }
+
+  prevPage(){
+    if(this.page > 0){ this.page--; this.loadCompanies(); }
+  }
+
+  nextPage(){
+    if(this.page < this.totalPages - 1){ this.page++; this.loadCompanies(); }
+  }
+
+  @HostListener('document:click')
+  closeDropdowns(){
+    this.filterDropdownOpen = false;
+    this.sortDropdownOpen = false;
+    this.openMenuId = null;
+    this.cdr.detectChanges();
+  }
+
+  // Company userek modal
+  openCompanyUsersModal(company: any){
+    this.modalService.open(CompanyUsersModalComponent, {
+      companyId: company.id,
+      companyName: company.name
+    });
+  }
+
+  toggleMenu(event: MouseEvent, companyId: number){
+    event.stopPropagation();
+    this.openMenuId = this.openMenuId === companyId ? null : companyId;
   }
 }

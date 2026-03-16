@@ -18,8 +18,18 @@ export class UserService {
         return this.http.get<any>(`${this.apiUrl}/users/me`);
     }
 
-    getAllUsers() {
-        return this.http.get<any[]>(`${this.apiUrl}/users`);
+    getAllUsers(params: {
+        page?: number,
+        size?: number,
+        sort?: string,
+        direction?: string,
+        search?: string,
+        active?: boolean | null
+    } = {}) {
+        const {page = 0, size = 10, sort = 'email', direction = 'asc', search = '', active} = params;
+        let queryParams: any = {page, size, sort, direction, search};
+        if(active !== null && active !== undefined) queryParams.active = active;
+        return this.http.get<any>(`${this.apiUrl}/users`, {params: queryParams});
     }
 
     createUser(request: any) {
@@ -36,5 +46,13 @@ export class UserService {
 
     deactivateUser(id: number) {
         return this.http.patch<void>(`${this.apiUrl}/users/${id}/deactivate`, {});
+    }
+
+    createUserForCompany(companyId: number, request: any){
+        return this.http.post<any>(`${this.apiUrl}/users/companies/${companyId}/users`, request);
+    }
+
+    getUsersByCompany(companyId: number){
+        return this.http.get<any[]>(`${this.apiUrl}/users/companies/${companyId}`);
     }
 }

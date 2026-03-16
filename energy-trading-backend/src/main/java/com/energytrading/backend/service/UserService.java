@@ -1,7 +1,9 @@
 package com.energytrading.backend.service;
 
+import com.energytrading.backend.dto.PageResponse;
 import com.energytrading.backend.dto.UserRequest;
 import com.energytrading.backend.dto.UserResponse;
+import com.energytrading.backend.exception.BusinessException;
 import com.energytrading.backend.exception.ResourceNotFoundException;
 import com.energytrading.backend.model.Company;
 import com.energytrading.backend.model.User;
@@ -9,6 +11,10 @@ import com.energytrading.backend.model.enums.Role;
 import com.energytrading.backend.repository.CompanyRepository;
 import com.energytrading.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +30,22 @@ public class UserService {
     private final CompanyRepository companyRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public List<UserResponse> getAllUsers(){
-        List<User> users = this.userRepository.findAll();
-        List<UserResponse> responses = new ArrayList<>();
-        users.forEach(user -> responses.add(mapToResponse(user)));
-        return responses;
+    public PageResponse<UserResponse> getAllUsers(int page, int size, String sort, String direction, String search, Boolean active) {
+        Sort.Direction dir = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        String sortField = switch (sort) {
+            case "createdAt" -> "createdAt";
+            default -> "email";
+        };
+        Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sortField));
+        Page<User> result = userRepository.findAllFiltered(
+                search.isBlank() ? null : search,
+                active,
+                pageable
+        );
+        List<UserResponse> responses = result.getContent().stream()
+                .map(this::mapToResponse)
+                .toList();
+        return new PageResponse<>(responses, result.getNumber(), result.getSize(), result.getTotalElements(), result.getTotalPages(), result.isLast());
     }
 
     public UserResponse getUserById(Long id){
@@ -51,6 +68,26 @@ public class UserService {
                 .active(true)
                 .build();
         User saved = this.userRepository.save(user);
+        return mapToResponse(saved);
+    }
+
+    public UserResponse createUserForCompany(Long companyId, UserRequest request){
+        if(userRepository.existsByEmail(request.getEmail())){
+            throw new BusinessException("Ez az email cím már foglalt: " + request.getEmail());
+        }
+
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Couldn't find company with id: " + companyId));
+
+        User user = User.builder()
+                .email(request.getEmail())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .role(Role.COMPANY_USER)
+                .company(company)
+                .active(true)
+                .build();
+
+        User saved = userRepository.save(user);
         return mapToResponse(saved);
     }
 
@@ -92,6 +129,15 @@ public class UserService {
         }
 
         return response;
+    }
+
+    public List<UserResponse> getUsersByCompany(Long companyId){
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found with id: " + companyId));
+        return userRepository.findByCompany(company)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     public void deactivateUser(Long id){

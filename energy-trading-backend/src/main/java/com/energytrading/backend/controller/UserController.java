@@ -1,8 +1,10 @@
 package com.energytrading.backend.controller;
 
+import com.energytrading.backend.dto.PageResponse;
 import com.energytrading.backend.dto.UserRequest;
 import com.energytrading.backend.dto.UserResponse;
 import com.energytrading.backend.model.User;
+import com.energytrading.backend.model.enums.Role;
 import com.energytrading.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +23,15 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('DISPATCHER')")
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getAllUsers(){
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<PageResponse<UserResponse>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "email") String sort,
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(required = false) Boolean active
+    ) {
+        return ResponseEntity.ok(userService.getAllUsers(page, size, sort, direction, search, active));
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('DISPATCHER')")
@@ -61,5 +70,18 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMe(@AuthenticationPrincipal User user){
         return ResponseEntity.ok(userService.getMe(user));
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DISPATCHER')")
+    @PostMapping("/companies/{companyId}/users")
+    public ResponseEntity<UserResponse> createUserForCompany(@PathVariable("companyId") Long companyId,
+                                                             @RequestBody UserRequest request){
+        return ResponseEntity.ok(userService.createUserForCompany(companyId, request));
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DISPATCHER')")
+    @GetMapping("/companies/{companyId}")
+    public ResponseEntity<List<UserResponse>> getUsersByCompany(@PathVariable("companyId") Long companyId){
+        return ResponseEntity.ok(userService.getUsersByCompany(companyId));
     }
 }

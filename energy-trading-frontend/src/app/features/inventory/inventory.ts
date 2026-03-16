@@ -3,6 +3,7 @@ import { DecimalPipe, NgStyle } from '@angular/common';
 import { CompanyInventoryService } from '../../core/services/company-inventory.service';
 import { ResourceTypeService } from '../../core/services/resource-type.service';
 import { FormsModule } from '@angular/forms';
+import { LucideAngularModule, TriangleAlert } from 'lucide-angular';
 
 interface InventoryItem {
   data: any;
@@ -13,11 +14,14 @@ interface InventoryItem {
 
 @Component({
   selector: 'app-inventory',
-  imports: [FormsModule, DecimalPipe],
+  imports: [FormsModule, DecimalPipe, LucideAngularModule],
   templateUrl: './inventory.html',
   styleUrl: './inventory.css'
 })
 export class InventoryComponent implements OnInit, OnDestroy {
+
+  // Icons
+  readonly TriangleAlert = TriangleAlert;
 
   inventoryItems: InventoryItem[] = [];
   isLoading: boolean = true;

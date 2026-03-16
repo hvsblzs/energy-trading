@@ -92,7 +92,7 @@ export class ResourceAssignmentModalComponent implements OnInit{
   get filteredResourceTypes(): any[] {
     if (!this.resourceSearch) return this.allResourceTypes;
     return this.allResourceTypes.filter(rt =>
-      rt.name.toLowerCase().startsWith(this.resourceSearch.toLowerCase())
+      rt.name.toLowerCase().includes(this.resourceSearch.toLowerCase())
     );
   }
 

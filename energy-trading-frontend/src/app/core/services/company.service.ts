@@ -8,8 +8,18 @@ export class CompanyService {
 
     constructor(private http: HttpClient){}
 
-    getAllCompanies(){
-        return this.http.get<any[]>(`${this.apiUrl}/companies`);
+    getAllCompanies(params: {
+        page?: number,
+        size?: number,
+        sort?: string,
+        direction?: string,
+        search?: string,
+        active?: boolean | null
+    } = {}) {
+        const { page = 0, size = 10, sort = 'name', direction = 'asc', search = '', active } = params;
+        let queryParams: any = { page, size, sort, direction, search };
+        if (active !== null && active !== undefined) queryParams.active = active;
+        return this.http.get<any>(`${this.apiUrl}/companies`, { params: queryParams });
     }
 
     getCompanyById(id: number) {

@@ -61,12 +61,18 @@
         @for (item of paginatedInventoryItems; track item.data.id) {
           <div
             class="relative rounded-2xl border p-6 overflow-hidden h-48 flex flex-col justify-between"
-            [style.border-color]="item.color + '40'"
+            [style.border-color]="item.data.active ? (item.color + '40') : '#dc2626'"
             [style.background-color]="'#111827'"
-            [style.background]="'linear-gradient(135deg, ' + item.colorLight + ' 0%, #111827 60%)'">
+            [style.background]="'linear-gradient(135deg, ' + item.colorLight + ' 0%, ' + item.color + '33 45%, #111827 100%)'">
 
             <div class="flex items-center justify-between">
               <h2 class="text-white font-semibold text-lg">{{ item.data.resourceTypeName }}</h2>
+              @if (!item.data.active) {
+                <div class="bg-red-900 border border-red-700 text-red-300 text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1">
+                  <lucide-icon [img]="TriangleAlert" class="w-3 h-3"></lucide-icon>
+                  You can't trade this right now
+                </div>
+              }
               <span class="text-xs font-semibold px-2 py-1 rounded-full"
                 [style.color]="item.color"
                 [style.background-color]="item.colorLight">
@@ -87,6 +93,8 @@
                 {{ item.data.quantity | number:'1.0-2' }} {{ item.data.resourceTypeUnit }}
               </span>
             </div>
+
+            
 
           </div>
         }

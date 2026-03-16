@@ -317,7 +317,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   get filteredResources(): any[] {
     if (!this.resourceSearch) return this.availableResources;
     return this.availableResources.filter(r =>
-      r.resourceTypeName.toLowerCase().startsWith(this.resourceSearch.toLowerCase())
+      r.resourceTypeName.toLowerCase().includes(this.resourceSearch.toLowerCase())
     );
   }
 
@@ -555,7 +555,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   get filteredStorageItems(): StorageItem[] {
     if(!this.storageSearch) return this.storageItems;
     return this.storageItems.filter(item => 
-      item.data.resourceType.toLowerCase().startsWith(this.storageSearch.toLowerCase())
+      item.data.resourceType.toLowerCase().includes(this.storageSearch.toLowerCase())
     );
   }
 
@@ -581,6 +581,50 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   get isQuantityValid(): boolean {
     return !!this.quantity && parseFloat(this.quantity) > 0;
+  }
+
+  get previewValidationMessage(): string | null {
+    if (!this.isQuantityValid || !this.selectedResource) {
+      return null;
+    }
+
+    const requestedQuantity = parseFloat(this.quantity);
+    const centralItem = this.storageItems.find(
+      item => item.data.resourceType === this.selectedResource.resourceTypeName
+    );
+
+    if (!centralItem) {
+      return 'A kiválasztott nyersanyag nem található a központi készletben.';
+    }
+
+    const centralQuantity = parseFloat(centralItem.data.quantity);
+    const centralMaxQuantity = parseFloat(centralItem.data.maxQuantity);
+
+    if (this.offerType === 'BUY') {
+      if (requestedQuantity > centralQuantity) {
+        return 'Nincs elég nyersanyag a központi tárolóban ehhez a vásárláshoz.';
+      }
+      return null;
+    }
+
+    const companyItem = this.companyInventory.find(
+      inv => inv.resourceTypeName === this.selectedResource.resourceTypeName
+    );
+    const companyQuantity = companyItem ? parseFloat(companyItem.quantity) : 0;
+
+    if (requestedQuantity > companyQuantity) {
+      return 'Nincs elég nyersanyag a cég készletében ehhez az eladáshoz.';
+    }
+
+    if (centralQuantity + requestedQuantity > centralMaxQuantity) {
+      return 'Nincs elég hely a központi tárolóban ehhez az eladáshoz.';
+    }
+
+    return null;
+  }
+
+  get isTradePreviewValid(): boolean {
+    return this.previewValidationMessage === null;
   }
 
   hexToRgba(hex: string, opacity: number): string {

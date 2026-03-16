@@ -60,7 +60,7 @@ public class TradeOfferService {
                 .findByResourceType(resourceType)
                 .orElseThrow(() -> new BusinessException("Nincs ilyen nyersanyag a központi tárolóban!"));
 
-        // Price check
+        // Quantity check
         if(request.getQuantity().compareTo(BigDecimal.ZERO) <= 0){
             throw new BusinessException("A mennyiség csak pozitív szám lehet!");
         }

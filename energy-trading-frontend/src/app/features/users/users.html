@@ -15,6 +15,103 @@
     </div>
   }
 
+  <!-- Toolbar -->
+  @if (!isLoading) {
+    <div class="flex items-center gap-3 mb-6">
+
+      <div class="relative w-72">
+        <input
+          [(ngModel)]="search"
+          (ngModelChange)="onSearch()"
+          type="text"
+          placeholder="Keresés email alapján..."
+          class="w-full bg-gray-900 border border-gray-800 rounded-xl pl-9 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
+        <svg class="w-4 h-4 text-gray-500 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+
+      <div class="flex items-center gap-3 ml-auto">
+        <!-- Szűrők -->
+        <div class="relative">
+          <button
+            (click)="filterDropdownOpen = !filterDropdownOpen; sortDropdownOpen = false; $event.stopPropagation()"
+            class="flex items-center gap-2 px-4 py-2.5 bg-gray-900 border rounded-xl text-sm font-medium transition-colors"
+            [class]="activeFilter !== null ? 'border-indigo-500 text-indigo-400' : 'border-gray-800 text-gray-400 hover:text-white'">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+            </svg>
+            Szűrők
+            @if (activeFilter !== null) {
+              <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+            }
+          </button>
+          @if (filterDropdownOpen) {
+            <div
+              (click)="$event.stopPropagation()"
+              class="absolute top-full right-0 mt-1 bg-gray-900 border border-gray-800 rounded-xl p-3 flex flex-col gap-2 z-10 min-w-36">
+              <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1">Állapot</p>
+              <button
+                (click)="setActiveFilter(true)"
+                class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors text-left"
+                [class]="activeFilter === true ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-400 hover:bg-gray-800'">
+                Aktív
+              </button>
+              <button
+                (click)="setActiveFilter(false)"
+                class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors text-left"
+                [class]="activeFilter === false ? 'bg-red-500/20 text-red-400' : 'text-gray-400 hover:bg-gray-800'">
+                Inaktív
+              </button>
+            </div>
+          }
+        </div>
+
+        <!-- Rendezés -->
+        <div class="relative">
+          <button
+            (click)="sortDropdownOpen = !sortDropdownOpen; filterDropdownOpen = false; $event.stopPropagation()"
+            class="flex items-center gap-2 px-4 py-2.5 bg-gray-900 border border-gray-800 rounded-xl text-gray-400 hover:text-white text-sm font-medium transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M6 12h12M10 17h4"/>
+            </svg>
+            Rendezés
+          </button>
+          @if (sortDropdownOpen) {
+            <div
+              (click)="$event.stopPropagation()"
+              class="absolute top-full right-0 mt-1 bg-gray-900 border border-gray-800 rounded-xl p-3 flex flex-col gap-2 z-10 min-w-48">
+              <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1">Rendezés</p>
+              <button (click)="setSort('email', 'asc')"
+                class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+                [class]="sortField === 'email' && sortDirection === 'asc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+                Email A-Z
+              </button>
+              <button (click)="setSort('email', 'desc')"
+                class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+                [class]="sortField === 'email' && sortDirection === 'desc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+                Email Z-A
+              </button>
+              <button (click)="setSort('createdAt', 'desc')"
+                class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+                [class]="sortField === 'createdAt' && sortDirection === 'desc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+                Legújabb
+              </button>
+              <button (click)="setSort('createdAt', 'asc')"
+                class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+                [class]="sortField === 'createdAt' && sortDirection === 'asc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+                Legrégebbi
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+
+      
+
+    </div>
+  }
+
   <!-- Table -->
   @if (!isLoading) {
     <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
@@ -91,6 +188,28 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Pagination -->
+    @if (totalPages > 1) {
+      <div class="flex items-center justify-between mt-6">
+        <span class="text-gray-500 text-sm">{{ totalElements }} felhasználó összesen</span>
+        <div class="flex items-center gap-2">
+          <button
+            (click)="prevPage()"
+            [disabled]="page === 0"
+            class="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-lg text-gray-400 text-sm disabled:opacity-40 hover:bg-gray-800 transition-colors">
+            ←
+          </button>
+          <span class="text-gray-500 text-sm">{{ page + 1 }} / {{ totalPages }}</span>
+          <button
+            (click)="nextPage()"
+            [disabled]="page >= totalPages - 1"
+            class="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-lg text-gray-400 text-sm disabled:opacity-40 hover:bg-gray-800 transition-colors">
+            →
+          </button>
+        </div>
+      </div>
+    }
   }
 
 </div>

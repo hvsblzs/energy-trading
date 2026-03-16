@@ -1,0 +1,93 @@
+<div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-xl">
+
+  <div class="flex items-center justify-between p-6 border-b border-gray-800">
+    <div>
+      <h2 class="text-white font-semibold">Felhasználók</h2>
+      <p class="text-gray-500 text-xs mt-0.5">{{ data.companyName }}</p>
+    </div>
+    <button (click)="close()" class="text-gray-500 hover:text-gray-300 transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="p-6 flex flex-col gap-4">
+    @if (isLoading) {
+      <div class="flex items-center justify-center h-24">
+        <div class="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }
+
+    @if (!isLoading && users.length === 0) {
+      <div class="text-center py-8">
+        <p class="text-gray-400 text-sm font-medium mb-1">Nincsenek felhasználók</p>
+        <p class="text-gray-600 text-xs">Adj hozzá tagot a + Tag gombbal.</p>
+      </div>
+    }
+
+    @if (!isLoading && users.length > 0) {
+      <!-- Pagination -->
+      @if (userTotalPages > 1) {
+        <div class="flex items-center justify-end gap-2 mb-2">
+          <button
+            (click)="userPage = userPage - 1"
+            [disabled]="userPage === 0"
+            class="px-2.5 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 text-sm disabled:opacity-40 hover:bg-gray-700 transition-colors">
+            ←
+          </button>
+          <span class="text-gray-500 text-sm">{{ userPage + 1 }}/{{ userTotalPages }}</span>
+          <button
+            (click)="userPage = userPage + 1"
+            [disabled]="userPage >= userTotalPages - 1"
+            class="px-2.5 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 text-sm disabled:opacity-40 hover:bg-gray-700 transition-colors">
+            →
+          </button>
+        </div>
+      }
+      @for (user of users; track user.id) {
+        <div class="flex items-center justify-between p-4 rounded-xl border border-gray-800 bg-gray-800/50 gap-4">
+          <div class="flex items-center gap-3 min-w-0 flex-1">
+            <div class="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-600/30 flex items-center justify-center">
+              <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-white text-sm font-medium truncate">{{ user.email }}</p>
+              <span
+                class="text-xs font-semibold px-1.5 py-0.5 rounded-full"
+                [class]="user.active ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400'">
+                {{ user.active ? 'Aktív' : 'Inaktív' }}
+              </span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              (click)="resetPassword(user)"
+              class="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs font-medium rounded-lg transition-colors">
+              Jelszó reset
+            </button>
+            @if (isAdmin) {
+              <button
+                (click)="toggleActive(user)"
+                class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
+                [class]="user.active ? 'bg-red-500/15 hover:bg-red-500/25 text-red-400' : 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400'">
+                {{ user.active ? 'Deaktivál' : 'Aktivál' }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <div class="flex items-center justify-end p-6 border-t border-gray-800">
+    <button
+      (click)="close()"
+      class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl transition-colors">
+      Kész
+    </button>
+  </div>
+
+</div>

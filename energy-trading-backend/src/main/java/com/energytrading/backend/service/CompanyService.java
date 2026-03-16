@@ -3,12 +3,18 @@ package com.energytrading.backend.service;
 import com.energytrading.backend.dto.CompanyRequest;
 import com.energytrading.backend.dto.CompanyResponse;
 import com.energytrading.backend.dto.CompanyWithUserRequest;
+import com.energytrading.backend.dto.PageResponse;
+import com.energytrading.backend.exception.BusinessException;
 import com.energytrading.backend.exception.ResourceNotFoundException;
 import com.energytrading.backend.model.Company;
 import com.energytrading.backend.model.User;
 import com.energytrading.backend.model.enums.Role;
 import com.energytrading.backend.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,11 +37,23 @@ public class CompanyService {
     private final PaymentRepository paymentRepository;
     private final TransactionsRepository transactionsRepository;
 
-    public List<CompanyResponse> getAllCompanies(){
-        List<Company> companies = this.companyRepository.findAll();
-        List<CompanyResponse> responses = new ArrayList<>();
-        companies.forEach(company -> responses.add(mapToResponse(company)));
-        return responses;
+    public PageResponse<CompanyResponse> getAllCompanies(int page, int size, String sort, String direction, String search, Boolean active) {
+        Sort.Direction dir = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        String sortField = switch (sort) {
+            case "createdAt" -> "createdAt";
+            case "creditBalance" -> "creditBalance";
+            default -> "name";
+        };
+        Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sortField));
+        Page<Company> result = companyRepository.findAllFiltered(
+                search.isBlank() ? null : search,
+                active,
+                pageable
+        );
+        List<CompanyResponse> responses = result.getContent().stream()
+                .map(this::mapToResponse)
+                .toList();
+        return new PageResponse<>(responses, result.getNumber(), result.getSize(), result.getTotalElements(), result.getTotalPages(), result.isLast());
     }
 
     public CompanyResponse getCompanyById(Long id){
@@ -87,6 +105,10 @@ public class CompanyService {
 
     @Transactional
     public CompanyResponse createCompanyWithUser(CompanyWithUserRequest request){
+        if(request.getCreditBalance() != null && request.getCreditBalance().compareTo(BigDecimal.ZERO) <= 0){
+            throw new BusinessException("A kredit nem lehet negatív!");
+        }
+
         Company company = Company.builder()
                 .name(request.getCompanyName())
                 .email(request.getCompanyEmail())

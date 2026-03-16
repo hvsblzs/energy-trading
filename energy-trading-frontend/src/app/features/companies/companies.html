@@ -1,4 +1,3 @@
-<!-- companies.html -->
 <div class="min-h-screen bg-gray-950 p-6">
 
   <!-- Header -->
@@ -22,6 +21,109 @@
     </div>
   }
 
+  <!-- Toolbar -->
+  @if (!isLoading) {
+    <div class="flex items-center gap-3 mb-6">
+      <div class="relative w-72">
+        <input
+          [(ngModel)]="search"
+          (input)="onSearch()"
+          type="text"
+          placeholder="Keresés név vagy email alapján..."
+          class="w-full bg-gray-900 border border-gray-800 rounded-xl pl-9 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
+        <svg class="w-4 h-4 text-gray-500 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+
+      <div class="flex items-center gap-3 ml-auto">
+        <!-- Szűrők -->
+        <div class="relative">
+          <button
+            (click)="filterDropdownOpen = !filterDropdownOpen; sortDropdownOpen = false; $event.stopPropagation()"
+            class="flex items-center gap-2 px-4 py-2.5 bg-gray-900 border rounded-xl text-sm font-medium transition-colors"
+            [class]="activeFilter !== null ? 'border-indigo-500 text-indigo-400' : 'border-gray-800 text-gray-400 hover:text-white'">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+            </svg>
+            Szűrők
+            @if (activeFilter !== null) {
+              <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+            }
+          </button>
+          @if (filterDropdownOpen) {
+            <div
+              (click)="$event.stopPropagation()"
+              class="absolute top-full right-0 mt-1 bg-gray-900 border border-gray-800 rounded-xl p-3 flex flex-col gap-2 z-10 min-w-36">
+              <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1">Állapot</p>
+              <button
+                (click)="setActiveFilter(true)"
+                class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors text-left"
+                [class]="activeFilter === true ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-400 hover:bg-gray-800'">
+                Aktív
+              </button>
+              <button
+                (click)="setActiveFilter(false)"
+                class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors text-left"
+                [class]="activeFilter === false ? 'bg-red-500/20 text-red-400' : 'text-gray-400 hover:bg-gray-800'">
+                Inaktív
+              </button>
+            </div>
+          }
+        </div>
+
+        <!-- Rendezés -->
+        <div class="relative">
+          <button
+            (click)="sortDropdownOpen = !sortDropdownOpen; filterDropdownOpen = false; $event.stopPropagation()"
+            class="flex items-center gap-2 px-4 py-2.5 bg-gray-900 border border-gray-800 rounded-xl text-gray-400 hover:text-white text-sm font-medium transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M6 12h12M10 17h4"/>
+            </svg>
+            Rendezés
+          </button>
+          @if (sortDropdownOpen) {
+            <div
+              (click)="$event.stopPropagation()"
+              class="absolute top-full right-0 mt-1 bg-gray-900 border border-gray-800 rounded-xl p-3 flex flex-col gap-2 z-10 min-w-48">
+              <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1">Rendezés</p>
+              <button (click)="setSort('name', 'asc')"
+                class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+                [class]="sortField === 'name' && sortDirection === 'asc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+                Név A-Z
+              </button>
+              <button (click)="setSort('name', 'desc')"
+                class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+                [class]="sortField === 'name' && sortDirection === 'desc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+                Név Z-A
+              </button>
+              <button (click)="setSort('creditBalance', 'asc')"
+                class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+                [class]="sortField === 'creditBalance' && sortDirection === 'asc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+                Kredit növekvő
+              </button>
+              <button (click)="setSort('creditBalance', 'desc')"
+                class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+                [class]="sortField === 'creditBalance' && sortDirection === 'desc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+                Kredit csökkenő
+              </button>
+              <button (click)="setSort('createdAt', 'desc')"
+                class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+                [class]="sortField === 'createdAt' && sortDirection === 'desc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+                Legújabb
+              </button>
+              <button (click)="setSort('createdAt', 'asc')"
+                class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+                [class]="sortField === 'createdAt' && sortDirection === 'asc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+                Legrégebbi
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
   <!-- Companies grid -->
   @if (!isLoading) {
     @if (companies.length === 0) {
@@ -32,12 +134,14 @@
     }
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
       @for (company of companies; track company.id) {
-        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 flex flex-col gap-4">
+        <div
+          (click)="openCompanyUsersModal(company)"
+          class="bg-gray-900 border border-gray-800 rounded-2xl p-5 flex flex-col gap-3 cursor-pointer hover:border-gray-700 transition-colors">
 
           <!-- Company header -->
           <div class="flex items-start justify-between">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-600/30 flex items-center justify-center">
+              <div class="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-600/30 flex items-center justify-center shrink-0">
                 <lucide-icon [img]="Building2" class="w-5 h-5 text-indigo-400"></lucide-icon>
               </div>
               <div>
@@ -45,11 +149,58 @@
                 <p class="text-gray-500 text-xs">{{ company.email }}</p>
               </div>
             </div>
-            <span
-              class="text-xs font-semibold px-2 py-0.5 rounded-full"
-              [class]="company.active ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400'">
-              {{ company.active ? 'Aktív' : 'Inaktív' }}
-            </span>
+
+            <!-- Jobb felső: aktív badge + ... menü -->
+            <div class="flex items-center gap-2 shrink-0">
+              <span
+                class="text-xs font-semibold px-2 py-0.5 rounded-full"
+                [class]="company.isActive ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400'">
+                {{ company.isActive ? 'Aktív' : 'Inaktív' }}
+              </span>
+              <div class="relative">
+                <button
+                  (click)="toggleMenu($event, company.id)"
+                  class="w-7 h-7 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-400 rounded-lg transition-colors text-sm">
+                  ···
+                </button>
+                @if (openMenuId === company.id) {
+                  <div
+                    (click)="$event.stopPropagation()"
+                    class="absolute top-full right-0 mt-1 bg-gray-900 border border-gray-800 rounded-xl overflow-hidden z-10 min-w-36">
+                    <button
+                      (click)="openEditModal(company); $event.stopPropagation()"
+                      class="w-full px-4 py-2.5 text-left text-xs font-medium text-gray-300 hover:bg-gray-800 transition-colors">
+                      Szerkesztés
+                    </button>
+                    <button
+                      (click)="openResourceModal(company); $event.stopPropagation()"
+                      class="w-full px-4 py-2.5 text-left text-xs font-medium text-gray-300 hover:bg-gray-800 transition-colors">
+                      Nyersanyagok
+                    </button>
+                    <button
+                      (click)="openAddUserModal(company); $event.stopPropagation()"
+                      class="w-full px-4 py-2.5 text-left text-xs font-medium text-gray-300 hover:bg-gray-800 transition-colors">
+                      + Tag
+                    </button>
+                    @if (isAdmin) {
+                      <div class="border-t border-gray-800">
+                        <button
+                          (click)="toggleActive(company); $event.stopPropagation()"
+                          class="w-full px-4 py-2.5 text-left text-xs font-medium transition-colors"
+                          [class]="company.isActive ? 'text-red-400 hover:bg-red-500/10' : 'text-emerald-400 hover:bg-emerald-500/10'">
+                          {{ company.isActive ? 'Deaktivál' : 'Aktivál' }}
+                        </button>
+                        <button
+                          (click)="openDeleteModal(company); $event.stopPropagation()"
+                          class="w-full px-4 py-2.5 text-left text-xs font-medium text-red-400 hover:bg-red-500/10 transition-colors">
+                          Törlés
+                        </button>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
           </div>
 
           <!-- Company details -->
@@ -72,36 +223,31 @@
             </div>
           </div>
 
-          <!-- Actions -->
-          <div class="flex items-center gap-2 pt-2 border-t border-gray-800">
-            <button
-              (click)="openEditModal(company)"
-              class="flex-1 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-lg transition-colors">
-              Szerkesztés
-            </button>
-            <button
-              (click)="openResourceModal(company)"
-              class="flex-1 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-lg transition-colors">
-              Nyersanyagok
-            </button>
-            @if (isAdmin) {
-              <button
-                (click)="toggleActive(company)"
-                class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
-                [class]="company.active ? 'bg-red-500/15 hover:bg-red-500/25 text-red-400' : 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400'">
-                {{ company.active ? 'Deaktivál' : 'Aktivál' }}
-              </button>
-              <button
-                (click)="openDeleteModal(company)"
-                class="px-3 py-1.5 bg-red-500/15 hover:bg-red-500/25 text-red-400 text-xs font-medium rounded-lg transition-colors">
-                Törlés
-              </button>
-            }
-          </div>
-
         </div>
       }
     </div>
+
+    <!-- Pagination -->
+    @if (totalPages > 1) {
+      <div class="flex items-center justify-between mt-6">
+        <span class="text-gray-500 text-sm">{{ totalElements }} cég összesen</span>
+        <div class="flex items-center gap-2">
+          <button
+            (click)="prevPage()"
+            [disabled]="page === 0"
+            class="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-lg text-gray-400 text-sm disabled:opacity-40 hover:bg-gray-800 transition-colors">
+            ←
+          </button>
+          <span class="text-gray-500 text-sm">{{ page + 1 }} / {{ totalPages }}</span>
+          <button
+            (click)="nextPage()"
+            [disabled]="page >= totalPages - 1"
+            class="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-lg text-gray-400 text-sm disabled:opacity-40 hover:bg-gray-800 transition-colors">
+            →
+          </button>
+        </div>
+      </div>
+    }
   }
 
 </div>

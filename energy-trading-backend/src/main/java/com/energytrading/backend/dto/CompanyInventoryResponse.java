@@ -11,4 +11,5 @@ public class CompanyInventoryResponse {
     private String resourceTypeUnit;
     private String resourceTypeColor;
     private BigDecimal quantity;
+    private boolean isActive;
 }

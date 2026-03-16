@@ -3,6 +3,7 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormsModule } from '@angular/forms';
 import { CompanyService } from '../../../../core/services/company.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { CreditCard } from 'lucide-angular';
 
 @Component({
   selector: 'app-create-company-modal',
@@ -43,7 +44,7 @@ export class CreateCompanyModalComponent {
   }
 
   validate(): boolean {
-    this.errors = { companyName: '', companyEmail: '', userEmail: '', password: '' };
+    this.errors = { companyName: '', companyEmail: '', userEmail: '', password: ''};
     let valid = true;
 
     if (!this.form.companyName) {
@@ -76,6 +77,7 @@ export class CreateCompanyModalComponent {
       error: (err) => {
         this.toastService.error(err.error?.error ?? 'Hiba történt!');
         this.isSubmitting = false;
+        this.cancel();
       }
     });
   }
