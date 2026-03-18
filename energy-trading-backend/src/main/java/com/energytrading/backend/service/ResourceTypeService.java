@@ -42,11 +42,11 @@ public class ResourceTypeService {
         System.out.println("Converted name: " + name);
 
         if(!name.matches("[A-Z0-9_]+")){
-            throw new BusinessException("A név csak betűket, számokat és alulvonást tartalmazhat!");
+            throw new BusinessException("INVALID_RESOURCE_NAME");
         }
 
         if(resourceTypeRepository.findByName(name).isPresent()){
-            throw new BusinessException("Ez a nyersanyag már létezik!");
+            throw new BusinessException("RESOURCE_ALREADY_EXISTS");
         }
 
         ResourceType resourceType = ResourceType.builder()

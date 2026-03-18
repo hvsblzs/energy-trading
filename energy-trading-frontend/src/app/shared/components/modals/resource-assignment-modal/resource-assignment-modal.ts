@@ -4,6 +4,8 @@ import { ResourceTypeService } from '../../../../core/services/resource-type.ser
 import { CompanyResourcesService } from '../../../../core/services/company-resources.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+import { ErrorService } from '../../../../core/services/error.service';
 
 export interface ResourceAssignmentData {
   companyId: number;
@@ -12,7 +14,7 @@ export interface ResourceAssignmentData {
 
 @Component({
   selector: 'app-resource-assignment-modal',
-  imports: [FormsModule],
+  imports: [FormsModule, TranslateModule],
   templateUrl: './resource-assignment-modal.html',
   styleUrl: './resource-assignment-modal.css'
 })
@@ -33,6 +35,7 @@ export class ResourceAssignmentModalComponent implements OnInit{
     private companyResourcesService: CompanyResourcesService,
     private resourceTypeService: ResourceTypeService,
     private toastService: ToastService,
+    private errorService: ErrorService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -72,7 +75,7 @@ export class ResourceAssignmentModalComponent implements OnInit{
           this.companyResources = this.companyResources.filter(r => r.resourceTypeName !== resourceType.name);
           this.cdr.detectChanges();
         },
-        error: (err) => this.toastService.error(err.error?.error ?? 'Hiba történt!')
+        error: (err) => this.toastService.error(this.errorService.getErrorMessage(err))
       });
     } else {
       this.companyResourcesService.addResource(this.data.companyId, resourceType.id).subscribe({
@@ -80,7 +83,7 @@ export class ResourceAssignmentModalComponent implements OnInit{
           this.companyResources = [...this.companyResources, {resourceTypeName: resourceType.name}];
           this.cdr.detectChanges();
         },
-        error: (err) => this.toastService.error(err.error?.error ?? 'Hiba történt!')
+        error: (err) => this.toastService.error(this.errorService.getErrorMessage(err))
       });
     }
   }

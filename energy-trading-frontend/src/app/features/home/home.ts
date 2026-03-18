@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { LucideAngularModule, Zap, ChartLine, Warehouse, CircleDollarSign, ArrowRight, CreditCard } from 'lucide-angular';
 
 @Component({
   selector: 'app-home',
-  imports: [LucideAngularModule],
+  imports: [LucideAngularModule, TranslateModule],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

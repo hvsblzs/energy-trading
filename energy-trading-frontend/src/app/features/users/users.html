@@ -1,21 +1,18 @@
 <div class="min-h-screen bg-gray-950 p-6">
 
-  <!-- Header -->
   <div class="flex items-center justify-between mb-8">
     <div>
-      <h1 class="text-2xl font-bold text-white">Felhasználók</h1>
-      <p class="text-gray-400 text-sm mt-1">Cég felhasználók áttekintése</p>
+      <h1 class="text-2xl font-bold text-white">{{ 'users.title' | translate }}</h1>
+      <p class="text-gray-400 text-sm mt-1">{{ 'users.subtitle' | translate }}</p>
     </div>
   </div>
 
-  <!-- Loading -->
   @if (isLoading) {
     <div class="flex items-center justify-center h-64">
       <div class="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
     </div>
   }
 
-  <!-- Toolbar -->
   @if (!isLoading) {
     <div class="flex items-center gap-3 mb-6">
 
@@ -24,7 +21,7 @@
           [(ngModel)]="search"
           (ngModelChange)="onSearch()"
           type="text"
-          placeholder="Keresés email alapján..."
+          [placeholder]="'users.search' | translate"
           class="w-full bg-gray-900 border border-gray-800 rounded-xl pl-9 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
         <svg class="w-4 h-4 text-gray-500 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -32,7 +29,6 @@
       </div>
 
       <div class="flex items-center gap-3 ml-auto">
-        <!-- Szűrők -->
         <div class="relative">
           <button
             (click)="filterDropdownOpen = !filterDropdownOpen; sortDropdownOpen = false; $event.stopPropagation()"
@@ -41,7 +37,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
             </svg>
-            Szűrők
+            {{ 'users.filters.label' | translate }}
             @if (activeFilter !== null) {
               <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
             }
@@ -50,24 +46,23 @@
             <div
               (click)="$event.stopPropagation()"
               class="absolute top-full right-0 mt-1 bg-gray-900 border border-gray-800 rounded-xl p-3 flex flex-col gap-2 z-10 min-w-36">
-              <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1">Állapot</p>
+              <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1">{{ 'users.filters.status' | translate }}</p>
               <button
                 (click)="setActiveFilter(true)"
                 class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors text-left"
                 [class]="activeFilter === true ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-400 hover:bg-gray-800'">
-                Aktív
+                {{ 'users.filters.active' | translate }}
               </button>
               <button
                 (click)="setActiveFilter(false)"
                 class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors text-left"
                 [class]="activeFilter === false ? 'bg-red-500/20 text-red-400' : 'text-gray-400 hover:bg-gray-800'">
-                Inaktív
+                {{ 'users.filters.inactive' | translate }}
               </button>
             </div>
           }
         </div>
 
-        <!-- Rendezés -->
         <div class="relative">
           <button
             (click)="sortDropdownOpen = !sortDropdownOpen; filterDropdownOpen = false; $event.stopPropagation()"
@@ -75,55 +70,52 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M6 12h12M10 17h4"/>
             </svg>
-            Rendezés
+            {{ 'users.sort.label' | translate }}
           </button>
           @if (sortDropdownOpen) {
             <div
               (click)="$event.stopPropagation()"
               class="absolute top-full right-0 mt-1 bg-gray-900 border border-gray-800 rounded-xl p-3 flex flex-col gap-2 z-10 min-w-48">
-              <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1">Rendezés</p>
+              <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1">{{ 'users.sort.label' | translate }}</p>
               <button (click)="setSort('email', 'asc')"
                 class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
                 [class]="sortField === 'email' && sortDirection === 'asc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
-                Email A-Z
+                {{ 'users.sort.emailAsc' | translate }}
               </button>
               <button (click)="setSort('email', 'desc')"
                 class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
                 [class]="sortField === 'email' && sortDirection === 'desc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
-                Email Z-A
+                {{ 'users.sort.emailDesc' | translate }}
               </button>
               <button (click)="setSort('createdAt', 'desc')"
                 class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
                 [class]="sortField === 'createdAt' && sortDirection === 'desc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
-                Legújabb
+                {{ 'users.sort.newest' | translate }}
               </button>
               <button (click)="setSort('createdAt', 'asc')"
                 class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
                 [class]="sortField === 'createdAt' && sortDirection === 'asc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
-                Legrégebbi
+                {{ 'users.sort.oldest' | translate }}
               </button>
             </div>
           }
         </div>
       </div>
 
-      
-
     </div>
   }
 
-  <!-- Table -->
   @if (!isLoading) {
     <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
       <table class="w-full">
         <thead>
           <tr class="border-b border-gray-800">
-            <th class="text-left text-gray-400 text-xs font-semibold uppercase tracking-wider px-6 py-4">Felhasználó</th>
-            <th class="text-left text-gray-400 text-xs font-semibold uppercase tracking-wider px-6 py-4">Cég</th>
-            <th class="text-left text-gray-400 text-xs font-semibold uppercase tracking-wider px-6 py-4">Létrehozva</th>
-            <th class="text-left text-gray-400 text-xs font-semibold uppercase tracking-wider px-6 py-4">Státusz</th>
-            @if (isAdmin) {
-              <th class="text-right text-gray-400 text-xs font-semibold uppercase tracking-wider px-6 py-4">Műveletek</th>
+            <th class="text-left text-gray-400 text-xs font-semibold uppercase tracking-wider px-6 py-4">{{ 'users.table.user' | translate }}</th>
+            <th class="text-left text-gray-400 text-xs font-semibold uppercase tracking-wider px-6 py-4">{{ 'users.table.company' | translate }}</th>
+            <th class="text-left text-gray-400 text-xs font-semibold uppercase tracking-wider px-6 py-4">{{ 'users.table.createdAt' | translate }}</th>
+            <th class="text-left text-gray-400 text-xs font-semibold uppercase tracking-wider px-6 py-4">{{ 'users.table.status' | translate }}</th>
+            @if (isAdmin || isDispatcher) {
+              <th class="text-right text-gray-400 text-xs font-semibold uppercase tracking-wider px-6 py-4">{{ 'users.table.actions' | translate }}</th>
             }
           </tr>
         </thead>
@@ -131,7 +123,6 @@
           @for (user of users; track user.id) {
             <tr class="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors">
 
-              <!-- Email -->
               <td class="px-6 py-4">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-600/30 flex items-center justify-center">
@@ -141,36 +132,41 @@
                 </div>
               </td>
 
-              <!-- Cég -->
               <td class="px-6 py-4">
                 <span class="text-gray-400 text-sm">{{ user.companyName ?? '-' }}</span>
               </td>
 
-              <!-- Létrehozva -->
               <td class="px-6 py-4">
                 <span class="text-gray-400 text-sm">{{ user.createdAt | date:'yyyy. MM. dd.' }}</span>
               </td>
 
-              <!-- Státusz -->
               <td class="px-6 py-4">
                 <span
                   class="text-xs font-semibold px-2 py-0.5 rounded-full"
                   [class]="user.active ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400'">
-                  {{ user.active ? 'Aktív' : 'Inaktív' }}
+                  {{ user.active ? ('users.status.active' | translate) : ('users.status.inactive' | translate) }}
                 </span>
               </td>
 
-              <!-- Műveletek -->
-              @if (isAdmin) {
+              @if (isAdmin || isDispatcher) {
                 <td class="px-6 py-4 text-right">
-                  <button
-                    (click)="toggleActive(user)"
-                    class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
-                    [class]="user.active
-                      ? 'bg-red-500/15 hover:bg-red-500/25 text-red-400'
-                      : 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400'">
-                    {{ user.active ? 'Deaktivál' : 'Aktivál' }}
-                  </button>
+                  <div class="flex items-center justify-end gap-2">
+                    <button
+                      (click)="resetPassword(user)"
+                      class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors bg-gray-700 hover:bg-gray-600 text-gray-300">
+                      {{ 'modals.companyUsers.resetPassword' | translate }}
+                    </button>
+                    @if (isAdmin) {
+                      <button
+                        (click)="toggleActive(user)"
+                        class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
+                        [class]="user.active
+                          ? 'bg-red-500/15 hover:bg-red-500/25 text-red-400'
+                          : 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400'">
+                        {{ user.active ? ('users.actions.deactivate' | translate) : ('users.actions.activate' | translate) }}
+                      </button>
+                    }
+                  </div>
                 </td>
               }
 
@@ -180,7 +176,7 @@
           @if (users.length === 0) {
             <tr>
               <td colspan="5" class="px-6 py-16 text-center text-gray-500 text-sm">
-                Nincsenek felhasználók
+                {{ 'users.empty' | translate }}
               </td>
             </tr>
           }
@@ -189,10 +185,11 @@
       </table>
     </div>
 
-    <!-- Pagination -->
     @if (totalPages > 1) {
       <div class="flex items-center justify-between mt-6">
-        <span class="text-gray-500 text-sm">{{ totalElements }} felhasználó összesen</span>
+        <span class="text-gray-500 text-sm">
+          {{ 'users.pagination.total' | translate:{ count: totalElements } }}
+        </span>
         <div class="flex items-center gap-2">
           <button
             (click)="prevPage()"

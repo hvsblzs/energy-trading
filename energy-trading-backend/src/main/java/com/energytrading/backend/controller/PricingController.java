@@ -1,5 +1,6 @@
 package com.energytrading.backend.controller;
 
+import com.energytrading.backend.dto.PriceHistoryResponse;
 import com.energytrading.backend.dto.PricingRequest;
 import com.energytrading.backend.dto.PricingResponse;
 import com.energytrading.backend.model.User;
@@ -34,5 +35,10 @@ public class PricingController {
     @GetMapping("/all")
     public ResponseEntity<List<PricingResponse>> getAllCurrentPrices(){
         return ResponseEntity.ok(pricingService.getAllCurrentPrices());
+    }
+
+    @GetMapping("/{resourceType}/price-history")
+    public ResponseEntity<List<PriceHistoryResponse>> getAllPricesForResourceType(@PathVariable("resourceType") String resourceType){
+        return ResponseEntity.ok(pricingService.getAllPricesForResourceType(resourceType));
     }
 }

@@ -1,7 +1,7 @@
 <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md">
 
   <div class="flex items-center justify-between p-6 border-b border-gray-800">
-    <h2 class="text-white font-semibold">Árak kezelése</h2>
+    <h2 class="text-white font-semibold">{{ 'modals.priceModal.title' | translate }}</h2>
     <button (click)="cancel()" class="text-gray-500 hover:text-gray-300 transition-colors">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -11,7 +11,7 @@
 
   <div class="p-6 flex flex-col gap-4">
     <div class="flex flex-col gap-1.5">
-      <label class="text-gray-400 text-xs">Nyersanyag</label>
+      <label class="text-gray-400 text-xs">{{ 'modals.priceModal.resourceLabel' | translate }}</label>
       <div class="relative">
         <div
           class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm flex items-center justify-between cursor-pointer focus-within:border-indigo-500 transition-colors"
@@ -21,13 +21,13 @@
               <div class="w-2.5 h-2.5 rounded-full"
                 [style.background-color]="dispatcherService.selectedPriceResource?.resourceTypeColor">
               </div>
-              <span>{{ dispatcherService.selectedPriceResource?.resourceType ?? 'Válassz...' }}</span>
+              <span>{{ dispatcherService.selectedPriceResource?.resourceType ?? ('modals.priceModal.selectPlaceholder' | translate) }}</span>
             </div>
           } @else {
             <input
               [(ngModel)]="resourceSearch"
               type="text"
-              placeholder="Keresés..."
+              [placeholder]="'modals.priceModal.searchPlaceholder' | translate"
               class="bg-transparent text-white text-sm focus:outline-none w-full"
               (click)="$event.stopPropagation()"
               autofocus/>
@@ -39,7 +39,7 @@
             class="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-xl overflow-hidden z-10"
             (click)="$event.stopPropagation()">
             @if (filteredPrices.length === 0) {
-              <div class="px-4 py-3 text-gray-500 text-sm">Nincs találat</div>
+              <div class="px-4 py-3 text-gray-500 text-sm">{{ 'modals.priceModal.noResult' | translate }}</div>
             }
             @for (price of filteredPrices; track price.resourceType) {
               <button
@@ -58,14 +58,14 @@
     @if (dispatcherService.selectedPriceResource) {
       <div class="bg-gray-800 rounded-xl p-4 flex flex-col gap-3">
         <div class="flex flex-col gap-1.5">
-          <label class="text-gray-400 text-xs">Központi vétel ár:</label>
+          <label class="text-gray-400 text-xs">{{ 'modals.priceModal.buyPrice' | translate }}</label>
           <input
             [(ngModel)]="dispatcherService.priceForm[dispatcherService.selectedPriceResource.resourceType].buyPrice"
             type="number" min="0"
             class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
         </div>
         <div class="flex flex-col gap-1.5">
-          <label class="text-gray-400 text-xs">Központi eladási ár:</label>
+          <label class="text-gray-400 text-xs">{{ 'modals.priceModal.sellPrice' | translate }}</label>
           <input
             [(ngModel)]="dispatcherService.priceForm[dispatcherService.selectedPriceResource.resourceType].sellPrice"
             type="number" min="0"
@@ -78,13 +78,13 @@
   <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-800">
     <button (click)="cancel()"
       class="px-4 py-2 text-gray-400 hover:text-white text-sm transition-colors">
-      Mégse
+      {{ 'modals.cancel' | translate }}
     </button>
     <button
       (click)="save()"
       [disabled]="dispatcherService.isSubmitting"
       class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors">
-      {{ dispatcherService.isSubmitting ? 'Mentés...' : 'Mentés' }}
+      {{ dispatcherService.isSubmitting ? ('modals.priceModal.submitting' | translate) : ('modals.priceModal.submit' | translate) }}
     </button>
   </div>
 

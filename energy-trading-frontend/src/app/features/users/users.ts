@@ -5,10 +5,13 @@ import { UserService } from '../../core/services/user.service';
 import { ToastService } from '../../core/services/toast.service';
 import { AuthService } from '../../core/services/auth.service';
 import { LucideAngularModule, User } from 'lucide-angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { ResetPasswordModalComponent } from '../../shared/components/modals/reset-password-modal/reset-password-modal';
+import { ModalService } from '../../core/services/modal.service';
 
 @Component({
   selector: 'app-users',
-  imports: [DatePipe, LucideAngularModule, FormsModule],
+  imports: [DatePipe, LucideAngularModule, FormsModule, TranslateModule],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })
@@ -19,6 +22,7 @@ export class UsersComponent implements OnInit {
   users: any[] = [];
   isLoading: boolean = true;
   isAdmin: boolean = false;
+  isDispatcher: boolean = false;
 
   // Pagination + szűrés + rendezés
   page: number = 0;
@@ -36,11 +40,13 @@ export class UsersComponent implements OnInit {
     private userService: UserService,
     private authService: AuthService,
     private toastService: ToastService,
+    private modalService: ModalService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.getRole() === 'ADMIN';
+    this.isDispatcher = this.authService.getRole() === 'DISPATCHER';
     this.isLoading = true;
     this.loadUsers();
   }
@@ -119,5 +125,12 @@ export class UsersComponent implements OnInit {
     this.filterDropdownOpen = false;
     this.sortDropdownOpen = false;
     this.cdr.detectChanges();
+  }
+
+  resetPassword(user: any) {
+    this.modalService.open(ResetPasswordModalComponent, {
+      userId: user.id,
+      userEmail: user.email
+    });
   }
 }

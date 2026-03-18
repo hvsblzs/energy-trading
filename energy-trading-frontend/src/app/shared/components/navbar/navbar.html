@@ -1,4 +1,4 @@
-<nav class="bg-gray-900 border-b border-gray-800 px-6 py-4">
+<nav class="bg-gray-900 border-b border-gray-800 px-6 py-4 sticky top-0 z-50 shadow-lg shadow-black/20">
   <div class="max-w-7xl mx-auto flex items-center justify-between">
 
     <!-- Logo / Cím -->
@@ -11,25 +11,28 @@
 
     <div class="flex items-center gap-6">
       <a routerLink="/marketplace" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">
-        Marketplace
+        {{ 'nav.marketplace' | translate }}
       </a>
       <a routerLink="/price-history" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">
-        Árváltozások
+        {{ 'nav.priceHistory' | translate }}
+      </a>
+      <a routerLink="/trade-history" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">
+        {{ 'nav.tradeHistory' | translate }}
       </a>
       @if (!isAdmin() && !isDispatcher()) {
         <a routerLink="/inventory" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">
-            Készlet
+            {{ 'nav.inventory' | translate }}
         </a>
       }
       @if (isAdmin() || isDispatcher()) {
         <a routerLink="/trade-offers" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">
-          Trade Requests
+          {{ 'nav.tradeOffers' | translate }}
         </a>
         <a routerLink="/companies" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">
-          Cégek
+          {{ 'nav.companies' | translate }}
         </a>
         <a routerLink="/users" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">
-          Felhasználók
+          {{ 'nav.users' | translate }}
         </a>
       }
     </div>
@@ -39,11 +42,13 @@
 
       <!-- Kredit balance - csak COMPANY_USER-nek -->
       @if (currentUser && isCompanyUser()) {
-        <div class="flex items-center gap-2 bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5">
+        <button
+          (click)="openTopUpModal()"
+          class="flex items-center gap-2 bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 hover:border-indigo-500 transition-colors">
           <lucide-icon [img]="CircleDollarSign" class="w-4 h-4 text-yellow-400"></lucide-icon>
           <span class="text-white text-sm font-semibold">{{ currentUser.creditBalance | number:'1.0-2' }}</span>
-          <span class="text-gray-400 text-xs">kredit</span>
-        </div>
+          <span class="text-gray-400 text-xs">{{ 'nav.creditUnit' | translate }}</span>
+        </button>
       }
 
       <!-- Kredit balance - dispatcher/admin -->
@@ -51,7 +56,7 @@
         <div class="flex items-center gap-2 bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5">
           <lucide-icon [img]="CircleDollarSign" class="w-4 h-4 text-yellow-400"></lucide-icon>
           <span class="text-white text-sm font-semibold">{{ currentUser.creditBalance | number:'1.0-2' }}</span>
-          <span class="text-gray-400 text-xs">kredit</span>
+          <span class="text-gray-400 text-xs">{{'nav.creditUnit' | translate}}</span>
         </div>
       }
 
@@ -64,11 +69,26 @@
       <!-- Role badge -->
       <a routerLink="/profile" class="text-xs font-semibold px-3 py-1 rounded-full"
         [class]="isAdmin() ? 'bg-purple-900 text-purple-300' : isDispatcher() ? 'bg-blue-900 text-blue-300' : 'bg-green-900 text-green-300'">
-        {{ getRole() === 'ADMIN' ? 'Admin' : getRole() === 'DISPATCHER' ? 'Diszpécser' : 'Felhasználó' }}
+        {{ getRole() === 'ADMIN' ? ('nav.roles.ADMIN' | translate) : getRole() === 'DISPATCHER' ? ('nav.roles.DISPATCHER' | translate) : ('nav.roles.COMPANY_USER' | translate) }}
       </a>
 
       <button (click)="logout()" class="text-gray-400 hover:text-red-400 transition-colors text-sm font-medium">
-        Kijelentkezés
+        {{ 'nav.logout' | translate }}
+      </button>
+
+      <!-- Nyelvválasztó -->
+      <button
+        (click)="languageService.toggle()"
+        class="relative flex items-center gap-2 bg-gray-800 border border-gray-700 rounded-full px-2.5 py-1.5 hover:border-gray-500 transition-all">
+        <span class="text-xs font-semibold w-5 text-center"
+          [class]="languageService.currentLang === 'hu' ? 'text-white' : 'text-gray-500'">HU</span>
+        <div class="relative w-10 h-5 bg-indigo-600 rounded-full">
+          <div class="absolute top-1 w-3 h-3 bg-white rounded-full shadow transition-all duration-300"
+            [class]="languageService.currentLang === 'hu' ? 'left-1' : 'left-6'">
+          </div>
+        </div>
+        <span class="text-xs font-semibold w-5 text-center"
+          [class]="languageService.currentLang === 'en' ? 'text-white' : 'text-gray-500'">EN</span>
       </button>
     </div>
 

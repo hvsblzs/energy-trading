@@ -75,12 +75,12 @@ public class CentralStorageService {
 
         // Amount check
         if(amount.compareTo(BigDecimal.ZERO) <= 0){
-            throw new BusinessException("A mennyiség csak pozitív szám lehet!");
+            throw new BusinessException("AMOUNT_MUST_BE_POSITIVE");
         }
 
         BigDecimal newQuantity = centralStorage.getQuantity().add(amount);
         if(newQuantity.compareTo(centralStorage.getMaxQuantity()) > 0){
-            throw new BusinessException("A mennyiség meghaladná a maximális kapacitást!");
+            throw new BusinessException("EXCEEDS_MAX_CAPACITY");
         }
         centralStorage.setQuantity(newQuantity);
 
@@ -96,7 +96,7 @@ public class CentralStorageService {
                 .orElseThrow(() -> new ResourceNotFoundException("Central storage not found for: " + resourceTypeName));
 
         if(maxQuantity.compareTo(centralStorage.getQuantity()) < 0){
-            throw new BusinessException("A maximum kapacitás nem lehet kisebb a jelenlegi mennyiségnél!");
+            throw new BusinessException("MAX_LESS_THAN_CURRENT");
         }
         centralStorage.setMaxQuantity(maxQuantity);
         return mapToResponse(centralStorageRepository.save(centralStorage));

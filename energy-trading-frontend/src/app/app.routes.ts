@@ -52,6 +52,11 @@ export const routes: Routes = [
         canActivate: [authGuard]
     },
     {
+        path: 'trade-history',
+        loadComponent: () => import('./features/trade-history/trade-history').then(m => m.TradeHistoryComponent),
+        canActivate: [authGuard]
+    },
+    {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full'

@@ -1,5 +1,6 @@
 package com.energytrading.backend.service;
 
+import com.energytrading.backend.dto.PriceHistoryResponse;
 import com.energytrading.backend.dto.PricingRequest;
 import com.energytrading.backend.dto.PricingResponse;
 import com.energytrading.backend.exception.BusinessException;
@@ -47,7 +48,7 @@ public class PricingService {
 
         // Price check
         if(request.getBuyPrice().compareTo(BigDecimal.ZERO) <= 0 || request.getSellPrice().compareTo(BigDecimal.ZERO) <= 0){
-            throw new BusinessException("Az ár csak pozitív szám lehet!");
+            throw new BusinessException("PRICE_MUST_BE_POSITIVE");
         }
 
         Pricing pricing = Pricing.builder()
@@ -63,6 +64,15 @@ public class PricingService {
         return mapToResponse(saved);
     }
 
+    public List<PriceHistoryResponse> getAllPricesForResourceType(String resourceTypeName){
+        ResourceType resourceType = resourceTypeRepository.findByName(resourceTypeName)
+                .orElseThrow(() -> new ResourceNotFoundException("Resource not found with this name: " + resourceTypeName));
+        List<Pricing> pricings = pricingRepository.findByResourceTypeOrderByCreatedAtAsc(resourceType);
+        return pricings.stream()
+                .map(this::mapToPriceHistoryResponse)
+                .toList();
+    }
+
     public PricingResponse mapToResponse(Pricing pricing){
         PricingResponse response = new PricingResponse();
         response.setId(pricing.getId());
@@ -74,5 +84,13 @@ public class PricingService {
         response.setSetByUserEmail(pricing.getSetByUser().getEmail());
         response.setCreatedAt(pricing.getCreatedAt());
         return response;
+    }
+
+    public PriceHistoryResponse mapToPriceHistoryResponse(Pricing pricing){
+        PriceHistoryResponse phr = new PriceHistoryResponse();
+        phr.setBuyPrice(pricing.getBuyPrice());
+        phr.setSellPrice(pricing.getSellPrice());
+        phr.setCreatedAt(pricing.getCreatedAt());
+        return phr;
     }
 }

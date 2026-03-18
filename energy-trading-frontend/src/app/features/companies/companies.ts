@@ -12,10 +12,12 @@ import { AddUserModalComponent } from '../../shared/components/modals/add-user-m
 import { CompanyUsersModalComponent } from '../../shared/components/modals/company-users-modal/company-users-modal';
 import { LucideAngularModule, Plus, Building2, Phone, MapPin, CircleDollarSign} from 'lucide-angular';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ErrorService } from '../../core/services/error.service';
 
 @Component({
   selector: 'app-companies',
-  imports: [FormsModule, DecimalPipe, LucideAngularModule],
+  imports: [FormsModule, DecimalPipe, LucideAngularModule, TranslateModule],
   templateUrl: './companies.html',
   styleUrl: './companies.css'
 })
@@ -50,6 +52,8 @@ export class CompaniesComponent implements OnInit {
     private toastService: ToastService,
     private authService: AuthService,
     private modalService: ModalService,
+    private translate: TranslateService,
+    private errorService: ErrorService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -127,18 +131,18 @@ export class CompaniesComponent implements OnInit {
     if (company.isActive) {
       this.companyService.deactivateCompany(company.id).subscribe({
         next: () => {
-          this.toastService.success('Cég deaktiválva!');
+          this.toastService.success(this.translate.instant('companies.toasts.deactivated'));
           this.loadCompanies();
         },
-        error: (err) => this.toastService.error(err.error?.error ?? 'Hiba történt!')
+        error: (err) => this.toastService.error(this.errorService.getErrorMessage(err))
       });
     } else {
       this.companyService.activateCompany(company.id).subscribe({
         next: () => {
-          this.toastService.success('Cég aktiválva!');
+          this.toastService.success(this.translate.instant('companies.toasts.activated'));
           this.loadCompanies();
         },
-        error: (err) => this.toastService.error(err.error?.error ?? 'Hiba történt!')
+        error: (err) => this.toastService.error(this.errorService.getErrorMessage(err))
       });
     }
   }
@@ -151,18 +155,18 @@ export class CompaniesComponent implements OnInit {
   // Delete
   openDeleteModal(company: any){
     const ref = this.modalService.open(ConfirmDeleteModalComponent, {
-      title: 'Cég törlése',
+      title: this.translate.instant('companies.deleteModal.title'),
       itemName: company.name,
-      message: 'céget? Ez a művelet nem visszavonható, a hozzá tartozó felhasználó is törlődik.'
+      message: this.translate.instant('companies.deleteModal.message')
     });
     ref.closed.subscribe(result => {
       if (result === 'confirmed') {
         this.companyService.deleteCompany(company.id).subscribe({
           next: () => {
-            this.toastService.success('Cég sikeresen törölve!');
+            this.toastService.success(this.translate.instant('companies.toasts.deleted'));
             this.loadCompanies();
           },
-          error: (err) => this.toastService.error(err.error?.error ?? 'Hiba történt!')
+          error: (err) => this.toastService.error(this.errorService.getErrorMessage(err))
         });
       }
     });

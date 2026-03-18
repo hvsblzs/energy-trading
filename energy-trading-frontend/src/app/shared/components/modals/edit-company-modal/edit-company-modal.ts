@@ -3,6 +3,8 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormsModule } from '@angular/forms';
 import { CompanyService } from '../../../../core/services/company.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ErrorService } from '../../../../core/services/error.service';
 
 export interface EditCompanyData {
   id: number;
@@ -15,7 +17,7 @@ export interface EditCompanyData {
 
 @Component({
   selector: 'app-edit-company-modal',
-  imports: [FormsModule],
+  imports: [FormsModule, TranslateModule],
   templateUrl: './edit-company-modal.html',
 })
 export class EditCompanyModalComponent {
@@ -38,7 +40,9 @@ export class EditCompanyModalComponent {
     public dialogRef: DialogRef<string>,
     @Inject(DIALOG_DATA) public data: EditCompanyData,
     private companyService: CompanyService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private errorService: ErrorService,
+    private translate: TranslateService
   ) {
     this.form = {
       name: data.name,
@@ -57,11 +61,11 @@ export class EditCompanyModalComponent {
     let valid = true;
 
     if (!this.form.name) {
-      this.errors.name = 'A cégnév megadása kötelező.';
+      this.errors.name = this.translate.instant('modals.editCompany.validation.nameRequired');
       valid = false;
     }
     if (this.form.email && !this.isValidEmail(this.form.email)) {
-      this.errors.email = 'Érvénytelen email formátum.';
+      this.errors.email = this.translate.instant('modals.editCompany.validation.invalidEmail');
       valid = false;
     }
     return valid;
@@ -72,11 +76,11 @@ export class EditCompanyModalComponent {
     this.isSubmitting = true;
     this.companyService.updateCompany(this.data.id, this.form).subscribe({
       next: () => {
-        this.toastService.success('Cég sikeresen frissítve!');
+        this.toastService.success(this.translate.instant('modals.editCompany.toasts.updated'));
         this.dialogRef.close('updated');
       },
       error: (err) => {
-        this.toastService.error(err.error?.error ?? 'Hiba történt!');
+        this.toastService.error(this.errorService.getErrorMessage(err));
         this.isSubmitting = false;
       }
     });

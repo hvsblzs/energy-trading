@@ -4,8 +4,8 @@
     <!-- Header -->
     <div class="mb-8 flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-white">Marketplace</h1>
-        <p class="text-gray-400 text-sm mt-1">Kereskedj és kövesd a központi tároló készleteit</p>
+        <h1 class="text-2xl font-bold text-white">{{ 'dashboard.title' | translate }}</h1>
+        <p class="text-gray-400 text-sm mt-1">{{ 'dashboard.subtitle' | translate }}</p>
       </div>
       @if (isDispatcher) {
         <div class="flex items-center gap-2">
@@ -13,23 +13,22 @@
             (click)="openCreateResourceModal()"
             class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-xl transition-colors">
             <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
-            Új nyersanyag
+            {{ 'dashboard.newResource' | translate }}
           </button>
           <button
             (click)="openPriceModal()"
             class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl transition-colors">
             <lucide-icon [img]="CircleDollarSign" class="w-4 h-4"></lucide-icon>
-            Árak kezelése
+            {{ 'dashboard.managePrices' | translate }}
           </button>
         </div>
       }
     </div>
-    
 
     <!-- Loading -->
     @if (isLoading) {
       <div class="flex items-center justify-center h-64">
-        <div class="text-gray-400 text-sm">Betöltés...</div>
+        <div class="text-gray-400 text-sm">{{ 'dashboard.loading' | translate }}</div>
       </div>
     }
 
@@ -42,7 +41,7 @@
             [(ngModel)]="storageSearch"
             (ngModelChange)="onStorageSearch()"
             type="text"
-            placeholder="Keresés..."
+            [placeholder]="'dashboard.search' | translate"
             class="bg-gray-900 border border-gray-800 rounded-xl pl-9 pr-4 py-2 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors w-64"/>
           <svg class="w-4 h-4 text-gray-500 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -79,7 +78,7 @@
             @if (item.percentage <= 10) {
               <div class="absolute top-3 right-3 bg-red-900 border border-red-700 text-red-300 text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1">
                 <lucide-icon [img]="TriangleAlert" class="w-3 h-3"></lucide-icon>
-                Low Inventory
+                {{ 'dashboard.lowInventory' | translate }}
               </div>
             }
 
@@ -113,7 +112,7 @@
                   class="flex-1 px-2 py-1.5 text-gray-300 text-xs font-medium rounded-lg transition-colors border"
                   [style.background-color]="hoveredButton === 'add-' + item.data.resourceTypeId ? item.color + '99' : item.colorLight"
                   [style.border-color]="item.color + '60'">
-                  + Feltöltés
+                  {{ 'dashboard.refill' | translate }}
                 </button>
                 <button
                   (click)="openMaxQuantityModal(item)"
@@ -122,7 +121,7 @@
                   class="flex-1 px-2 py-1.5 text-gray-300 text-xs font-medium rounded-lg transition-colors border"
                   [style.background-color]="hoveredButton === 'max-' + item.data.resourceTypeId ? item.color + '99' : item.colorLight"
                   [style.border-color]="item.color + '60'">
-                  ↑ Max kapacitás
+                  {{ 'dashboard.maxCapacity' | translate }}
                 </button>
                 <button
                   (click)="openDeleteResourceModal(item)"
@@ -135,19 +134,17 @@
         }
       </div>
 
-      <!-- Trading szekció - csak COMPANY_USER-nek -->
+      <!-- Trading szekció -->
       @if (isCompanyUser) {
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
 
-          <!-- Bal: Trading window -->
           <div class="lg:col-span-2 bg-gray-900 rounded-2xl border border-gray-800 p-6">
-            <h2 class="text-white font-semibold text-lg mb-6">Kereskedés</h2>
+            <h2 class="text-white font-semibold text-lg mb-6">{{ 'dashboard.trading.title' | translate }}</h2>
 
             <div class="space-y-5">
 
-              <!-- Resource type dropdown -->
               <div class="relative">
-                <label class="block text-gray-400 text-sm mb-2">Nyersanyag</label>
+                <label class="block text-gray-400 text-sm mb-2">{{ 'dashboard.trading.resource' | translate }}</label>
                 <div
                   class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between cursor-pointer focus-within:border-blue-500 transition-colors"
                   (click)="dropdownOpen = true; $event.stopPropagation()">
@@ -160,7 +157,7 @@
                     <input
                       [(ngModel)]="resourceSearch"
                       type="text"
-                      placeholder="Keresés..."
+                      [placeholder]="'dashboard.trading.searchResource' | translate"
                       class="bg-transparent text-white text-sm focus:outline-none w-full"
                       (click)="$event.stopPropagation()"
                       autofocus/>
@@ -170,7 +167,7 @@
                 @if (dropdownOpen) {
                   <div class="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg overflow-hidden z-10" (click)="$event.stopPropagation()">
                     @if (filteredResources.length === 0) {
-                      <div class="px-4 py-3 text-gray-500 text-sm">Nincs találat</div>
+                      <div class="px-4 py-3 text-gray-500 text-sm">{{ 'dashboard.trading.noResult' | translate }}</div>
                     }
                     @for (resource of filteredResources; track resource.id) {
                       <button
@@ -184,9 +181,8 @@
                 }
               </div>
 
-              <!-- BUY / SELL toggle -->
               <div>
-                <label class="block text-gray-400 text-sm mb-2">Típus</label>
+                <label class="block text-gray-400 text-sm mb-2">{{ 'dashboard.trading.type' | translate }}</label>
                 <div class="flex gap-3">
                   <button
                     (click)="offerType = 'BUY'; onOfferTypeChange()"
@@ -194,7 +190,7 @@
                     [class]="offerType === 'BUY'
                       ? 'bg-green-700 text-white border border-green-600'
                       : 'bg-gray-800 text-gray-400 border border-gray-700 hover:border-gray-600'">
-                    BUY
+                    {{ 'dashboard.trading.buy' | translate}}
                   </button>
                   <button
                     (click)="offerType = 'SELL'; onOfferTypeChange()"
@@ -202,21 +198,20 @@
                     [class]="offerType === 'SELL'
                       ? 'bg-red-700 text-white border border-red-600'
                       : 'bg-gray-800 text-gray-400 border border-gray-700 hover:border-gray-600'">
-                    SELL
+                    {{ 'dashboard.trading.sell' | translate}}
                   </button>
                 </div>
               </div>
 
-              <!-- Mennyiség -->
               <div>
-                <label class="block text-gray-400 text-sm mb-2">Mennyiség</label>
+                <label class="block text-gray-400 text-sm mb-2">{{ 'dashboard.trading.quantity' | translate }}</label>
                 <div class="relative">
                   <input
                     type="number"
                     [(ngModel)]="quantity"
                     (ngModelChange)="onQuantityChange()"
                     min="0"
-                    placeholder="Mennyiség"
+                    [placeholder]="'dashboard.trading.quantityPlaceholder' | translate"
                     class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors"/>
                   <span class="absolute right-4 top-3 text-gray-500 text-sm">
                     {{ selectedResource?.resourceTypeUnit }}
@@ -224,20 +219,18 @@
                 </div>
               </div>
 
-              <!-- Ár -->
               <div class="bg-gray-800 rounded-lg px-4 py-3 flex items-center justify-between">
                 <span class="text-gray-400 text-sm">
-                  Egységár:
+                  {{ 'dashboard.trading.unitPrice' | translate }}
                   <span class="text-white font-medium">
-                    {{ offerType === 'BUY' ? (currentPrice?.sellPrice | number:'1.0-2') : (currentPrice?.buyPrice | number:'1.0-2') }} credits
+                    {{ offerType === 'BUY' ? (currentPrice?.sellPrice | number:'1.0-2') : (currentPrice?.buyPrice | number:'1.0-2') }} {{ 'dashboard.trading.credits' | translate }}
                   </span>
                 </span>
                 <span class="text-white font-bold text-lg">
-                  {{ calculatedPrice | number:'1.0-2' }} credits
+                  {{ calculatedPrice | number:'1.0-2' }} {{ 'dashboard.trading.credits' | translate }}
                 </span>
               </div>
 
-              <!-- Submit gomb -->
               <button
                 (click)="openConfirmTradeModal()"
                 [disabled]="isSubmitting || !isQuantityValid || !isTradePreviewValid"
@@ -245,16 +238,15 @@
                 [class]="offerType === 'BUY'
                   ? 'bg-green-700 hover:bg-green-600 text-white'
                   : 'bg-red-700 hover:bg-red-600 text-white'">
-                {{ isSubmitting ? 'Submitting...' : 'Request Trade' }}
+                {{ isSubmitting ? ('dashboard.trading.submitting' | translate) : ('dashboard.trading.requestTrade' | translate) }}
               </button>
 
             </div>
           </div>
 
-          <!-- Jobb: Live preview -->
           <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
             <div class="flex flex-col justify-between gap-4">
-              <h2 class="text-white font-semibold text-lg mb-6">Előnézet</h2>
+              <h2 class="text-white font-semibold text-lg mb-6">{{ 'dashboard.preview.title' | translate }}</h2>
 
               @if (previewValidationMessage) {
                 <div class="flex items-start gap-2 rounded-lg border border-red-700 bg-red-900/30 px-3 py-2">
@@ -263,9 +255,8 @@
                 </div>
               }
 
-              <!-- Central Storage Preview -->
               @for (item of previewItems; track item.data.resourceType) {
-                <h3 class="text-white font-medium text-sm">Központi készlet</h3>
+                <h3 class="text-white font-medium text-sm">{{ 'dashboard.preview.centralStorage' | translate }}</h3>
                 <div
                   class="relative rounded-xl border p-4 overflow-hidden flex flex-col justify-between h-36"
                   [style.border-color]="item.color + '40'"
@@ -287,10 +278,9 @@
                 </div>
               }
 
-              <!-- Cég inventory -->
               @for (inv of companyInventory; track inv.id) {
                 @if (inv.resourceTypeName === selectedResource?.resourceTypeName) {
-                  <h3 class="text-white font-medium text-sm">Cég készlet</h3>
+                  <h3 class="text-white font-medium text-sm">{{ 'dashboard.preview.companyStorage' | translate }}</h3>
                   <div
                     class="relative rounded-xl border p-4 overflow-hidden flex flex-col justify-between h-36"
                     [style.border-color]="inv.resourceTypeColor + '40'"
@@ -301,7 +291,6 @@
                       <span class="text-xs font-semibold px-2 py-0.5 rounded-full"
                         [style.color]="inv.resourceTypeColor"
                         [style.background-color]="inv.resourceTypeColor + '26'">
-                        
                         {{ inv.resourceTypeUnit }}
                       </span>
                     </div>
@@ -325,7 +314,7 @@
       <!-- Statisztika szekció -->
       <div class="mb-10">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-white font-semibold text-lg">Statisztikák</h2>
+          <h2 class="text-white font-semibold text-lg">{{ 'dashboard.stats.title' | translate }}</h2>
           <div class="flex gap-2">
             <button
               (click)="onPeriodChange('DAILY')"
@@ -333,7 +322,7 @@
               [class]="statsPeriod === 'DAILY'
                 ? 'bg-blue-700 text-white'
                 : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700'">
-              Napi
+              {{ 'dashboard.stats.daily' | translate }}
             </button>
             <button
               (click)="onPeriodChange('WEEKLY')"
@@ -341,7 +330,7 @@
               [class]="statsPeriod === 'WEEKLY'
                 ? 'bg-blue-700 text-white'
                 : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700'">
-              Heti
+              {{ 'dashboard.stats.weekly' | translate }}
             </button>
           </div>
         </div>
@@ -350,10 +339,10 @@
           @if (stats) {
 
             <div class="flex flex-col items-center justify-center bg-gray-900 rounded-2xl border border-gray-800 p-6">
-              <p class="text-gray-400 text-sm mb-2">Összes kredit mozgás</p>
+              <p class="text-gray-400 text-sm mb-2">{{ 'dashboard.stats.totalCredit' | translate }}</p>
               <p class="text-3xl font-bold text-white">
                 {{ stats.totalCreditVolume | number:'1.0-2' }}
-                <span class="text-gray-500 text-lg font-normal">kredit</span>
+                <span class="text-gray-500 text-lg font-normal">{{ 'dashboard.stats.creditUnit' | translate }}</span>
               </p>
             </div>
 
@@ -362,16 +351,16 @@
                 <p class="text-gray-400 text-sm mb-4">{{ stat.resourceType }}</p>
                 <div class="space-y-3">
                   <div>
-                    <p class="text-gray-500 text-xs mb-1">Összes kereskedett mennyiség</p>
+                    <p class="text-gray-500 text-xs mb-1">{{ 'dashboard.stats.totalQuantity' | translate }}</p>
                     <p class="text-2xl font-bold text-white">{{ stat.totalQuantity | number:'1.0-2' }}
                       <span class="text-gray-500 text-sm font-normal">{{ stat.unit }}</span>
                     </p>
                   </div>
                   <div>
-                    <p class="text-gray-500 text-xs mb-1">Összes kredit érték</p>
+                    <p class="text-gray-500 text-xs mb-1">{{ 'dashboard.stats.totalCreditValue' | translate }}</p>
                     <p class="text-xl font-bold text-white">
                       {{ stat.totalCredit | number:'1.0-2' }}
-                      <span class="text-gray-500 text-sm font-normal">kredit</span>
+                      <span class="text-gray-500 text-sm font-normal">{{ 'dashboard.stats.creditUnit' | translate }}</span>
                     </p>
                   </div>
                 </div>
@@ -380,7 +369,7 @@
 
             @if (stats.resourceStats.length === 0) {
               <div class="col-span-3 bg-gray-900 rounded-2xl border border-gray-800 p-6 text-center">
-                <p class="text-gray-500 text-sm">Nem volt tranzakció ebben a periódusban.</p>
+                <p class="text-gray-500 text-sm">{{ 'dashboard.stats.noTransactions' | translate }}</p>
               </div>
             }
 

@@ -3,6 +3,9 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { UserService } from '../../../../core/services/user.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { ResetPasswordModalComponent } from '../reset-password-modal/reset-password-modal';
+import { ModalService } from '../../../../core/services/modal.service';
 
 export interface CompanyUsersModalData{
   companyId: number;
@@ -11,7 +14,7 @@ export interface CompanyUsersModalData{
 
 @Component({
   selector: 'app-company-users-modal',
-  imports: [],
+  imports: [TranslateModule],
   templateUrl: './company-users-modal.html',
   styleUrl: './company-users-modal.css',
 })
@@ -29,6 +32,7 @@ export class CompanyUsersModalComponent implements OnInit{
     private userService: UserService,
     private toastService: ToastService,
     private authService: AuthService,
+    private modalService: ModalService,
     private cdr: ChangeDetectorRef
   ){}
 
@@ -79,8 +83,11 @@ export class CompanyUsersModalComponent implements OnInit{
     return Math.ceil(this.users.length / this.userPageSize);
   }
 
-  resetPassword(user: any){
-    //TODO
+  resetPassword(user: any) {
+    this.modalService.open(ResetPasswordModalComponent, {
+      userId: user.id,
+      userEmail: user.email
+    });
   }
 
   close(){

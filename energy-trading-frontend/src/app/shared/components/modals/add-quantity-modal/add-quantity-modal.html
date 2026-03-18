@@ -2,7 +2,7 @@
 
   <div class="flex items-center justify-between p-6 border-b border-gray-800">
     <div>
-      <h2 class="text-white font-semibold">Feltöltés</h2>
+      <h2 class="text-white font-semibold">{{ 'modals.addQuantity.title' | translate }}</h2>
       <p class="text-gray-500 text-xs mt-0.5">{{ data.resourceType }}</p>
     </div>
     <button (click)="cancel()" class="text-gray-500 hover:text-gray-300 transition-colors">
@@ -14,15 +14,15 @@
 
   <div class="p-6 flex flex-col gap-4">
     <div class="flex items-center justify-between text-sm">
-      <span class="text-gray-400">Jelenlegi készlet:</span>
+      <span class="text-gray-400">{{ 'modals.addQuantity.currentStock' | translate }}</span>
       <span class="text-white font-medium">{{ data.quantity | number:'1.0-0' }} {{ data.unit }}</span>
     </div>
     <div class="flex items-center justify-between text-sm">
-      <span class="text-gray-400">Max kapacitás:</span>
+      <span class="text-gray-400">{{ 'modals.addQuantity.maxCapacity' | translate }}</span>
       <span class="text-white font-medium">{{ data.maxQuantity | number:'1.0-0' }} {{ data.unit }}</span>
     </div>
     <div class="flex flex-col gap-1.5">
-      <label class="text-gray-400 text-xs">Hozzáadandó mennyiség</label>
+      <label class="text-gray-400 text-xs">{{ 'modals.addQuantity.amountLabel' | translate }}</label>
       <div class="relative">
         <input
           [(ngModel)]="amount"
@@ -36,13 +36,13 @@
   <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-800">
     <button (click)="cancel()"
       class="px-4 py-2 text-gray-400 hover:text-white text-sm transition-colors">
-      Mégse
+      {{ 'modals.cancel' | translate }}
     </button>
     <button
       (click)="submit()"
       [disabled]="dispatcherService.isSubmitting || !amount"
       class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors">
-      {{ dispatcherService.isSubmitting ? 'Feltöltés...' : 'Feltöltés' }}
+      {{ dispatcherService.isSubmitting ? ('modals.addQuantity.submitting' | translate) : ('modals.addQuantity.submit' | translate) }}
     </button>
   </div>
 

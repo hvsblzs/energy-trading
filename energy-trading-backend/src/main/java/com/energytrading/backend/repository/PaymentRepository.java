@@ -6,7 +6,9 @@ import com.energytrading.backend.model.TradeOffers;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     List<Payment> findByCompany(Company company);
+    Optional<Payment> findByStripePaymentId(String stripePaymentId);
 }

@@ -21,4 +21,8 @@ export class PricingService {
   getAllPrices(){
     return this.http.get<any[]>(`${this.apiUrl}/pricings/all`);
   }
+
+  getAllPricesForResourceType(resourceType: string){
+    return this.http.get<any[]>(`${this.apiUrl}/pricings/${resourceType}/price-history`);
+  }
 }

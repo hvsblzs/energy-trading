@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { DispatcherService } from '../../../../core/services/dispatcher.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { ErrorService } from '../../../../core/services/error.service';
 
 export interface AddQuantityData{
   resourceType: string;
@@ -14,7 +16,7 @@ export interface AddQuantityData{
 
 @Component({
   selector: 'app-add-quantity-modal',
-  imports: [FormsModule, DecimalPipe],
+  imports: [FormsModule, DecimalPipe, TranslateModule],
   templateUrl: './add-quantity-modal.html',
   styleUrl: './add-quantity-modal.css',
 })
@@ -26,6 +28,7 @@ export class AddQuantityModalComponent {
     public dialogRef: DialogRef<string>,
     @Inject(DIALOG_DATA) public data: AddQuantityData,
     private toastService: ToastService,
+    private errorService: ErrorService,
     public dispatcherService: DispatcherService
   ){}
 
@@ -36,7 +39,7 @@ export class AddQuantityModalComponent {
         this.dialogRef.close('added');
       },
       error: (err) => {
-        this.toastService.error(err.error?.error ?? 'Hiba történt!');
+        this.toastService.error(this.errorService.getErrorMessage(err));
         this.cancel();
       }
     });

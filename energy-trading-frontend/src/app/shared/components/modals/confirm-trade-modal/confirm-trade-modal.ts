@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { DecimalPipe } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 export interface ConfirmTradeData {
   resourceTypeName: string;
@@ -12,7 +13,7 @@ export interface ConfirmTradeData {
 
 @Component({
   selector: 'app-confirm-trade-modal',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, TranslateModule],
   templateUrl: './confirm-trade-modal.html',
   styleUrl: './confirm-trade-modal.css'
 })

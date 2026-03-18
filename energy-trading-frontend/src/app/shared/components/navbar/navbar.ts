@@ -6,10 +6,14 @@ import { DecimalPipe } from '@angular/common';
 import { WebSocketService } from '../../../core/services/websocket.service';
 import { LucideAngularModule, CircleDollarSign, Zap } from 'lucide-angular';
 import { InactivityService } from '../../../core/services/inactivity.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { LanguageService } from '../../../core/services/language.service';
+import { ModalService } from '../../../core/services/modal.service';
+import { TopUpModalComponent } from '../modals/top-up-modal/top-up-modal';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, DecimalPipe, LucideAngularModule],
+  imports: [RouterLink, DecimalPipe, LucideAngularModule, TranslateModule],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
@@ -28,7 +32,9 @@ export class NavbarComponent implements OnInit, OnDestroy{
     private webSocketService: WebSocketService,
     private inactivityService: InactivityService, 
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private modalService: ModalService,
+    public languageService: LanguageService
   ){}
 
   getRole(): string | null {
@@ -72,6 +78,10 @@ export class NavbarComponent implements OnInit, OnDestroy{
         this.userService.updateCreditBalance(parseFloat(message.creditBalance));
       });
     }
+  }
+
+  openTopUpModal(){
+    this.modalService.open(TopUpModalComponent);
   }
 
   logout() {

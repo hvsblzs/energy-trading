@@ -106,7 +106,7 @@ public class CompanyService {
     @Transactional
     public CompanyResponse createCompanyWithUser(CompanyWithUserRequest request){
         if(request.getCreditBalance() != null && request.getCreditBalance().compareTo(BigDecimal.ZERO) <= 0){
-            throw new BusinessException("A kredit nem lehet negatív!");
+            throw new BusinessException("CREDIT_CANNOT_BE_NEGATIVE");
         }
 
         Company company = Company.builder()

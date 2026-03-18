@@ -47,7 +47,7 @@ public class CompanyResourcesService {
                 .orElseThrow(() -> new ResourceNotFoundException("Resource type not found with id: " + resourceTypeId));
 
         if(companyResourcesRepository.findByCompanyAndResourceType(company, resourceType).isPresent()){
-            throw new BusinessException("A cég már kereskedik ezzel a nyersanyaggal!");
+            throw new BusinessException("RESOURCE_ALREADY_ASSIGNED");
         }
 
         CompanyResources companyResource = CompanyResources.builder()
@@ -74,7 +74,7 @@ public class CompanyResourcesService {
                 .orElseThrow(() -> new ResourceNotFoundException("Resource type not found with id: " + resourceTypeId));
 
         CompanyResources companyResource = companyResourcesRepository.findByCompanyAndResourceType(company, resourceType)
-                .orElseThrow(() -> new ResourceNotFoundException("A cég nem kereskedik ezzel a nyersanyaggal!"));
+                .orElseThrow(() -> new ResourceNotFoundException("RESOURCE_NOT_ASSIGNED"));
         companyResourcesRepository.delete(companyResource);
     }
 

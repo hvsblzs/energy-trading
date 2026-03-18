@@ -3,6 +3,8 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../../core/services/user.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ErrorService } from '../../../../core/services/error.service';
 
 export interface AddUserModalData {
   companyId: number;
@@ -11,7 +13,7 @@ export interface AddUserModalData {
 
 @Component({
   selector: 'app-add-user-modal',
-  imports: [FormsModule],
+  imports: [FormsModule, TranslateModule],
   templateUrl: './add-user-modal.html',
   styleUrl: './add-user-modal.css',
 })
@@ -33,7 +35,9 @@ export class AddUserModalComponent {
     public dialogRef: DialogRef<string>,
     @Inject(DIALOG_DATA) public data: AddUserModalData,
     private userService: UserService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private errorService: ErrorService,
+    private translate: TranslateService
   ){}
 
   isValidEmail(email: string): boolean {
@@ -45,11 +49,11 @@ export class AddUserModalComponent {
     let valid = true;
 
     if(!this.form.email || !this.isValidEmail(this.form.email)){
-      this.errors.email = 'Érvényes email cím megadása kötelező';
+      this.errors.email = this.translate.instant('modals.addUser.validation.emailRequired');
       valid = false;
     }
     if(!this.form.password || this.form.password.length < 6){
-      this.errors.password = 'A jelszónak legalább 6 karakter hosszúnak kell lennie!';
+      this.errors.password = this.translate.instant('modals.addUser.validation.passwordLength');
       valid = false;
     }
     return valid;
@@ -60,11 +64,11 @@ export class AddUserModalComponent {
     this.isSubmitting = true;
     this.userService.createUserForCompany(this.data.companyId, this.form).subscribe({
       next: () => {
-        this.toastService.success('Felhasználó sikeresen létrehozva!');
+        this.toastService.success(this.translate.instant('modals.addUser.toasts.created'));
         this.dialogRef.close('created');
       },
       error: (err) => {
-        this.toastService.error(err.error?.error ?? 'Hiba történt!');
+        this.toastService.error(this.errorService.getErrorMessage(err));
         this.isSubmitting = false;
         this.cancel();
       }

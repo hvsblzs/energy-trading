@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface PricingRepository extends JpaRepository<Pricing, Long> {
     Optional<Pricing> findTopByResourceTypeOrderByCreatedAtDesc(ResourceType resourceType);
     List<Pricing> findByResourceType(ResourceType resourceType);
+    List<Pricing> findByResourceTypeOrderByCreatedAtAsc(ResourceType resourceType);
 }

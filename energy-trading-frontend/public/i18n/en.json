@@ -1,0 +1,551 @@
+{
+  "nav": {
+    "home": "Home",
+    "marketplace": "Marketplace",
+    "inventory": "Inventory",
+    "tradeOffers": "Trade Offers",
+    "companies": "Companies",
+    "users": "Users",
+    "priceHistory": "Price History",
+    "tradeHistory": "History",
+    "profile": "Profile",
+    "logout": "Logout",
+    "creditUnit": "credits",
+    "roles": {
+      "ADMIN": "Admin",
+      "DISPATCHER": "Dispatcher",
+      "COMPANY_USER": "User"
+    }
+  },
+  "dashboard": {
+    "title": "Marketplace",
+    "subtitle": "Trade and monitor central storage levels",
+    "newResource": "New resource",
+    "managePrices": "Manage prices",
+    "loading": "Loading...",
+    "search": "Search...",
+    "lowInventory": "Low Inventory",
+    "refill": "+ Refill",
+    "maxCapacity": "↑ Max capacity",
+    "trading": {
+      "title": "Trading",
+      "resource": "Resource",
+      "searchResource": "Search...",
+      "noResult": "No results",
+      "type": "Type",
+      "quantity": "Quantity",
+      "quantityPlaceholder": "Quantity",
+      "unitPrice": "Unit price:",
+      "credits": "credits",
+      "submitting": "Submitting...",
+      "requestTrade": "Request Trade",
+      "buy": "Buy",
+      "sell": "Sell"
+    },
+    "preview": {
+      "title": "Preview",
+      "centralStorage": "Central storage",
+      "companyStorage": "Company inventory"
+    },
+    "stats": {
+      "title": "Statistics",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "totalCredit": "Total credit volume",
+      "creditUnit": "credits",
+      "totalQuantity": "Total traded quantity",
+      "totalCreditValue": "Total credit value",
+      "noTransactions": "No transactions in this period."
+    },
+    "toasts": {
+      "tradeSent": "Trade request submitted successfully!",
+      "tradeError": "An error occurred during trading!",
+      "priceSaved": "Price updated successfully!",
+      "quantityAdded": "Quantity added successfully!",
+      "maxCapacityUpdated": "Maximum capacity updated successfully!",
+      "resourceDeleted": "Resource deleted successfully!",
+      "deleteError": "An error occurred while deleting!"
+    },
+    "validation": {
+      "resourceNotFound": "The selected resource was not found in central storage.",
+      "notEnoughCentral": "Not enough resource in central storage for this purchase.",
+      "notEnoughCompany": "Not enough resource in company inventory for this sale.",
+      "notEnoughSpace": "Not enough space in central storage for this sale."
+    },
+    "deleteModal": {
+      "title": "Delete resource",
+      "message": "resource? This action cannot be undone, all related data will be deleted."
+    }
+  },
+  "tradeOffers": {
+    "title": "Trade Requests",
+    "subtitle": "Pending trade requests",
+    "refresh": "Refresh",
+    "loading": "Loading...",
+    "empty": {
+      "title": "No pending requests",
+      "subtitle": "Requests awaiting approval will appear here."
+    },
+    "fields": {
+      "quantity": "Quantity:",
+      "unitPrice": "Unit price:",
+      "total": "Total:",
+      "company": "Company:",
+      "type": "Type:"
+    },
+    "reject": "Reject",
+    "approve": "Approve",
+    "approveModal": {
+      "title": "Approve Trade Request",
+      "confirmButton": "Confirm Approve",
+      "processing": "Processing..."
+    },
+    "rejectModal": {
+      "title": "Reject Trade Request",
+      "notesLabel": "Reason (optional)",
+      "notesPlaceholder": "Enter the reason for rejection...",
+      "confirmButton": "Confirm Reject",
+      "processing": "Processing..."
+    },
+    "cancel": "Cancel",
+    "creditUnit": "credits",
+    "toasts": {
+      "approved": "Trade request approved successfully!",
+      "rejected": "Trade request rejected successfully!",
+      "error": "An error occurred!"
+    }
+  },
+  "companies": {
+    "title": "Companies",
+    "subtitle": "Manage companies and users",
+    "newCompany": "New company",
+    "loading": "Loading...",
+    "search": "Search by name or email...",
+    "filters": {
+      "label": "Filters",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "sort": {
+      "label": "Sort",
+      "nameAsc": "Name A-Z",
+      "nameDesc": "Name Z-A",
+      "creditAsc": "Credit ascending",
+      "creditDesc": "Credit descending",
+      "newest": "Newest",
+      "oldest": "Oldest"
+    },
+    "empty": {
+      "title": "No companies",
+      "subtitle": "Newly created companies will appear here."
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "menu": {
+      "edit": "Edit",
+      "resources": "Resources",
+      "addMember": "+ Member",
+      "deactivate": "Deactivate",
+      "activate": "Activate",
+      "delete": "Delete"
+    },
+    "creditUnit": "credits",
+    "pagination": {
+      "total": "{{ count }} companies total"
+    },
+    "deleteModal": {
+      "title": "Delete company",
+      "message": "company? This action cannot be undone, the associated user will also be deleted."
+    },
+    "toasts": {
+      "deactivated": "Company deactivated!",
+      "activated": "Company activated!",
+      "deleted": "Company deleted successfully!",
+      "error": "An error occurred!"
+    }
+  },
+  "users": {
+    "title": "Users",
+    "subtitle": "Company users overview",
+    "search": "Search by email...",
+    "filters": {
+      "label": "Filters",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "sort": {
+      "label": "Sort",
+      "emailAsc": "Email A-Z",
+      "emailDesc": "Email Z-A",
+      "newest": "Newest",
+      "oldest": "Oldest"
+    },
+    "table": {
+      "user": "User",
+      "company": "Company",
+      "createdAt": "Created at",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "actions": {
+      "deactivate": "Deactivate",
+      "activate": "Activate"
+    },
+    "empty": "No users found",
+    "pagination": {
+      "total": "{{ count }} users total"
+    }
+  },
+  "modals": {
+    "cancel": "Cancel",
+    "close": "Close",
+    "topUpCredits": {
+      "title": "Top Up Credits",
+      "amountLabel": "Amount (HUF)",
+      "amountPlaceholder": "e.g. 5000",
+      "creditsToReceive": "Credits to receive:",
+      "minAmount": "Minimum amount: 500 HUF",
+      "cardLabel": "Card details",
+      "submitting": "Processing payment...",
+      "submit": "Pay",
+      "success": "Credits topped up successfully!",
+      "conversionRate": "1 HUF = 10 credits"
+    },
+    "addQuantity": {
+      "title": "Refill",
+      "currentStock": "Current stock:",
+      "maxCapacity": "Max capacity:",
+      "amountLabel": "Amount to add",
+      "submitting": "Refilling...",
+      "submit": "Refill"
+    },
+    "addUser": {
+      "title": "New user",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "user@company.com",
+      "passwordLabel": "Password",
+      "submitting": "Creating...",
+      "submit": "Create",
+      "validation": {
+        "emailRequired": "A valid email address is required",
+        "passwordLength": "Password must be at least 6 characters long!"
+      },
+      "toasts": {
+        "created": "User created successfully!"
+      }
+    },
+    "companyUsers": {
+      "title": "Users",
+      "empty": {
+        "title": "No users",
+        "subtitle": "Add a member using the + Member button."
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "resetPassword": "Reset password",
+      "deactivate": "Deactivate",
+      "activate": "Activate",
+      "done": "Done"
+    },
+    "confirmDelete": {
+      "message": "Are you sure you want to delete",
+      "confirm": "Delete"
+    },
+    "confirmTrade": {
+      "title": "Confirm Trade",
+      "resource": "Resource:",
+      "orderType": "Order Type:",
+      "quantity": "Quantity:",
+      "totalPrice": "Total Price:",
+      "credits": "credits",
+      "confirm": "Confirm"
+    },
+    "createCompany": {
+      "title": "Create new company",
+      "companySection": "Company details",
+      "companyName": "Company name *",
+      "companyNamePlaceholder": "E.g. Energy Ltd.",
+      "email": "Email",
+      "emailPlaceholder": "company@email.com",
+      "phone": "Phone",
+      "phonePlaceholder": "+1 234 567 8900",
+      "address": "Address",
+      "addressPlaceholder": "1234 Example Street, City",
+      "startingCredit": "Starting credit",
+      "userSection": "User details",
+      "userEmail": "User email *",
+      "userEmailPlaceholder": "user@email.com",
+      "password": "Password *",
+      "submitting": "Creating...",
+      "submit": "Create",
+      "validation": {
+        "companyNameRequired": "Company name is required.",
+        "invalidEmail": "Invalid email format.",
+        "userEmailRequired": "A valid email address is required.",
+        "passwordLength": "Password must be at least 6 characters long."
+      },
+      "toasts": {
+        "created": "Company created successfully!"
+      }
+    },
+    "createResource": {
+      "title": "New resource",
+      "nameLabel": "Name *",
+      "namePlaceholder": "E.g. WATER",
+      "unitLabel": "Unit *",
+      "unitPlaceholder": "E.g. m3",
+      "colorLabel": "Color",
+      "buyPriceLabel": "Central buy price *",
+      "sellPriceLabel": "Central sell price *",
+      "submitting": "Creating...",
+      "submit": "Create",
+      "toasts": {
+        "created": "Resource created successfully!"
+      }
+    },
+    "editCompany": {
+      "title": "Edit",
+      "companyName": "Company name *",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "submitting": "Saving...",
+      "submit": "Save",
+      "validation": {
+        "nameRequired": "Company name is required.",
+        "invalidEmail": "Invalid email format."
+      },
+      "toasts": {
+        "updated": "Company updated successfully!"
+      }
+    },
+    "maxQuantity": {
+      "title": "Update max capacity",
+      "currentMax": "Current max:",
+      "newMaxLabel": "New maximum capacity",
+      "submitting": "Saving...",
+      "submit": "Save"
+    },
+    "priceModal": {
+      "title": "Manage prices",
+      "resourceLabel": "Resource",
+      "selectPlaceholder": "Select...",
+      "searchPlaceholder": "Search...",
+      "noResult": "No results",
+      "buyPrice": "Central buy price:",
+      "sellPrice": "Central sell price:",
+      "submitting": "Saving...",
+      "submit": "Save"
+    },
+    "resourceAssignment": {
+      "title": "Resources",
+      "search": "Search...",
+      "noResult": "No results",
+      "remove": "Remove",
+      "add": "Add",
+      "done": "Done"
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "submitting": "Saving...",
+      "submit": "Save",
+      "validation": {
+        "passwordLength": "Password must be at least 6 characters long!",
+        "passwordMismatch": "Passwords do not match!"
+      },
+      "toasts": {
+        "success": "Password reset successfully!"
+      }
+    }
+  },
+  "login": {
+    "subtitle": "Sign in to continue",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "submitting": "Signing in...",
+    "submit": "Sign in",
+    "defaultError": "Invalid email or password",
+    "inactivityModal": {
+      "titleInactivity": "Automatic logout",
+      "titleExpired": "Session expired",
+      "inactivityMessage": "You were automatically logged out due to 5 minutes of inactivity.",
+      "expiredMessage": "Your session has expired. Please sign in again.",
+      "ok": "OK"
+    }
+  },
+  "home": {
+    "badge": "Energy Trading Platform",
+    "heroTitle1": "Resource trading",
+    "heroTitle2": "simple and efficient",
+    "heroSubtitle": "Our platform enables companies to trade energy carriers and raw materials in real time through a secure, transparent system.",
+    "features": {
+      "trading": {
+        "title": "Real-time trading",
+        "description": "Submit buy and sell offers for resources, which a dispatcher approves in real time."
+      },
+      "inventory": {
+        "title": "Inventory management",
+        "description": "Track your company's current resource inventory and monitor the central warehouse status at any time."
+      },
+      "credits": {
+        "title": "Credit system",
+        "description": "Trades are conducted using credits. Balances update in real time after every approved transaction."
+      }
+    },
+    "howItWorks": {
+      "title": "How does it work?",
+      "step1": {
+        "title": "Submit an offer",
+        "description": "On the Marketplace page, select a resource, enter the desired quantity, then submit your buy or sell offer."
+      },
+      "step2": {
+        "title": "Dispatcher approval",
+        "description": "Incoming offers are reviewed by a dispatcher and either approved or rejected. If approved, the transaction is executed automatically."
+      },
+      "step3": {
+        "title": "Balance and inventory update",
+        "description": "After approval, credit balances and resource inventories are updated in real time via WebSocket connection."
+      }
+    },
+    "creditBanner": {
+      "title": "Top up credits",
+      "description": "Purchase credits with real money and start trading immediately. Secure payment, instant credit.",
+      "button": "Buy credits"
+    },
+    "cta": "Go to Marketplace"
+  },
+  "ticker": {
+    "bought": "bought",
+    "sold": "sold",
+    "at": "@",
+    "credits": "credits"
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Account and company details",
+    "loading": "Loading...",
+    "account": {
+      "title": "Account details",
+      "username": "Username",
+      "email": "Email address",
+      "createdAt": "Registration date",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "credits": {
+      "title": "Credit balance",
+      "unit": "credits",
+      "topUp": "Top Up Credits"
+    },
+    "company": {
+      "title": "Company details",
+      "name": "Company name",
+      "phone": "Phone number",
+      "address": "Address"
+    },
+    "roles": {
+      "ADMIN": "Administrator",
+      "DISPATCHER": "Dispatcher",
+      "COMPANY_USER": "Company User"
+    }
+  },
+  "tradeHistory": {
+    "title": "Trade History",
+    "subtitle": "Past buy and sell offers",
+    "filters": {
+      "label": "Filters",
+      "status": "Status",
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "pending": "Pending",
+      "offerType": "Type",
+      "buy": "Buy",
+      "sell": "Sell"
+    },
+    "sort": {
+      "label": "Sort",
+      "newest": "Newest",
+      "oldest": "Oldest",
+      "totalDesc": "Amount descending",
+      "totalAsc": "Amount ascending",
+      "quantityDesc": "Quantity descending",
+      "quantityAsc": "Quantity ascending"
+    },
+    "fields": {
+      "quantity": "Quantity",
+      "unitPrice": "Unit price",
+      "total": "Total",
+      "date": "Date",
+      "resolvedAt": "Resolved at",
+      "rejectionReason": "Rejection reason"
+    },
+    "status": {
+      "COMPLETED": "Completed",
+      "REJECTED": "Rejected",
+      "PENDING": "Pending"
+    },
+    "empty": {
+      "title": "No history yet",
+      "subtitle": "Closed trades will appear here."
+    },
+    "pagination": {
+      "total": "{{ count }} transactions total"
+    },
+    "creditUnit": "credits",
+    "search": "Search by company name...",
+    "searchResource": "Search by resource..."
+  },
+  "priceHistory": {
+    "title": "Price History",
+    "subtitle": "Resource price changes",
+    "search": "Search...",
+    "noResult": "No results",
+    "buyPrice": "Central buy price",
+    "sellPrice": "Central sell price",
+    "xaxisTitle": "Time",
+    "yaxisTitle": "Credit"
+  },
+  "errors": {
+    "EMAIL_ALREADY_EXISTS": "This email address is already taken.",
+    "COMPANY_NOT_FOUND": "Company not found.",
+    "INSUFFICIENT_CREDIT": "Insufficient credit balance.",
+    "INSUFFICIENT_STORAGE": "Insufficient storage quantity",
+    "INSUFFICIENT_INVENTORY": "Insufficient company inventory.",
+    "GENERIC": "An error occured!",
+    "AMOUNT_MUST_BE_POSITIVE": "Amount must be a positive number!",
+    "EXCEEDS_MAX_CAPACITY": "The amount would exceed the maximum capacity!",
+    "MAX_LESS_THAN_CURRENT": "Maximum capacity cannot be less than the current quantity!",
+    "RESOURCE_ALREADY_ASSIGNED": "The company already trades this resource!",
+    "RESOURCE_NOT_ASSIGNED": "The company does not trade this resource!",
+    "CREDIT_CANNOT_BE_NEGATIVE": "Credit balance cannot be negative!",
+    "PRICE_MUST_BE_POSITIVE": "Price must be a positive number!",
+    "INVALID_RESOURCE_NAME": "Name can only contain letters, numbers and underscores!",
+    "RESOURCE_ALREADY_EXISTS": "This resource already exists!",
+    "COMPANY_INACTIVE": "The company is deactivated, trading is not possible!",
+    "RESOURCE_NOT_IN_STORAGE": "This resource does not exist in central storage!",
+    "INSUFFICIENT_CREDIT_BUY": "Insufficient credit balance for this purchase!",
+    "INSUFFICIENT_STORAGE_BUY": "Insufficient resource quantity in central storage!",
+    "RESOURCE_NOT_IN_INVENTORY": "This resource does not exist in company inventory.",
+    "INSUFFICIENT_INVENTORY_SELL": "Insufficient resource quantity for this sale!",
+    "INSUFFICIENT_SPACE_SELL": "Insufficient space in central storage!",
+    "PASSWORD_TOO_SHORT": "Password must be at least 6 characters long!",
+    "USER_DISABLED": "This user account is disabled!",
+    "BAD_CREDENTIALS": "Invalid email or password!",
+    "AMOUNT_TOO_LOW": "The minimum top-up amount is 500 HUF!",
+    "PAYMENT_FAILED": "The payment has failed!",
+    "PAYMENT_NOT_FOUND": "Payment not found!"
+  }
+}

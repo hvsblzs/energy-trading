@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { TransactionService } from '../../../core/services/transaction.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-ticker',
-  imports: [],
+  imports: [TranslateModule],
   templateUrl: './ticker.html',
   styleUrl: './ticker.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -16,6 +17,7 @@ export class TickerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private transactionService: TransactionService,
+    private translate: TranslateService,
     private cdr: ChangeDetectorRef
   ){}
 
@@ -48,9 +50,13 @@ export class TickerComponent implements OnInit, OnDestroy, AfterViewInit {
     el.style.animationDuration = `${duration}s`;
   }
 
-  formatTicker(transaction: any): string{
-    const action = transaction.offerType === 'Bought' ? 'bought' : 'sold';
-    return `${transaction.companyName} ${action} ${transaction.quantity} ${transaction.unit} ${transaction.resourceType} @ ${transaction.creditAmount} credits`;
+  formatTicker(transaction: any): string {
+    const action = transaction.offerType === 'Bought'
+      ? this.translate.instant('ticker.bought')
+      : this.translate.instant('ticker.sold');
+    const credits = this.translate.instant('ticker.credits');
+    const at = this.translate.instant('ticker.at');
+    return `${transaction.companyName} ${action} ${transaction.quantity} ${transaction.unit} ${transaction.resourceType} ${at} ${transaction.creditAmount} ${credits}`;
   }
 
   isBuy(transaction: any): boolean{

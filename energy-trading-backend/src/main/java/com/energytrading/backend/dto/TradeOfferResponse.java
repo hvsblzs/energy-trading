@@ -23,4 +23,6 @@ public class TradeOfferResponse {
     private LocalDateTime resolvedAt;
     private Long resolvedByUserId;
     private String notes;
+    private String resourceTypeColor;
+    private String resourceTypeUnit;
 }

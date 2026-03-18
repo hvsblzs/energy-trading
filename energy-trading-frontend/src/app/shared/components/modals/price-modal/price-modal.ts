@@ -3,10 +3,12 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { FormsModule } from '@angular/forms';
 import { DispatcherService } from '../../../../core/services/dispatcher.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { ErrorService } from '../../../../core/services/error.service';
 
 @Component({
   selector: 'app-price-modal',
-  imports: [FormsModule],
+  imports: [FormsModule, TranslateModule],
   templateUrl: './price-modal.html',
   styleUrl: './price-modal.css',
 })
@@ -20,6 +22,7 @@ export class PriceModalComponent implements OnInit {
     @Inject(DIALOG_DATA) public data: any,
     private toastService: ToastService,
     public dispatcherService: DispatcherService,
+    private errorService: ErrorService,
     private cdr: ChangeDetectorRef
   ){}
 
@@ -40,7 +43,7 @@ export class PriceModalComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        this.toastService.error(err.error?.error ?? 'Hiba történt!');
+        this.toastService.error(this.errorService.getErrorMessage(err));
         this.cancel();
       }
     });
@@ -54,7 +57,7 @@ export class PriceModalComponent implements OnInit {
         this.dialogRef.close("saved");
       },
       error: (err) => {
-        this.toastService.error(err.error?.error ?? 'Hiba történt!');
+        this.toastService.error(this.errorService.getErrorMessage(err));
         this.cancel();
       }
     });
@@ -72,7 +75,7 @@ export class PriceModalComponent implements OnInit {
   get filteredPrices(): any[] {
     if (!this.resourceSearch) return this.dispatcherService.allPrices;
     return this.dispatcherService.allPrices.filter(p => 
-      p.resourceType.toLowerCase().startsWith(this.resourceSearch.toLowerCase())
+      p.resourceType.toLowerCase().includes(this.resourceSearch.toLowerCase())
     );
   }
 

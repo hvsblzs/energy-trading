@@ -1,5 +1,6 @@
 package com.energytrading.backend.controller;
 
+import com.energytrading.backend.dto.PageResponse;
 import com.energytrading.backend.dto.TradeOfferRequest;
 import com.energytrading.backend.dto.TradeOfferResponse;
 import com.energytrading.backend.model.User;
@@ -63,5 +64,20 @@ public class TradeOfferController {
                                                                @AuthenticationPrincipal User currentUser,
                                                                @RequestParam String notes){
         return ResponseEntity.ok(tradeOfferService.rejectTradeOffer(id, currentUser, notes));
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<PageResponse<TradeOfferResponse>> getTradeHistory(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sort,
+            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String offerType,
+            @RequestParam(required = false) String resourceType,
+            @RequestParam(required = false) String search,
+            @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(tradeOfferService.getTradeHistory(
+                page, size, sort, direction, status, offerType, resourceType, search, currentUser));
     }
 }

@@ -1,7 +1,7 @@
 <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md">
 
   <div class="flex items-center justify-between p-6 border-b border-gray-800">
-    <h2 class="text-white font-semibold">Confirm Trade</h2>
+    <h2 class="text-white font-semibold">{{ 'modals.confirmTrade.title' | translate }}</h2>
     <button (click)="cancel()" class="text-gray-500 hover:text-gray-300 transition-colors">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -12,22 +12,22 @@
   <div class="p-6">
     <div class="bg-gray-800 rounded-xl p-4 space-y-2">
       <div class="flex justify-between text-sm">
-        <span class="text-gray-400">Resource:</span>
+        <span class="text-gray-400">{{ 'modals.confirmTrade.resource' | translate }}</span>
         <span class="text-white font-medium">{{ data.resourceTypeName }}</span>
       </div>
       <div class="flex justify-between text-sm">
-        <span class="text-gray-400">Order Type:</span>
+        <span class="text-gray-400">{{ 'modals.confirmTrade.orderType' | translate }}</span>
         <span class="font-semibold" [class]="data.offerType === 'BUY' ? 'text-green-400' : 'text-red-400'">
           {{ data.offerType }}
         </span>
       </div>
       <div class="flex justify-between text-sm">
-        <span class="text-gray-400">Quantity:</span>
+        <span class="text-gray-400">{{ 'modals.confirmTrade.quantity' | translate }}</span>
         <span class="text-white font-medium">{{ data.quantity }} {{ data.resourceTypeUnit }}</span>
       </div>
       <div class="flex justify-between text-sm border-t border-gray-700 pt-2 mt-2">
-        <span class="text-gray-400">Total Price:</span>
-        <span class="text-white font-bold">{{ data.calculatedPrice | number:'1.0-2' }} credits</span>
+        <span class="text-gray-400">{{ 'modals.confirmTrade.totalPrice' | translate }}</span>
+        <span class="text-white font-bold">{{ data.calculatedPrice | number:'1.0-2' }} {{ 'modals.confirmTrade.credits' | translate }}</span>
       </div>
     </div>
   </div>
@@ -35,13 +35,13 @@
   <div class="flex items-center gap-3 p-6 border-t border-gray-800">
     <button (click)="cancel()"
       class="flex-1 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm font-medium rounded-xl transition-colors border border-gray-700">
-      Cancel
+      {{ 'modals.cancel' | translate }}
     </button>
     <button
       (click)="confirm()"
       class="flex-1 py-2 text-white text-sm font-semibold rounded-xl transition-colors"
       [class]="data.offerType === 'BUY' ? 'bg-green-700 hover:bg-green-600' : 'bg-red-700 hover:bg-red-600'">
-      Confirm {{ data.offerType }}
+      {{ 'modals.confirmTrade.confirm' | translate }} {{ data.offerType }}
     </button>
   </div>
 

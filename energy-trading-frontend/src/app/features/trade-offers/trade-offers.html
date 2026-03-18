@@ -1,45 +1,38 @@
 <div class="min-h-screen bg-gray-950 p-6">
   <div class="max-w-7xl mx-auto">
 
-    <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div>
-        <h1 class="text-2xl font-bold text-white">Trade Requests</h1>
-        <p class="text-gray-400 text-sm mt-1">Függőben lévő kereskedési kérelmek</p>
+        <h1 class="text-2xl font-bold text-white">{{ 'tradeOffers.title' | translate }}</h1>
+        <p class="text-gray-400 text-sm mt-1">{{ 'tradeOffers.subtitle' | translate }}</p>
       </div>
       <button
         (click)="loadPendingOffers()"
         class="bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors border border-gray-700">
-        Frissítés
+        {{ 'tradeOffers.refresh' | translate }}
       </button>
     </div>
 
-    <!-- Loading -->
     @if (isLoading) {
       <div class="flex items-center justify-center h-64">
-        <div class="text-gray-400 text-sm">Betöltés...</div>
+        <div class="text-gray-400 text-sm">{{ 'tradeOffers.loading' | translate }}</div>
       </div>
     }
 
-    <!-- Üres állapot -->
     @if (!isLoading && pendingOffers.length === 0) {
       <div class="bg-gray-900 rounded-2xl border border-gray-800 p-12 text-center">
-        <p class="text-gray-400 text-lg font-medium mb-2">Nincs függőben lévő kérelem</p>
-        <p class="text-gray-600 text-sm">A jóváhagyásra váró kérelmek itt fognak megjelenni.</p>
+        <p class="text-gray-400 text-lg font-medium mb-2">{{ 'tradeOffers.empty.title' | translate }}</p>
+        <p class="text-gray-600 text-sm">{{ 'tradeOffers.empty.subtitle' | translate }}</p>
       </div>
     }
 
-    <!-- Trade offer lista -->
     @if (!isLoading && pendingOffers.length > 0) {
       <div class="flex flex-col gap-4">
         @for (offer of pendingOffers; track offer.id) {
           <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
             <div class="flex items-center justify-between">
 
-              <!-- Bal oldal: infók -->
               <div class="flex items-center gap-6">
-
-                <!-- BUY/SELL badge -->
                 <div class="flex flex-col items-center justify-center w-16 h-16 rounded-xl"
                   [style.background-color]="offer.offerType === 'BUY' ? 'rgba(21, 128, 61, 0.2)' : 'rgba(185, 28, 28, 0.2)'"
                   [style.border]="offer.offerType === 'BUY' ? '1px solid #15803d' : '1px solid #b91c1c'">
@@ -49,7 +42,6 @@
                   </span>
                 </div>
 
-                <!-- Részletek -->
                 <div>
                   <div class="flex items-center gap-3 mb-1">
                     <span class="text-white font-semibold text-lg">{{ offer.companyName }}</span>
@@ -58,31 +50,29 @@
                     </span>
                   </div>
                   <div class="flex items-center gap-4 text-sm text-gray-400">
-                    <span>Mennyiség: <span class="text-white font-medium">{{ offer.quantity | number:'1.0-2' }}</span></span>
-                    <span>Egységár: <span class="text-white font-medium">{{ offer.pricePerUnit | number:'1.0-2' }} kredit</span></span>
-                    <span>Összesen: <span class="font-bold"
+                    <span>{{ 'tradeOffers.fields.quantity' | translate }} <span class="text-white font-medium">{{ offer.quantity | number:'1.0-2' }}</span></span>
+                    <span>{{ 'tradeOffers.fields.unitPrice' | translate }} <span class="text-white font-medium">{{ offer.pricePerUnit | number:'1.0-2' }} {{ 'tradeOffers.creditUnit' | translate }}</span></span>
+                    <span>{{ 'tradeOffers.fields.total' | translate }} <span class="font-bold"
                       [style.color]="offer.offerType === 'BUY' ? '#4ade80' : '#f87171'">
-                      {{ offer.totalPrice | number:'1.0-2' }} kredit
+                      {{ offer.totalPrice | number:'1.0-2' }} {{ 'tradeOffers.creditUnit' | translate }}
                     </span></span>
                   </div>
                   <div class="text-xs text-gray-600 mt-1">
                     {{ offer.createdAt | date:'yyyy.MM.dd HH:mm' }}
                   </div>
                 </div>
-
               </div>
 
-              <!-- Jobb oldal: gombok -->
               <div class="flex items-center gap-3">
                 <button
                   (click)="openRejectModal(offer)"
                   class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-800 hover:bg-red-900 text-gray-300 hover:text-red-300 border border-gray-700 hover:border-red-700 transition-colors">
-                  Reject
+                  {{ 'tradeOffers.reject' | translate }}
                 </button>
                 <button
                   (click)="openApproveModal(offer)"
                   class="px-4 py-2 rounded-lg text-sm font-medium bg-green-900 hover:bg-green-800 text-green-300 border border-green-700 transition-colors">
-                  Approve
+                  {{ 'tradeOffers.approve' | translate }}
                 </button>
               </div>
 
@@ -95,31 +85,30 @@
   </div>
 </div>
 
-<!-- Approve modal -->
 @if (showApproveModal && selectedOffer) {
   <div class="fixed inset-0 backdrop-blur-sm bg-black/40 flex items-center justify-center z-40">
     <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 w-full max-w-md mx-4">
 
-      <h3 class="text-white font-bold text-lg mb-4">Approve Trade Request</h3>
+      <h3 class="text-white font-bold text-lg mb-4">{{ 'tradeOffers.approveModal.title' | translate }}</h3>
 
       <div class="bg-gray-800 rounded-lg p-4 mb-6 space-y-2">
         <div class="flex justify-between text-sm">
-          <span class="text-gray-400">Cég:</span>
+          <span class="text-gray-400">{{ 'tradeOffers.fields.company' | translate }}</span>
           <span class="text-white font-medium">{{ selectedOffer.companyName }}</span>
         </div>
         <div class="flex justify-between text-sm">
-          <span class="text-gray-400">Típus:</span>
+          <span class="text-gray-400">{{ 'tradeOffers.fields.type' | translate }}</span>
           <span class="font-semibold" [style.color]="selectedOffer.offerType === 'BUY' ? '#4ade80' : '#f87171'">
             {{ selectedOffer.offerType }}
           </span>
         </div>
         <div class="flex justify-between text-sm">
-          <span class="text-gray-400">Mennyiség:</span>
+          <span class="text-gray-400">{{ 'tradeOffers.fields.quantity' | translate }}</span>
           <span class="text-white font-medium">{{ selectedOffer.quantity | number:'1.0-2' }} {{ selectedOffer.resourceType }}</span>
         </div>
         <div class="flex justify-between text-sm border-t border-gray-700 pt-2 mt-2">
-          <span class="text-gray-400">Összesen:</span>
-          <span class="text-white font-bold">{{ selectedOffer.totalPrice | number:'1.0-2' }} kredit</span>
+          <span class="text-gray-400">{{ 'tradeOffers.fields.total' | translate }}</span>
+          <span class="text-white font-bold">{{ selectedOffer.totalPrice | number:'1.0-2' }} {{ 'tradeOffers.creditUnit' | translate }}</span>
         </div>
       </div>
 
@@ -127,13 +116,13 @@
         <button
           (click)="showApproveModal = false"
           class="flex-1 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold text-sm transition-colors border border-gray-700">
-          Cancel
+          {{ 'tradeOffers.cancel' | translate }}
         </button>
         <button
           (click)="approve()"
           [disabled]="isSubmitting"
           class="flex-1 py-3 rounded-lg bg-green-700 hover:bg-green-600 text-white font-semibold text-sm transition-colors disabled:opacity-50">
-          {{ isSubmitting ? 'Processing...' : 'Confirm Approve' }}
+          {{ isSubmitting ? ('tradeOffers.approveModal.processing' | translate) : ('tradeOffers.approveModal.confirmButton' | translate) }}
         </button>
       </div>
 
@@ -141,36 +130,34 @@
   </div>
 }
 
-<!-- Reject modal -->
 @if (showRejectModal && selectedOffer) {
   <div class="fixed inset-0 backdrop-blur-sm bg-black/40 flex items-center justify-center z-40">
     <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 w-full max-w-md mx-4">
 
-      <h3 class="text-white font-bold text-lg mb-4">Reject Trade Request</h3>
+      <h3 class="text-white font-bold text-lg mb-4">{{ 'tradeOffers.rejectModal.title' | translate }}</h3>
 
       <div class="bg-gray-800 rounded-lg p-4 mb-4 space-y-2">
         <div class="flex justify-between text-sm">
-          <span class="text-gray-400">Cég:</span>
+          <span class="text-gray-400">{{ 'tradeOffers.fields.company' | translate }}</span>
           <span class="text-white font-medium">{{ selectedOffer.companyName }}</span>
         </div>
         <div class="flex justify-between text-sm">
-          <span class="text-gray-400">Típus:</span>
+          <span class="text-gray-400">{{ 'tradeOffers.fields.type' | translate }}</span>
           <span class="font-semibold" [style.color]="selectedOffer.offerType === 'BUY' ? '#4ade80' : '#f87171'">
             {{ selectedOffer.offerType }}
           </span>
         </div>
         <div class="flex justify-between text-sm">
-          <span class="text-gray-400">Mennyiség:</span>
+          <span class="text-gray-400">{{ 'tradeOffers.fields.quantity' | translate }}</span>
           <span class="text-white font-medium">{{ selectedOffer.quantity | number:'1.0-2' }} {{ selectedOffer.resourceType }}</span>
         </div>
       </div>
 
-      <!-- Notes input -->
       <div class="mb-6">
-        <label class="block text-gray-400 text-sm mb-2">Indoklás (opcionális)</label>
+        <label class="block text-gray-400 text-sm mb-2">{{ 'tradeOffers.rejectModal.notesLabel' | translate }}</label>
         <textarea
           [(ngModel)]="rejectNotes"
-          placeholder="Add meg az elutasítás okát..."
+          [placeholder]="'tradeOffers.rejectModal.notesPlaceholder' | translate"
           rows="3"
           class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-red-500 transition-colors resize-none text-sm">
         </textarea>
@@ -180,13 +167,13 @@
         <button
           (click)="showRejectModal = false"
           class="flex-1 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold text-sm transition-colors border border-gray-700">
-          Cancel
+          {{ 'tradeOffers.cancel' | translate }}
         </button>
         <button
           (click)="reject()"
           [disabled]="isSubmitting"
           class="flex-1 py-3 rounded-lg bg-red-700 hover:bg-red-600 text-white font-semibold text-sm transition-colors disabled:opacity-50">
-          {{ isSubmitting ? 'Processing...' : 'Confirm Reject' }}
+          {{ isSubmitting ? ('tradeOffers.rejectModal.processing' | translate) : ('tradeOffers.rejectModal.confirmButton' | translate) }}
         </button>
       </div>
 

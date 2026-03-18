@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { TranslateModule } from '@ngx-translate/core';
 
 export interface ConfirmDeleteData{
   title: string;
@@ -9,7 +10,7 @@ export interface ConfirmDeleteData{
 
 @Component({
   selector: 'app-confirm-delete-modal',
-  imports: [],
+  imports: [TranslateModule],
   templateUrl: './confirm-delete-modal.html',
   styleUrl: './confirm-delete-modal.css',
 })

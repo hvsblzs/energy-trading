@@ -3,17 +3,22 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ActivatedRoute } from '@angular/router';
-import { LucideAngularModule, Clock } from 'lucide-angular';
+import { LucideAngularModule, Clock, Eye, EyeOff } from 'lucide-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '../../../core/services/language.service';
+import { ErrorService } from '../../../core/services/error.service';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, LucideAngularModule],
+  imports: [FormsModule, LucideAngularModule, TranslateModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class LoginComponent implements OnInit {
 
   readonly Clock = Clock;
+  readonly Eye = Eye;
+  readonly EyeOff = EyeOff;
 
   email: string = '';
   password: string = '';
@@ -21,22 +26,29 @@ export class LoginComponent implements OnInit {
   inactivityMessage: string = '';
   isLoading: boolean = false;
   showInactivityModal: boolean = false;
+  inactivityReason: 'inactivity' | 'session_expired' | null = null;
+  showPassword: boolean = false;
 
   constructor(
     private authService: AuthService, 
     private router: Router,
     private route: ActivatedRoute,
+    private translate: TranslateService,
+    public languageService: LanguageService,
+    private errorService: ErrorService,
     private cdr: ChangeDetectorRef
   ){}
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       if (params['reason'] === 'inactivity') {
+        this.inactivityReason = 'inactivity';
         this.showInactivityModal = true;
-        this.inactivityMessage = '5 perc inaktivitás miatt automatikusan kijelentkeztünk.';
+        this.inactivityMessage = this.translate.instant('login.inactivityModal.inactivityMessage');
       } else if (params['reason'] === 'session_expired') {
+        this.inactivityReason = 'session_expired';
         this.showInactivityModal = true;
-        this.inactivityMessage = 'A munkamenete lejárt. Kérjük, jelentkezzen be újra.';
+        this.inactivityMessage = this.translate.instant('login.inactivityModal.expiredMessage');
       }
     });
   }
@@ -56,7 +68,7 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/marketplace']);
       },
       error: (err) => {
-        this.errorMessage = err.error?.error ?? 'Hibás email vagy jelszó';
+        this.errorMessage = this.errorService.getErrorMessage(err);
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -64,5 +76,9 @@ export class LoginComponent implements OnInit {
         this.isLoading = false;
       }
     })
+  }
+
+  switchPasswordVisibility(){
+    this.showPassword = !this.showPassword;
   }
 }

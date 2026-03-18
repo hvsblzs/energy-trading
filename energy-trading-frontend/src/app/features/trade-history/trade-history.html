@@ -1,0 +1,270 @@
+<div class="min-h-screen bg-gray-950 p-6">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-white">{{ 'tradeHistory.title' | translate }}</h1>
+        <p class="text-gray-400 text-sm mt-1">{{ 'tradeHistory.subtitle' | translate }}</p>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="flex items-center gap-3 mb-6 justify-end">
+
+      @if (isAdmin || isDispatcher) {
+        <div class="relative w-72">
+          <input
+            [(ngModel)]="search"
+            (input)="onSearch()"
+            type="text"
+            [placeholder]="'tradeHistory.search' | translate"
+            class="w-full bg-gray-900 border border-gray-800 rounded-xl pl-9 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
+          <svg class="w-4 h-4 text-gray-500 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+      }
+
+      <!-- Nyersanyag kereső - mindenki látja -->
+      <div class="relative w-64">
+        <input
+          [(ngModel)]="resourceSearch"
+          (ngModelChange)="onResourceSearch()"
+          type="text"
+          [placeholder]="'tradeHistory.searchResource' | translate"
+          class="w-full bg-gray-900 border border-gray-800 rounded-xl pl-9 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
+        <svg class="w-4 h-4 text-gray-500 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+
+      <div class="flex items-center gap-3 ml-auto">
+        <!-- Szűrők -->
+        <div class="relative">
+          <button
+            (click)="filterDropdownOpen = !filterDropdownOpen; sortDropdownOpen = false; $event.stopPropagation()"
+            class="flex items-center gap-2 px-4 py-2.5 bg-gray-900 border rounded-xl text-sm font-medium transition-colors"
+            [class]="hasActiveFilter ? 'border-indigo-500 text-indigo-400' : 'border-gray-800 text-gray-400 hover:text-white'">
+            <lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon>
+            {{ 'tradeHistory.filters.label' | translate }}
+            @if (hasActiveFilter) {
+              <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+            }
+          </button>
+          @if (filterDropdownOpen) {
+            <div
+              (click)="$event.stopPropagation()"
+              class="absolute top-full right-0 mt-1 bg-gray-900 border border-gray-800 rounded-xl p-3 flex flex-col gap-2 z-10 min-w-44">
+              <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1">{{ 'tradeHistory.filters.status' | translate }}</p>
+              <button (click)="setStatusFilter('COMPLETED')"
+                class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors text-left"
+                [class]="statusFilter === 'COMPLETED' ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-400 hover:bg-gray-800'">
+                {{ 'tradeHistory.filters.completed' | translate }}
+              </button>
+              <button (click)="setStatusFilter('REJECTED')"
+                class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors text-left"
+                [class]="statusFilter === 'REJECTED' ? 'bg-red-500/20 text-red-400' : 'text-gray-400 hover:bg-gray-800'">
+                {{ 'tradeHistory.filters.rejected' | translate }}
+              </button>
+              <button (click)="setStatusFilter('PENDING')"
+                class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors text-left"
+                [class]="statusFilter === 'PENDING' ? 'bg-yellow-500/20 text-yellow-400' : 'text-gray-400 hover:bg-gray-800'">
+                {{ 'tradeHistory.filters.pending' | translate }}
+              </button>
+              <div class="border-t border-gray-800 my-1"></div>
+              <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1">{{ 'tradeHistory.filters.offerType' | translate }}</p>
+              <button (click)="setOfferTypeFilter('BUY')"
+                class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors text-left"
+                [class]="offerTypeFilter === 'BUY' ? 'bg-green-500/20 text-green-400' : 'text-gray-400 hover:bg-gray-800'">
+                {{ 'tradeHistory.filters.buy' | translate }}
+              </button>
+              <button (click)="setOfferTypeFilter('SELL')"
+                class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors text-left"
+                [class]="offerTypeFilter === 'SELL' ? 'bg-red-500/20 text-red-400' : 'text-gray-400 hover:bg-gray-800'">
+                {{ 'tradeHistory.filters.sell' | translate }}
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Rendezés -->
+      <div class="relative">
+        <button
+          (click)="sortDropdownOpen = !sortDropdownOpen; filterDropdownOpen = false; $event.stopPropagation()"
+          class="flex items-center gap-2 px-4 py-2.5 bg-gray-900 border border-gray-800 rounded-xl text-gray-400 hover:text-white text-sm font-medium transition-colors">
+          <lucide-icon [img]="ArrowUpDown" class="w-4 h-4"></lucide-icon>
+          {{ 'tradeHistory.sort.label' | translate }}
+        </button>
+        @if (sortDropdownOpen) {
+          <div
+            (click)="$event.stopPropagation()"
+            class="absolute top-full right-0 mt-1 bg-gray-900 border border-gray-800 rounded-xl p-3 flex flex-col gap-2 z-10 min-w-52">
+            <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1">{{ 'tradeHistory.sort.label' | translate }}</p>
+            <button (click)="setSort('createdAt', 'desc')"
+              class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+              [class]="sortField === 'createdAt' && sortDirection === 'desc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+              {{ 'tradeHistory.sort.newest' | translate }}
+            </button>
+            <button (click)="setSort('createdAt', 'asc')"
+              class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+              [class]="sortField === 'createdAt' && sortDirection === 'asc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+              {{ 'tradeHistory.sort.oldest' | translate }}
+            </button>
+            <button (click)="setSort('totalPrice', 'desc')"
+              class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+              [class]="sortField === 'totalPrice' && sortDirection === 'desc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+              {{ 'tradeHistory.sort.totalDesc' | translate }}
+            </button>
+            <button (click)="setSort('totalPrice', 'asc')"
+              class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+              [class]="sortField === 'totalPrice' && sortDirection === 'asc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+              {{ 'tradeHistory.sort.totalAsc' | translate }}
+            </button>
+            <button (click)="setSort('quantity', 'desc')"
+              class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+              [class]="sortField === 'quantity' && sortDirection === 'desc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+              {{ 'tradeHistory.sort.quantityDesc' | translate }}
+            </button>
+            <button (click)="setSort('quantity', 'asc')"
+              class="px-3 py-1.5 rounded-lg text-sm transition-colors text-left"
+              [class]="sortField === 'quantity' && sortDirection === 'asc' ? 'bg-indigo-500/20 text-indigo-400' : 'text-gray-400 hover:bg-gray-800'">
+              {{ 'tradeHistory.sort.quantityAsc' | translate }}
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Loading -->
+    @if (isLoading && isInitialLoading) {
+      <div class="flex items-center justify-center h-64">
+        <div class="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }
+
+    <!-- Üres állapot -->
+    @if (!isInitialLoading && offers.length === 0) {
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 p-12 text-center">
+        <p class="text-gray-400 text-lg font-medium mb-2">{{ 'tradeHistory.empty.title' | translate }}</p>
+        <p class="text-gray-600 text-sm">{{ 'tradeHistory.empty.subtitle' | translate }}</p>
+      </div>
+    }
+
+    <!-- Kártyák -->
+    @if (!isInitialLoading && offers.length > 0) {
+      <div class="flex flex-col gap-4">
+        @for (offer of offers; track offer.id) {
+          <div class="bg-gray-900 rounded-2xl border p-6 transition-colors"
+            [class]="offer.status === 'REJECTED'
+              ? 'border-red-900/50 bg-red-950/20'
+              : offer.status === 'PENDING'
+              ? 'border-yellow-900/50'
+              : 'border-gray-800'">
+            <div class="flex items-start justify-between gap-4">
+
+              <div class="flex items-start gap-4">
+                <div class="flex flex-col items-center justify-center w-14 h-14 rounded-xl shrink-0"
+                  [style.background-color]="offer.offerType === 'BUY' ? 'rgba(21, 128, 61, 0.2)' : 'rgba(185, 28, 28, 0.2)'"
+                  [style.border]="offer.offerType === 'BUY' ? '1px solid #15803d' : '1px solid #b91c1c'">
+                  @if (offer.offerType === 'BUY') {
+                    <lucide-icon [img]="TrendingUp" class="w-5 h-5 text-green-400"></lucide-icon>
+                  } @else {
+                    <lucide-icon [img]="TrendingDown" class="w-5 h-5 text-red-400"></lucide-icon>
+                  }
+                  <span class="text-xs font-bold mt-0.5"
+                    [style.color]="offer.offerType === 'BUY' ? '#4ade80' : '#f87171'">
+                    {{ offer.offerType }}
+                  </span>
+                </div>
+
+                <div>
+                  <div class="flex items-center gap-3 mb-2">
+                    @if (isAdmin || isDispatcher) {
+                      <span class="text-white font-semibold">{{ offer.companyName }}</span>
+                    }
+                    <!-- Színes resourceType badge -->
+                    <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+                      [style.color]="offer.resourceTypeColor"
+                      [style.background-color]="offer.resourceTypeColor + '26'">
+                      {{ offer.resourceType }}
+                    </span>
+                    <!-- Status badge -->
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full"
+                      [class]="offer.status === 'COMPLETED'
+                        ? 'bg-emerald-500/15 text-emerald-400'
+                        : offer.status === 'PENDING'
+                        ? 'bg-yellow-500/15 text-yellow-400'
+                        : 'bg-red-500/15 text-red-400'">
+                      {{ 'tradeHistory.status.' + offer.status | translate }}
+                    </span>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-4 text-sm text-gray-400">
+                    <span>{{ 'tradeHistory.fields.quantity' | translate }}
+                      <span class="text-white font-medium">{{ offer.quantity | number:'1.0-2' }} {{ offer.resourceTypeUnit }}</span>
+                    </span>
+                    <span>{{ 'tradeHistory.fields.unitPrice' | translate }}
+                      <span class="text-white font-medium">{{ offer.pricePerUnit | number:'1.0-2' }} {{ 'tradeHistory.creditUnit' | translate }}</span>
+                    </span>
+                    <span>{{ 'tradeHistory.fields.date' | translate }}
+                      <span class="text-white font-medium">{{ offer.createdAt | date:'yyyy.MM.dd HH:mm' }}</span>
+                    </span>
+                    @if (offer.resolvedAt) {
+                      <span>{{ 'tradeHistory.fields.resolvedAt' | translate }}
+                        <span class="text-white font-medium">{{ offer.resolvedAt | date:'yyyy.MM.dd HH:mm' }}</span>
+                      </span>
+                    }
+                  </div>
+                  @if (offer.status === 'REJECTED' && offer.notes) {
+                    <div class="mt-2 flex items-start gap-2 bg-red-900/20 border border-red-800/40 rounded-lg px-3 py-2">
+                      <p class="text-red-400 text-xs">
+                        <span class="font-semibold">{{ 'tradeHistory.fields.rejectionReason' | translate }}:</span>
+                        {{ offer.notes }}
+                      </p>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Összeg -->
+              <div class="text-right shrink-0">
+                <p class="text-2xl font-bold"
+                  [style.color]="offer.offerType === 'BUY' ? '#f87171' : '#4ade80'">
+                  {{ offer.offerType === 'BUY' ? '-' : '+' }}{{ offer.totalPrice | number:'1.0-2' }}
+                </p>
+                <p class="text-gray-500 text-xs">{{ 'tradeHistory.creditUnit' | translate }}</p>
+              </div>
+
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Pagination -->
+      @if (totalPages > 1) {
+        <div class="flex items-center justify-between mt-6">
+          <span class="text-gray-500 text-sm">
+            {{ 'tradeHistory.pagination.total' | translate:{ count: totalElements } }}
+          </span>
+          <div class="flex items-center gap-2">
+            <button
+              (click)="prevPage()"
+              [disabled]="page === 0"
+              class="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-lg text-gray-400 text-sm disabled:opacity-40 hover:bg-gray-800 transition-colors">
+              ←
+            </button>
+            <span class="text-gray-500 text-sm">{{ page + 1 }} / {{ totalPages }}</span>
+            <button
+              (click)="nextPage()"
+              [disabled]="page >= totalPages - 1"
+              class="px-3 py-1.5 bg-gray-900 border border-gray-800 rounded-lg text-gray-400 text-sm disabled:opacity-40 hover:bg-gray-800 transition-colors">
+              →
+            </button>
+          </div>
+        </div>
+      }
+    }
+
+  </div>
+</div>

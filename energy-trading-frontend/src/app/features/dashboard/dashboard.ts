@@ -21,6 +21,8 @@ import { MaxQuantityModalComponent } from '../../shared/components/modals/max-qu
 import { ConfirmTradeModalComponent } from '../../shared/components/modals/confirm-trade-modal/confirm-trade-modal';
 import { HostListener } from '@angular/core';
 import { LucideAngularModule, TriangleAlert, Trash2, Plus, CircleDollarSign } from 'lucide-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ErrorService } from '../../core/services/error.service';
 
 interface StorageItem {
   data: any;
@@ -32,7 +34,7 @@ interface StorageItem {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [DecimalPipe, NgStyle, FormsModule, LucideAngularModule],
+  imports: [DecimalPipe, NgStyle, FormsModule, LucideAngularModule, TranslateModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -96,6 +98,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public tradingService: TradingService,
     public dispatcherService: DispatcherService,
     private modalService: ModalService,
+    private translate: TranslateService,
+    private errorService: ErrorService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -295,7 +299,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       parseFloat(this.quantity)
     ).subscribe({
       next: () => {
-        this.toastService.success('Cserekérelem sikeresen elküldve!');
+        this.toastService.success(this.translate.instant('dashboard.toasts.tradeSent'));
         this.quantity = '';
         this.isSubmitting = false;
         this.tradingService.isSubmitting = false;
@@ -304,7 +308,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        this.toastService.error(err.error?.error ?? 'Hiba történt a kereskedés során!');
+        this.toastService.error(this.errorService.getErrorMessage(err));
         this.isSubmitting = false;
         this.tradingService.isSubmitting = false;
         this.loadData();
@@ -487,7 +491,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const ref = this.modalService.open(PriceModalComponent);
     ref.closed.subscribe(result => { 
       if(result === 'saved'){
-        this.toastService.success('Ár sikeresen frissítve!');
+        this.toastService.success(this.translate.instant('dashboard.toasts.priceSaved'));
         this.loadData();
       }
     })
@@ -502,7 +506,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
     ref.closed.subscribe(result => {
       if(result === 'added'){
-        this.toastService.success('Mennyiség sikeresen hozzáadva!');
+        this.toastService.success(this.translate.instant('dashboard.toasts.quantityAdded'));
         this.loadData();
       }
     });
@@ -516,7 +520,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
     ref.closed.subscribe(result => {
       if (result === 'updated') {
-        this.toastService.success('Maximum kapacitás sikeresen frissítve!');
+        this.toastService.success(this.translate.instant('dashboard.toasts.maxCapacityUpdated'));
         this.loadData();
       }
     });
@@ -534,18 +538,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   openDeleteResourceModal(item: any){
     const ref = this.modalService.open(ConfirmDeleteModalComponent, {
-      title: 'Nyersanyag törlése',
+      title: this.translate.instant('dashboard.deleteModal.title'),
       itemName: item.data.resourceType,
-      message: 'nyersanyagot? Ez a művelet nem visszavonható, minden kapcsolódó adat törlődik.'
+      message: this.translate.instant('dashboard.deleteModal.message')
     });
     ref.closed.subscribe(result => {
       if (result === 'confirmed') {
         this.resourceTypeService.deleteResourceType(item.data.resourceTypeId).subscribe({
           next: () => {
-            this.toastService.success('Nyersanyag sikeresen törölve!');
+            this.toastService.success(this.translate.instant('dashboard.toasts.resourceDeleted'));
             this.loadResourceTypes();
           },
-          error: (err) => this.toastService.error(err.error?.error ?? 'Hiba történt!')
+          error: (err) => this.toastService.error(this.errorService.getErrorMessage(err))
         });
       }
     });
@@ -583,10 +587,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return !!this.quantity && parseFloat(this.quantity) > 0;
   }
 
+  // ── Live preview feedback ─────────────────────────────────
   get previewValidationMessage(): string | null {
-    if (!this.isQuantityValid || !this.selectedResource) {
-      return null;
-    }
+    if (!this.isQuantityValid || !this.selectedResource) return null;
 
     const requestedQuantity = parseFloat(this.quantity);
     const centralItem = this.storageItems.find(
@@ -594,7 +597,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     );
 
     if (!centralItem) {
-      return 'A kiválasztott nyersanyag nem található a központi készletben.';
+      return this.translate.instant('dashboard.validation.resourceNotFound');
     }
 
     const centralQuantity = parseFloat(centralItem.data.quantity);
@@ -602,7 +605,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     if (this.offerType === 'BUY') {
       if (requestedQuantity > centralQuantity) {
-        return 'Nincs elég nyersanyag a központi tárolóban ehhez a vásárláshoz.';
+        return this.translate.instant('dashboard.validation.notEnoughCentral');
       }
       return null;
     }
@@ -613,11 +616,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const companyQuantity = companyItem ? parseFloat(companyItem.quantity) : 0;
 
     if (requestedQuantity > companyQuantity) {
-      return 'Nincs elég nyersanyag a cég készletében ehhez az eladáshoz.';
+      return this.translate.instant('dashboard.validation.notEnoughCompany');
     }
 
     if (centralQuantity + requestedQuantity > centralMaxQuantity) {
-      return 'Nincs elég hely a központi tárolóban ehhez az eladáshoz.';
+      return this.translate.instant('dashboard.validation.notEnoughSpace');
     }
 
     return null;

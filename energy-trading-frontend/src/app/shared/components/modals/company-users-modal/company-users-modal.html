@@ -2,7 +2,7 @@
 
   <div class="flex items-center justify-between p-6 border-b border-gray-800">
     <div>
-      <h2 class="text-white font-semibold">Felhasználók</h2>
+      <h2 class="text-white font-semibold">{{ 'modals.companyUsers.title' | translate }}</h2>
       <p class="text-gray-500 text-xs mt-0.5">{{ data.companyName }}</p>
     </div>
     <button (click)="close()" class="text-gray-500 hover:text-gray-300 transition-colors">
@@ -21,13 +21,12 @@
 
     @if (!isLoading && users.length === 0) {
       <div class="text-center py-8">
-        <p class="text-gray-400 text-sm font-medium mb-1">Nincsenek felhasználók</p>
-        <p class="text-gray-600 text-xs">Adj hozzá tagot a + Tag gombbal.</p>
+        <p class="text-gray-400 text-sm font-medium mb-1">{{ 'modals.companyUsers.empty.title' | translate }}</p>
+        <p class="text-gray-600 text-xs">{{ 'modals.companyUsers.empty.subtitle' | translate }}</p>
       </div>
     }
 
     @if (!isLoading && users.length > 0) {
-      <!-- Pagination -->
       @if (userTotalPages > 1) {
         <div class="flex items-center justify-end gap-2 mb-2">
           <button
@@ -45,7 +44,7 @@
           </button>
         </div>
       }
-      @for (user of users; track user.id) {
+      @for (user of paginatedUsers; track user.id) {
         <div class="flex items-center justify-between p-4 rounded-xl border border-gray-800 bg-gray-800/50 gap-4">
           <div class="flex items-center gap-3 min-w-0 flex-1">
             <div class="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-600/30 flex items-center justify-center">
@@ -58,7 +57,7 @@
               <span
                 class="text-xs font-semibold px-1.5 py-0.5 rounded-full"
                 [class]="user.active ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400'">
-                {{ user.active ? 'Aktív' : 'Inaktív' }}
+                {{ user.active ? ('modals.companyUsers.status.active' | translate) : ('modals.companyUsers.status.inactive' | translate) }}
               </span>
             </div>
           </div>
@@ -66,14 +65,14 @@
             <button
               (click)="resetPassword(user)"
               class="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs font-medium rounded-lg transition-colors">
-              Jelszó reset
+              {{ 'modals.companyUsers.resetPassword' | translate }}
             </button>
             @if (isAdmin) {
               <button
                 (click)="toggleActive(user)"
                 class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
                 [class]="user.active ? 'bg-red-500/15 hover:bg-red-500/25 text-red-400' : 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400'">
-                {{ user.active ? 'Deaktivál' : 'Aktivál' }}
+                {{ user.active ? ('modals.companyUsers.deactivate' | translate) : ('modals.companyUsers.activate' | translate) }}
               </button>
             }
           </div>
@@ -86,7 +85,7 @@
     <button
       (click)="close()"
       class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl transition-colors">
-      Kész
+      {{ 'modals.companyUsers.done' | translate }}
     </button>
   </div>
 

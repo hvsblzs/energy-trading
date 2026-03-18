@@ -1,6 +1,7 @@
 package com.energytrading.backend.controller;
 
 import com.energytrading.backend.dto.PageResponse;
+import com.energytrading.backend.dto.ResetPasswordRequest;
 import com.energytrading.backend.dto.UserRequest;
 import com.energytrading.backend.dto.UserResponse;
 import com.energytrading.backend.model.User;
@@ -83,5 +84,13 @@ public class UserController {
     @GetMapping("/companies/{companyId}")
     public ResponseEntity<List<UserResponse>> getUsersByCompany(@PathVariable("companyId") Long companyId){
         return ResponseEntity.ok(userService.getUsersByCompany(companyId));
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DISPATCHER')")
+    @PatchMapping("/{id}/reset-password")
+    public ResponseEntity<Void> resetPassword(@PathVariable("id") Long id,
+                                              @RequestBody ResetPasswordRequest request){
+        userService.resetPassword(id, request.getNewPassword());
+        return ResponseEntity.noContent().build();
     }
 }

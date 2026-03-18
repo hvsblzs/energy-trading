@@ -73,7 +73,7 @@ public class UserService {
 
     public UserResponse createUserForCompany(Long companyId, UserRequest request){
         if(userRepository.existsByEmail(request.getEmail())){
-            throw new BusinessException("Ez az email cím már foglalt: " + request.getEmail());
+            throw new BusinessException("EMAIL_ALREADY_EXISTS");
         }
 
         Company company = companyRepository.findById(companyId)
@@ -152,6 +152,16 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         user.setActive(true);
         this.userRepository.save(user);
+    }
+
+    public void resetPassword(Long id, String newPassword){
+        if(newPassword == null || newPassword.length() < 6){
+            throw new BusinessException("PASSWORD_TOO_SHORT");
+        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     public UserResponse mapToResponse(User user){

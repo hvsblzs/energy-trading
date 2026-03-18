@@ -55,4 +55,8 @@ export class UserService {
     getUsersByCompany(companyId: number){
         return this.http.get<any[]>(`${this.apiUrl}/users/companies/${companyId}`);
     }
+
+    resetPassword(userId: number, newPassword: string) {
+        return this.http.patch<void>(`${this.apiUrl}/users/${userId}/reset-password`, {newPassword});
+    }
 }

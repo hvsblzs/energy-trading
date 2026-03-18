@@ -45,9 +45,9 @@ public class AuthController {
                     user.getCompany() != null ? user.getCompany().getId() : null
             ));
         } catch (DisabledException e) {
-            throw new BusinessException("A felhasználó deaktiválva van!");
+            throw new BusinessException("USER_DISABLED");
         } catch (BadCredentialsException e) {
-            throw new BusinessException("Hibás email vagy jelszó!");
+            throw new BusinessException("BAD_CREDENTIALS");
         }
     }
 }

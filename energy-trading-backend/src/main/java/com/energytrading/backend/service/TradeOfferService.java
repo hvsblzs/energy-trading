@@ -1,5 +1,6 @@
 package com.energytrading.backend.service;
 
+import com.energytrading.backend.dto.PageResponse;
 import com.energytrading.backend.dto.PricingResponse;
 import com.energytrading.backend.dto.TradeOfferRequest;
 import com.energytrading.backend.dto.TradeOfferResponse;
@@ -13,6 +14,10 @@ import com.energytrading.backend.model.enums.Role;
 import com.energytrading.backend.model.enums.Status;
 import com.energytrading.backend.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +45,7 @@ public class TradeOfferService {
     @Transactional
     public TradeOfferResponse createTradeOffer(TradeOfferRequest request, User currentUser){
         if(!currentUser.getCompany().isActive()){
-            throw new BusinessException("A cég deaktiválva van, kereskedés nem lehetséges!");
+            throw new BusinessException("COMPANY_INACTIVE");
         }
 
         ResourceType resourceType = resourceTypeRepository.findByName(request.getResourceType())
@@ -58,20 +63,20 @@ public class TradeOfferService {
 
         CentralStorage centralStorage = centralStorageRepository
                 .findByResourceType(resourceType)
-                .orElseThrow(() -> new BusinessException("Nincs ilyen nyersanyag a központi tárolóban!"));
+                .orElseThrow(() -> new BusinessException("RESOURCE_NOT_IN_STORAGE"));
 
         // Quantity check
         if(request.getQuantity().compareTo(BigDecimal.ZERO) <= 0){
-            throw new BusinessException("A mennyiség csak pozitív szám lehet!");
+            throw new BusinessException("AMOUNT_MUST_BE_POSITIVE");
         }
 
         // BUY validáció
         if(request.getOfferType() == OfferType.BUY){
             if(currentUser.getCompany().getCreditBalance().compareTo(totalPrice) < 0){
-                throw new BusinessException("Nincs elég kredit a vásárláshoz!");
+                throw new BusinessException("INSUFFICIENT_CREDIT_BUY");
             }
             if(centralStorage.getQuantity().compareTo(request.getQuantity()) < 0){
-                throw new BusinessException("Nincs elég nyersanyag a központi tárolóban!");
+                throw new BusinessException("INSUFFICIENT_STORAGE_BUY");
             }
         }
 
@@ -79,12 +84,12 @@ public class TradeOfferService {
         if(request.getOfferType() == OfferType.SELL){
             CompanyInventory inventory = companyInventoryRepository
                     .findByCompanyAndResourceType(currentUser.getCompany(), resourceType)
-                    .orElseThrow(() -> new BusinessException("Nincs ilyen nyersanyag a készletben."));
+                    .orElseThrow(() -> new BusinessException("RESOURCE_NOT_IN_INVENTORY"));
             if(inventory.getQuantity().compareTo(request.getQuantity()) < 0){
-                throw new BusinessException("Nincs elég nyersanyag az eladáshoz!");
+                throw new BusinessException("INSUFFICIENT_INVENTORY_SELL");
             }
             if(request.getQuantity().add(centralStorage.getQuantity()).compareTo(centralStorage.getMaxQuantity()) > 0){
-                throw new BusinessException("Nincs elég hely a központi tárolóban!");
+                throw new BusinessException("INSUFFICIENT_SPACE_SELL");
             }
 
         }
@@ -237,6 +242,60 @@ public class TradeOfferService {
         return mapToResponse(saved);
     }
 
+    public PageResponse<TradeOfferResponse> getTradeHistory(
+            int page, int size, String sort, String direction,
+            String status, String offerType, String resourceType,
+            String search, User currentUser){
+
+        Sort.Direction dir = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        String sortField = switch (sort) {
+            case "totalPrice" -> "totalPrice";
+            case "quantity" -> "quantity";
+            default -> "createdAt";
+        };
+        Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sortField));
+
+        Status statusEnum = null;
+        if(status != null && !status.isBlank()){
+            try{ statusEnum = Status.valueOf(status); } catch (IllegalArgumentException ignored){}
+        }
+
+        OfferType offerTypeEnum = null;
+        if (offerType != null && !offerType.isBlank()) {
+            try { offerTypeEnum = OfferType.valueOf(offerType); } catch (IllegalArgumentException ignored) {}
+        }
+
+        // COMPANY_USER csak a saját cégét látja
+        Long companyId = null;
+        if(currentUser.getRole() == Role.COMPANY_USER){
+            companyId = currentUser.getCompany().getId();
+        }
+
+        String searchParam = (search == null || search.isBlank()) ? null : search;
+
+        Page<TradeOffers> result = tradeOffersRepository.findHistory(
+                companyId,
+                statusEnum,
+                offerTypeEnum,
+                resourceType == null || resourceType.isBlank() ? null : resourceType,
+                searchParam,
+                pageable
+        );
+
+        List<TradeOfferResponse> responses = result.getContent().stream()
+                .map(this::mapToResponse)
+                .toList();
+
+        return new PageResponse<>(
+                responses,
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages(),
+                result.isLast()
+        );
+    }
+
     public TradeOfferResponse mapToResponse(TradeOffers tradeOffer){
         TradeOfferResponse response = new TradeOfferResponse();
         response.setId(tradeOffer.getId());
@@ -252,6 +311,8 @@ public class TradeOfferService {
         response.setResolvedAt(tradeOffer.getResolvedAt());
         response.setResolvedByUserId(tradeOffer.getResolvedByUser() != null ? tradeOffer.getResolvedByUser().getId() : null);
         response.setNotes(tradeOffer.getNotes());
+        response.setResourceTypeColor(tradeOffer.getResourceType().getColor());
+        response.setResourceTypeUnit(tradeOffer.getResourceType().getUnit());
         return response;
     }
 }

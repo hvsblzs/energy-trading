@@ -2,7 +2,7 @@
 
   <div class="flex items-center justify-between p-6 border-b border-gray-800">
     <div>
-      <h2 class="text-white font-semibold">Nyersanyagok</h2>
+      <h2 class="text-white font-semibold">{{ 'modals.resourceAssignment.title' | translate }}</h2>
       <p class="text-gray-500 text-xs mt-0.5">{{ data.companyName }}</p>
     </div>
     <button (click)="close()" class="text-gray-500 hover:text-gray-300 transition-colors">
@@ -14,14 +14,13 @@
 
   <div class="p-6 flex flex-col gap-3">
 
-    <!-- Kereső + pagination -->
     <div class="flex items-center justify-between gap-2">
       <div class="relative flex-1">
         <input
           [(ngModel)]="resourceSearch"
           (ngModelChange)="onResourceSearch()"
           type="text"
-          placeholder="Keresés..."
+          [placeholder]="'modals.resourceAssignment.search' | translate"
           class="w-full bg-gray-800 border border-gray-700 rounded-xl pl-9 pr-4 py-2 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
         <svg class="w-4 h-4 text-gray-500 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -46,7 +45,6 @@
       }
     </div>
 
-    <!-- Lista -->
     @if (isLoading) {
       <div class="flex items-center justify-center h-24">
         <div class="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
@@ -54,7 +52,7 @@
     }
     @if (!isLoading) {
       @if (filteredResourceTypes.length === 0) {
-        <div class="text-center text-gray-500 text-sm py-4">Nincs találat</div>
+        <div class="text-center text-gray-500 text-sm py-4">{{ 'modals.resourceAssignment.noResult' | translate }}</div>
       }
       @for (resourceType of paginatedResourceTypes; track resourceType.id) {
         <div
@@ -74,7 +72,7 @@
             [class]="hasResource(resourceType.name)
               ? 'bg-red-500/15 hover:bg-red-500/25 text-red-400'
               : 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400'">
-            {{ hasResource(resourceType.name) ? 'Eltávolít' : 'Hozzáad' }}
+            {{ hasResource(resourceType.name) ? ('modals.resourceAssignment.remove' | translate) : ('modals.resourceAssignment.add' | translate) }}
           </button>
         </div>
       }
@@ -85,7 +83,7 @@
   <div class="flex items-center justify-end p-6 border-t border-gray-800">
     <button (click)="close()"
       class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl transition-colors">
-      Kész
+      {{ 'modals.resourceAssignment.done' | translate }}
     </button>
   </div>
 

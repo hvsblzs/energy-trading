@@ -1,51 +1,48 @@
 <div class="min-h-screen bg-gray-950 p-6">
   <div class="max-w-4xl mx-auto">
 
-    <!-- Hero -->
     <div class="text-center py-16">
       <div class="inline-flex items-center gap-2 bg-indigo-600/15 border border-indigo-600/30 text-indigo-400 text-xs font-semibold px-4 py-1.5 rounded-full mb-6">
         <lucide-icon [img]="Zap" class="w-3.5 h-3.5"></lucide-icon>
-        Energy Trading Platform
+        {{ 'home.badge' | translate }}
       </div>
       <h1 class="text-4xl font-bold text-white mb-4">
-        Nyersanyag kereskedelem<br>
-        <span class="text-indigo-400">egyszerűen és hatékonyan</span>
+        {{ 'home.heroTitle1' | translate }}<br>
+        <span class="text-indigo-400">{{ 'home.heroTitle2' | translate }}</span>
       </h1>
       <p class="text-gray-400 text-lg max-w-2xl mx-auto">
-        Platformunk lehetővé teszi a cégek számára, hogy valós időben kereskedjenek energiahordozókkal és nyersanyagokkal egy biztonságos, átlátható rendszeren keresztül.
+        {{ 'home.heroSubtitle' | translate }}
       </p>
     </div>
 
-    <!-- Feature kártyák -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
       <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
         <div class="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-600/30 flex items-center justify-center mb-4">
           <lucide-icon [img]="ChartLine" class="w-5 h-5 text-indigo-400"></lucide-icon>
         </div>
-        <h3 class="text-white font-semibold mb-2">Valós idejű kereskedés</h3>
-        <p class="text-gray-500 text-sm">Adjon le vételi és eladási ajánlatokat nyersanyagokra, amelyeket a diszpécser valós időben hagy jóvá.</p>
+        <h3 class="text-white font-semibold mb-2">{{ 'home.features.trading.title' | translate }}</h3>
+        <p class="text-gray-500 text-sm">{{ 'home.features.trading.description' | translate }}</p>
       </div>
 
       <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
         <div class="w-10 h-10 rounded-xl bg-emerald-600/20 border border-emerald-600/30 flex items-center justify-center mb-4">
           <lucide-icon [img]="WareHouse" class="w-5 h-5 text-emerald-400"></lucide-icon>
         </div>
-        <h3 class="text-white font-semibold mb-2">Készletkezelés</h3>
-        <p class="text-gray-500 text-sm">Kövesse nyomon cége aktuális nyersanyag készleteit, és tekintse meg a központi raktár pillanatnyi állapotát.</p>
+        <h3 class="text-white font-semibold mb-2">{{ 'home.features.inventory.title' | translate }}</h3>
+        <p class="text-gray-500 text-sm">{{ 'home.features.inventory.description' | translate }}</p>
       </div>
 
       <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
         <div class="w-10 h-10 rounded-xl bg-yellow-600/20 border border-yellow-600/30 flex items-center justify-center mb-4">
           <lucide-icon [img]="CircleDollarSign" class="w-5 h-5 text-yellow-400"></lucide-icon>
         </div>
-        <h3 class="text-white font-semibold mb-2">Kredit rendszer</h3>
-        <p class="text-gray-500 text-sm">A kereskedések kreditek segítségével zajlanak. Az egyenleg valós időben frissül minden jóváhagyott tranzakció után.</p>
+        <h3 class="text-white font-semibold mb-2">{{ 'home.features.credits.title' | translate }}</h3>
+        <p class="text-gray-500 text-sm">{{ 'home.features.credits.description' | translate }}</p>
       </div>
     </div>
 
-    <!-- Hogyan működik -->
     <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 mb-8">
-      <h2 class="text-white font-bold text-xl mb-6">Hogyan működik?</h2>
+      <h2 class="text-white font-bold text-xl mb-6">{{ 'home.howItWorks.title' | translate }}</h2>
       <div class="flex flex-col gap-6">
 
         <div class="flex items-start gap-4">
@@ -53,8 +50,8 @@
             <span class="text-indigo-400 text-sm font-bold">1</span>
           </div>
           <div>
-            <h4 class="text-white font-medium mb-1">Ajánlat leadása</h4>
-            <p class="text-gray-500 text-sm">A Marketplace oldalon válasszon nyersanyagot, adja meg a kívánt mennyiséget, majd küldje el vételi vagy eladási ajánlatát.</p>
+            <h4 class="text-white font-medium mb-1">{{ 'home.howItWorks.step1.title' | translate }}</h4>
+            <p class="text-gray-500 text-sm">{{ 'home.howItWorks.step1.description' | translate }}</p>
           </div>
         </div>
 
@@ -63,8 +60,8 @@
             <span class="text-indigo-400 text-sm font-bold">2</span>
           </div>
           <div>
-            <h4 class="text-white font-medium mb-1">Diszpécser jóváhagyás</h4>
-            <p class="text-gray-500 text-sm">A beérkező ajánlatokat a diszpécser átvizsgálja és jóváhagyja vagy elutasítja. Jóváhagyás esetén a tranzakció automatikusan végrehajtódik.</p>
+            <h4 class="text-white font-medium mb-1">{{ 'home.howItWorks.step2.title' | translate }}</h4>
+            <p class="text-gray-500 text-sm">{{ 'home.howItWorks.step2.description' | translate }}</p>
           </div>
         </div>
 
@@ -73,36 +70,34 @@
             <span class="text-indigo-400 text-sm font-bold">3</span>
           </div>
           <div>
-            <h4 class="text-white font-medium mb-1">Egyenleg és készlet frissítés</h4>
-            <p class="text-gray-500 text-sm">A jóváhagyást követően a kredit egyenlegek és a nyersanyag készletek valós időben frissülnek, WebSocket kapcsolaton keresztül.</p>
+            <h4 class="text-white font-medium mb-1">{{ 'home.howItWorks.step3.title' | translate }}</h4>
+            <p class="text-gray-500 text-sm">{{ 'home.howItWorks.step3.description' | translate }}</p>
           </div>
         </div>
 
       </div>
     </div>
 
-    <!-- Kredit vásárlás banner -->
     <div class="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 border border-indigo-600/30 rounded-2xl p-8 mb-8 flex items-center justify-between gap-6">
       <div class="flex items-center gap-4">
         <div class="w-12 h-12 rounded-xl bg-indigo-600/30 border border-indigo-600/40 flex items-center justify-center shrink-0">
           <lucide-icon [img]="CreditCard" class="w-6 h-6 text-indigo-400"></lucide-icon>
         </div>
         <div>
-          <h3 class="text-white font-semibold mb-1">Tölts fel kreditet</h3>
-          <p class="text-gray-400 text-sm">Vásárolj kreditet valódi pénzért, és kezdj el azonnal kereskedni. Biztonságos fizetés, azonnali jóváírás.</p>
+          <h3 class="text-white font-semibold mb-1">{{ 'home.creditBanner.title' | translate }}</h3>
+          <p class="text-gray-400 text-sm">{{ 'home.creditBanner.description' | translate }}</p>
         </div>
       </div>
       <a href="/profile" class="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl transition-colors">
         <lucide-icon [img]="CreditCard" class="w-4 h-4"></lucide-icon>
-        Kredit vásárlás
+        {{ 'home.creditBanner.button' | translate }}
       </a>
     </div>
 
-    <!-- CTA -->
     <div class="text-center">
       <a href="/marketplace" class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl transition-colors">
         <lucide-icon [img]="ArrowRight" class="w-4 h-4"></lucide-icon>
-        Ugrás a Marketplace-re
+        {{ 'home.cta' | translate }}
       </a>
     </div>
 

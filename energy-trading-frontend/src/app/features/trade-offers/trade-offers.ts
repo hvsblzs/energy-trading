@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { TradeOfferService } from '../../core/services/trade-offers.service';
 import { ToastService } from '../../core/services/toast.service';
 import { WebSocketService } from '../../core/services/websocket.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ErrorService } from '../../core/services/error.service';
 
 @Component({
   selector: 'app-trade-offers',
-  imports: [DecimalPipe, DatePipe, FormsModule],
+  imports: [DecimalPipe, DatePipe, FormsModule, TranslateModule],
   templateUrl: './trade-offers.html',
   styleUrl: './trade-offers.css',
 })
@@ -26,6 +28,8 @@ export class TradeOffersComponent implements OnInit, OnDestroy{
     private tradeOfferService: TradeOfferService,
     private toastService: ToastService,
     private webSocketService: WebSocketService,
+    private translate: TranslateService,
+    private errorService: ErrorService,
     private cdr: ChangeDetectorRef
   ){}
 
@@ -74,14 +78,14 @@ export class TradeOffersComponent implements OnInit, OnDestroy{
     this.isSubmitting = true;
     this.tradeOfferService.approveTradeOffer(this.selectedOffer.id).subscribe({
       next: () => {
-        this.toastService.success("Cserekérelem sikeresen elfogadva!");
+        this.toastService.success(this.translate.instant('tradeOffers.toasts.approved'));
         this.showApproveModal = false;
         this.selectedOffer = null;
         this.isSubmitting = false;
         this.loadPendingOffers();
       },
       error: (err) => {
-        this.toastService.error(err.error?.error ?? 'Hiba történt!');
+        this.toastService.error(this.errorService.getErrorMessage(err));
         this.showApproveModal = false;
         this.isSubmitting = false;
       }
@@ -93,7 +97,7 @@ export class TradeOffersComponent implements OnInit, OnDestroy{
     this.isSubmitting = true;
     this.tradeOfferService.rejectTradeOffer(this.selectedOffer.id, this.rejectNotes).subscribe({
       next: () => {
-        this.toastService.success('Trade offer rejected.');
+        this.toastService.success(this.translate.instant('tradeOffers.toasts.rejected'));
         this.showRejectModal = false;
         this.selectedOffer = null;
         this.rejectNotes = '';
@@ -101,7 +105,7 @@ export class TradeOffersComponent implements OnInit, OnDestroy{
         this.loadPendingOffers();
       },
       error: (err) => {
-        this.toastService.error(err.error?.error ?? 'Hiba történt!');
+        this.toastService.error(this.errorService.getErrorMessage(err));
         this.showRejectModal = false;
         this.isSubmitting = false;
       }

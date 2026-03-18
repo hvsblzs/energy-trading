@@ -1,0 +1,551 @@
+{
+  "nav": {
+    "home": "Főoldal",
+    "marketplace": "Marketplace",
+    "inventory": "Készlet",
+    "tradeOffers": "Kérelmek",
+    "companies": "Cégek",
+    "users": "Felhasználók",
+    "priceHistory": "Árfolyam",
+    "tradeHistory": "Előzmények",
+    "profile": "Profil",
+    "logout": "Kijelentkezés",
+    "creditUnit": "kredit",
+    "roles": {
+      "ADMIN": "Admin",
+      "DISPATCHER": "Diszpécser",
+      "COMPANY_USER": "Felhasználó"
+    }
+  },
+  "dashboard": {
+    "title": "Marketplace",
+    "subtitle": "Kereskedj és kövesd a központi tároló készleteit",
+    "newResource": "Új nyersanyag",
+    "managePrices": "Árak kezelése",
+    "loading": "Betöltés...",
+    "search": "Keresés...",
+    "lowInventory": "Low Inventory",
+    "refill": "+ Feltöltés",
+    "maxCapacity": "↑ Max kapacitás",
+    "trading": {
+      "title": "Kereskedés",
+      "resource": "Nyersanyag",
+      "searchResource": "Keresés...",
+      "noResult": "Nincs találat",
+      "type": "Típus",
+      "quantity": "Mennyiség",
+      "quantityPlaceholder": "Mennyiség",
+      "unitPrice": "Egységár:",
+      "credits": "kredit",
+      "submitting": "Elküldés...",
+      "requestTrade": "Kereskedési kérelem küldése",
+      "buy": "Vásárlás",
+      "sell": "Eladás"
+    },
+    "preview": {
+      "title": "Előnézet",
+      "centralStorage": "Központi készlet",
+      "companyStorage": "Cég készlet"
+    },
+    "stats": {
+      "title": "Statisztikák",
+      "daily": "Napi",
+      "weekly": "Heti",
+      "totalCredit": "Összes kredit mozgás",
+      "creditUnit": "kredit",
+      "totalQuantity": "Összes kereskedett mennyiség",
+      "totalCreditValue": "Összes kredit érték",
+      "noTransactions": "Nem volt tranzakció ebben a periódusban."
+    },
+    "toasts": {
+      "tradeSent": "Cserekérelem sikeresen elküldve!",
+      "tradeError": "Hiba történt a kereskedés során!",
+      "priceSaved": "Ár sikeresen frissítve!",
+      "quantityAdded": "Mennyiség sikeresen hozzáadva!",
+      "maxCapacityUpdated": "Maximum kapacitás sikeresen frissítve!",
+      "resourceDeleted": "Nyersanyag sikeresen törölve!",
+      "deleteError": "Hiba történt a törlés során!"
+    },
+    "validation": {
+      "resourceNotFound": "A kiválasztott nyersanyag nem található a központi készletben.",
+      "notEnoughCentral": "Nincs elég nyersanyag a központi tárolóban ehhez a vásárláshoz.",
+      "notEnoughCompany": "Nincs elég nyersanyag a cég készletében ehhez az eladáshoz.",
+      "notEnoughSpace": "Nincs elég hely a központi tárolóban ehhez az eladáshoz."
+    },
+    "deleteModal": {
+      "title": "Nyersanyag törlése",
+      "message": "nyersanyagot? Ez a művelet nem visszavonható, minden kapcsolódó adat törlődik."
+    }
+  },
+  "tradeOffers": {
+    "title": "Kereskedési kérelmek",
+    "subtitle": "Függőben lévő kereskedési kérelmek",
+    "refresh": "Frissítés",
+    "loading": "Betöltés...",
+    "empty": {
+      "title": "Nincs függőben lévő kérelem",
+      "subtitle": "A jóváhagyásra váró kérelmek itt fognak megjelenni."
+    },
+    "fields": {
+      "quantity": "Mennyiség:",
+      "unitPrice": "Egységár:",
+      "total": "Összesen:",
+      "company": "Cég:",
+      "type": "Típus:"
+    },
+    "reject": "Elutasítás",
+    "approve": "Elfogadás",
+    "approveModal": {
+      "title": "Kérelem elfogadása",
+      "confirmButton": "Megerősítés",
+      "processing": "Feldolgozás..."
+    },
+    "rejectModal": {
+      "title": "Kérelem elutasítása",
+      "notesLabel": "Indoklás (opcionális)",
+      "notesPlaceholder": "Add meg az elutasítás okát...",
+      "confirmButton": "Megerősítés",
+      "processing": "Feldolgozás..."
+    },
+    "cancel": "Mégse",
+    "creditUnit": "kredit",
+    "toasts": {
+      "approved": "Cserekérelem sikeresen elfogadva!",
+      "rejected": "Cserekérelem sikeresen elutasítva!",
+      "error": "Hiba történt!"
+    }
+  },
+  "companies": {
+    "title": "Cégek",
+    "subtitle": "Cégek és felhasználók kezelése",
+    "newCompany": "Új cég",
+    "loading": "Betöltés...",
+    "search": "Keresés név vagy email alapján...",
+    "filters": {
+      "label": "Szűrők",
+      "status": "Állapot",
+      "active": "Aktív",
+      "inactive": "Inaktív"
+    },
+    "sort": {
+      "label": "Rendezés",
+      "nameAsc": "Név A-Z",
+      "nameDesc": "Név Z-A",
+      "creditAsc": "Kredit növekvő",
+      "creditDesc": "Kredit csökkenő",
+      "newest": "Legújabb",
+      "oldest": "Legrégebbi"
+    },
+    "empty": {
+      "title": "Nincsenek cégek",
+      "subtitle": "Az újonnan létrehozott cégek itt lesznek láthatók."
+    },
+    "status": {
+      "active": "Aktív",
+      "inactive": "Inaktív"
+    },
+    "menu": {
+      "edit": "Szerkesztés",
+      "resources": "Nyersanyagok",
+      "addMember": "+ Tag",
+      "deactivate": "Deaktivál",
+      "activate": "Aktivál",
+      "delete": "Törlés"
+    },
+    "creditUnit": "kredit",
+    "pagination": {
+      "total": "{{ count }} cég összesen"
+    },
+    "deleteModal": {
+      "title": "Cég törlése",
+      "message": "céget? Ez a művelet nem visszavonható, a hozzá tartozó felhasználó is törlődik."
+    },
+    "toasts": {
+      "deactivated": "Cég deaktiválva!",
+      "activated": "Cég aktiválva!",
+      "deleted": "Cég sikeresen törölve!",
+      "error": "Hiba történt!"
+    }
+  },
+  "users": {
+    "title": "Felhasználók",
+    "subtitle": "Cég felhasználók áttekintése",
+    "search": "Keresés email alapján...",
+    "filters": {
+      "label": "Szűrők",
+      "status": "Állapot",
+      "active": "Aktív",
+      "inactive": "Inaktív"
+    },
+    "sort": {
+      "label": "Rendezés",
+      "emailAsc": "Email A-Z",
+      "emailDesc": "Email Z-A",
+      "newest": "Legújabb",
+      "oldest": "Legrégebbi"
+    },
+    "table": {
+      "user": "Felhasználó",
+      "company": "Cég",
+      "createdAt": "Létrehozva",
+      "status": "Státusz",
+      "actions": "Műveletek"
+    },
+    "status": {
+      "active": "Aktív",
+      "inactive": "Inaktív"
+    },
+    "actions": {
+      "deactivate": "Deaktivál",
+      "activate": "Aktivál"
+    },
+    "empty": "Nincsenek felhasználók",
+    "pagination": {
+      "total": "{{ count }} felhasználó összesen"
+    }
+  },
+  "modals": {
+    "cancel": "Mégse",
+    "close": "Bezárás",
+    "topUpCredits": {
+      "title": "Kredit feltöltés",
+      "amountLabel": "Összeg (HUF)",
+      "amountPlaceholder": "pl. 5000",
+      "creditsToReceive": "Kapott kredit:",
+      "minAmount": "Minimum összeg: 500 Ft",
+      "cardLabel": "Kártyaadatok",
+      "submitting": "Fizetés folyamatban...",
+      "submit": "Fizetés",
+      "success": "Kredit feltöltés sikeres!",
+      "conversionRate": "1 Ft = 10 kredit"
+    },
+    "addQuantity": {
+      "title": "Feltöltés",
+      "currentStock": "Jelenlegi készlet:",
+      "maxCapacity": "Max kapacitás:",
+      "amountLabel": "Hozzáadandó mennyiség",
+      "submitting": "Feltöltés...",
+      "submit": "Feltöltés"
+    },
+    "addUser": {
+      "title": "Új felhasználó",
+      "emailLabel": "Email cím",
+      "emailPlaceholder": "felhasznalo@ceg.com",
+      "passwordLabel": "Jelszó",
+      "submitting": "Létrehozás...",
+      "submit": "Létrehozás",
+      "validation": {
+        "emailRequired": "Érvényes email cím megadása kötelező",
+        "passwordLength": "A jelszónak legalább 6 karakter hosszúnak kell lennie!"
+      },
+      "toasts": {
+        "created": "Felhasználó sikeresen létrehozva!"
+      }
+    },
+    "companyUsers": {
+      "title": "Felhasználók",
+      "empty": {
+        "title": "Nincsenek felhasználók",
+        "subtitle": "Adj hozzá tagot a + Tag gombbal."
+      },
+      "status": {
+        "active": "Aktív",
+        "inactive": "Inaktív"
+      },
+      "resetPassword": "Jelszó reset",
+      "deactivate": "Deaktivál",
+      "activate": "Aktivál",
+      "done": "Kész"
+    },
+    "confirmDelete": {
+      "message": "Biztosan törölni szeretnéd a",
+      "confirm": "Törlés"
+    },
+    "confirmTrade": {
+      "title": "Kereskedés megerősítése",
+      "resource": "Nyersanyag:",
+      "orderType": "Típus:",
+      "quantity": "Mennyiség:",
+      "totalPrice": "Összesen:",
+      "credits": "kredit",
+      "confirm": "Megerősítés"
+    },
+    "createCompany": {
+      "title": "Új cég létrehozása",
+      "companySection": "Cég adatok",
+      "companyName": "Cégnév *",
+      "companyNamePlaceholder": "Pl. Energia Kft.",
+      "email": "Email",
+      "emailPlaceholder": "ceg@email.hu",
+      "phone": "Telefon",
+      "phonePlaceholder": "+36 1 234 5678",
+      "address": "Cím",
+      "addressPlaceholder": "1234 Budapest, Példa utca 1.",
+      "startingCredit": "Kezdő kredit",
+      "userSection": "Felhasználó adatok",
+      "userEmail": "Felhasználó email *",
+      "userEmailPlaceholder": "user@email.hu",
+      "password": "Jelszó *",
+      "submitting": "Létrehozás...",
+      "submit": "Létrehozás",
+      "validation": {
+        "companyNameRequired": "A cégnév megadása kötelező.",
+        "invalidEmail": "Érvénytelen email formátum.",
+        "userEmailRequired": "Érvényes email cím megadása kötelező.",
+        "passwordLength": "A jelszónak legalább 6 karakter hosszúnak kell lennie."
+      },
+      "toasts": {
+        "created": "Cég sikeresen létrehozva!"
+      }
+    },
+    "createResource": {
+      "title": "Új nyersanyag",
+      "nameLabel": "Név *",
+      "namePlaceholder": "Pl. WATER",
+      "unitLabel": "Mértékegység *",
+      "unitPlaceholder": "Pl. m3",
+      "colorLabel": "Szín",
+      "buyPriceLabel": "Központ vételi ár *",
+      "sellPriceLabel": "Központ eladási ár *",
+      "submitting": "Létrehozás...",
+      "submit": "Létrehozás",
+      "toasts": {
+        "created": "Nyersanyag sikeresen létrehozva!"
+      }
+    },
+    "editCompany": {
+      "title": "szerkesztése",
+      "companyName": "Cégnév *",
+      "email": "Email",
+      "phone": "Telefon",
+      "address": "Cím",
+      "submitting": "Mentés...",
+      "submit": "Mentés",
+      "validation": {
+        "nameRequired": "A cégnév megadása kötelező.",
+        "invalidEmail": "Érvénytelen email formátum."
+      },
+      "toasts": {
+        "updated": "Cég sikeresen frissítve!"
+      }
+    },
+    "maxQuantity": {
+      "title": "Max kapacitás módosítása",
+      "currentMax": "Jelenlegi max:",
+      "newMaxLabel": "Új maximum kapacitás",
+      "submitting": "Mentés...",
+      "submit": "Mentés"
+    },
+    "priceModal": {
+      "title": "Árak kezelése",
+      "resourceLabel": "Nyersanyag",
+      "selectPlaceholder": "Válassz...",
+      "searchPlaceholder": "Keresés...",
+      "noResult": "Nincs találat",
+      "buyPrice": "Központi vétel ár:",
+      "sellPrice": "Központi eladási ár:",
+      "submitting": "Mentés...",
+      "submit": "Mentés"
+    },
+    "resourceAssignment": {
+      "title": "Nyersanyagok",
+      "search": "Keresés...",
+      "noResult": "Nincs találat",
+      "remove": "Eltávolít",
+      "add": "Hozzáad",
+      "done": "Kész"
+    },
+    "resetPassword": {
+      "title": "Jelszó visszaállítása",
+      "newPassword": "Új jelszó",
+      "confirmPassword": "Jelszó megerősítése",
+      "submitting": "Mentés...",
+      "submit": "Mentés",
+      "validation": {
+        "passwordLength": "A jelszónak legalább 6 karakter hosszúnak kell lennie!",
+        "passwordMismatch": "A két jelszó nem egyezik!"
+      },
+      "toasts": {
+        "success": "Jelszó sikeresen visszaállítva!"
+      }
+    }
+  },
+  "login": {
+    "subtitle": "Jelentkezz be a folytatáshoz",
+    "emailLabel": "Email",
+    "passwordLabel": "Jelszó",
+    "submitting": "Bejelentkezés...",
+    "submit": "Bejelentkezés",
+    "defaultError": "Hibás email vagy jelszó",
+    "inactivityModal": {
+      "titleInactivity": "Automatikus kijelentkezés",
+      "titleExpired": "Munkamenet lejárt",
+      "inactivityMessage": "5 perc inaktivitás miatt automatikusan kijelentkeztünk.",
+      "expiredMessage": "A munkamenete lejárt. Kérjük, jelentkezzen be újra.",
+      "ok": "Rendben"
+    }
+  },
+  "home": {
+    "badge": "Energy Trading Platform",
+    "heroTitle1": "Nyersanyag kereskedelem",
+    "heroTitle2": "egyszerűen és hatékonyan",
+    "heroSubtitle": "Platformunk lehetővé teszi a cégek számára, hogy valós időben kereskedjenek energiahordozókkal és nyersanyagokkal egy biztonságos, átlátható rendszeren keresztül.",
+    "features": {
+      "trading": {
+        "title": "Valós idejű kereskedés",
+        "description": "Adjon le vételi és eladási ajánlatokat nyersanyagokra, amelyeket a diszpécser valós időben hagy jóvá."
+      },
+      "inventory": {
+        "title": "Készletkezelés",
+        "description": "Kövesse nyomon cége aktuális nyersanyag készleteit, és tekintse meg a központi raktár pillanatnyi állapotát."
+      },
+      "credits": {
+        "title": "Kredit rendszer",
+        "description": "A kereskedések kreditek segítségével zajlanak. Az egyenleg valós időben frissül minden jóváhagyott tranzakció után."
+      }
+    },
+    "howItWorks": {
+      "title": "Hogyan működik?",
+      "step1": {
+        "title": "Ajánlat leadása",
+        "description": "A Marketplace oldalon válasszon nyersanyagot, adja meg a kívánt mennyiséget, majd küldje el vételi vagy eladási ajánlatát."
+      },
+      "step2": {
+        "title": "Diszpécser jóváhagyás",
+        "description": "A beérkező ajánlatokat a diszpécser átvizsgálja és jóváhagyja vagy elutasítja. Jóváhagyás esetén a tranzakció automatikusan végrehajtódik."
+      },
+      "step3": {
+        "title": "Egyenleg és készlet frissítés",
+        "description": "A jóváhagyást követően a kredit egyenlegek és a nyersanyag készletek valós időben frissülnek, WebSocket kapcsolaton keresztül."
+      }
+    },
+    "creditBanner": {
+      "title": "Tölts fel kreditet",
+      "description": "Vásárolj kreditet valódi pénzért, és kezdj el azonnal kereskedni. Biztonságos fizetés, azonnali jóváírás.",
+      "button": "Kredit vásárlás"
+    },
+    "cta": "Ugrás a Marketplace-re"
+  },
+  "ticker": {
+    "bought": "vásárolt",
+    "sold": "eladott",
+    "at": "@",
+    "credits": "kredit"
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Fiók és cég adatok",
+    "loading": "Betöltés...",
+    "account": {
+      "title": "Fiók adatok",
+      "username": "Felhasználónév",
+      "email": "Email cím",
+      "createdAt": "Regisztráció dátuma",
+      "status": "Státusz",
+      "active": "Aktív",
+      "inactive": "Inaktív"
+    },
+    "credits": {
+      "title": "Kredit egyenleg",
+      "unit": "kredit",
+      "topUp": "Kredit feltöltés"
+    },
+    "company": {
+      "title": "Cég adatok",
+      "name": "Cég neve",
+      "phone": "Telefonszám",
+      "address": "Cím"
+    },
+    "roles": {
+      "ADMIN": "Adminisztrátor",
+      "DISPATCHER": "Diszpécser",
+      "COMPANY_USER": "Céges Felhasználó"
+    }
+  },
+  "tradeHistory": {
+    "title": "Kereskedési előzmények",
+    "subtitle": "Korábbi vételi és eladási ajánlatok",
+    "filters": {
+      "label": "Szűrők",
+      "status": "Státusz",
+      "completed": "Teljesített",
+      "rejected": "Elutasított",
+      "pending": "Függőben",
+      "offerType": "Típus",
+      "buy": "Vétel",
+      "sell": "Eladás"
+    },
+    "sort": {
+      "label": "Rendezés",
+      "newest": "Legújabb",
+      "oldest": "Legrégebbi",
+      "totalDesc": "Összeg csökkenő",
+      "totalAsc": "Összeg növekvő",
+      "quantityDesc": "Mennyiség csökkenő",
+      "quantityAsc": "Mennyiség növekvő"
+    },
+    "fields": {
+      "quantity": "Mennyiség",
+      "unitPrice": "Egységár",
+      "total": "Összesen",
+      "date": "Dátum",
+      "resolvedAt": "Lezárva",
+      "rejectionReason": "Elutasítás oka"
+    },
+    "status": {
+      "COMPLETED": "Teljesített",
+      "REJECTED": "Elutasított",
+      "PENDING": "Függőben"
+    },
+    "empty": {
+      "title": "Nincsenek előzmények",
+      "subtitle": "A lezárt kereskedések itt fognak megjelenni."
+    },
+    "pagination": {
+      "total": "{{ count }} tranzakció összesen"
+    },
+    "creditUnit": "kredit",
+    "search": "Keresés cég neve alapján...",
+    "searchResource": "Keresés nyersanyag alapján..."
+  },
+  "priceHistory": {
+    "title": "Árfolyam",
+    "subtitle": "Nyersanyag árváltozások",
+    "search": "Keresés...",
+    "noResult": "Nincs találat",
+    "buyPrice": "Központi vételi ár",
+    "sellPrice": "Központi eladási ár",
+    "xaxisTitle": "Idő",
+    "yaxisTitle": "Kredit"
+  },
+  "errors": {
+    "EMAIL_ALREADY_EXISTS": "Ez az email cím már foglalt.",
+    "COMPANY_NOT_FOUND": "A cég nem található.",
+    "INSUFFICIENT_CREDIT": "Nincs elegendő kredit.",
+    "INSUFFICIENT_STORAGE": "Nincs elegendő készlet a raktárban.",
+    "INSUFFICIENT_INVENTORY": "Nincs elegendő készlet a cégnél.",
+    "GENERIC": "Hiba történt!",
+    "AMOUNT_MUST_BE_POSITIVE": "A mennyiség csak pozitív szám lehet!",
+    "EXCEEDS_MAX_CAPACITY": "A mennyiség meghaladná a maximális kapacitást!",
+    "MAX_LESS_THAN_CURRENT": "A maximum kapacitás nem lehet kisebb a jelenlegi mennyiségnél!",
+    "RESOURCE_ALREADY_ASSIGNED": "A cég már kereskedik ezzel a nyersanyaggal!",
+    "RESOURCE_NOT_ASSIGNED": "A cég nem kereskedik ezzel a nyersanyaggal!",
+    "CREDIT_CANNOT_BE_NEGATIVE": "A kredit nem lehet negatív!",
+    "PRICE_MUST_BE_POSITIVE": "Az ár csak pozitív szám lehet!",
+    "INVALID_RESOURCE_NAME": "A név csak betűket, számokat és alulvonást tartalmazhat!",
+    "RESOURCE_ALREADY_EXISTS": "Ez a nyersanyag már létezik!",
+    "COMPANY_INACTIVE": "A cég deaktiválva van, kereskedés nem lehetséges!",
+    "RESOURCE_NOT_IN_STORAGE": "Nincs ilyen nyersanyag a központi tárolóban!",
+    "INSUFFICIENT_CREDIT_BUY": "Nincs elég kredit a vásárláshoz!",
+    "INSUFFICIENT_STORAGE_BUY": "Nincs elég nyersanyag a központi tárolóban!",
+    "RESOURCE_NOT_IN_INVENTORY": "Nincs ilyen nyersanyag a készletben.",
+    "INSUFFICIENT_INVENTORY_SELL": "Nincs elég nyersanyag az eladáshoz!",
+    "INSUFFICIENT_SPACE_SELL": "Nincs elég hely a központi tárolóban!",
+    "PASSWORD_TOO_SHORT": "A jelszónak legalább 6 karakter hosszúnak kell lennie!",
+    "USER_DISABLED": "A felhasználó deaktiválva van!",
+    "BAD_CREDENTIALS": "Hibás email vagy jelszó!",
+    "AMOUNT_TOO_LOW": "A minimum feltölthető összeg 500 Ft!",
+    "PAYMENT_FAILED": "A fizetés sikertelen volt!",
+    "PAYMENT_NOT_FOUND": "A fizetés nem található!"
+  }
+}

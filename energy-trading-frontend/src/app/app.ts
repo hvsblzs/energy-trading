@@ -3,7 +3,8 @@ import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { NavbarComponent } from './shared/components/navbar/navbar';
 import { TickerComponent } from './shared/components/ticker/ticker';
 import { ToastComponent } from './shared/components/toast/toast';
-import { filter } from 'rxjs/operators';
+import { LanguageService } from './core/services/language.service';
+
 
 @Component({
   selector: 'app-root',
@@ -17,5 +18,10 @@ export class AppComonent {
     return !this.router.url.includes('/login');
   }
 
-  constructor(private router: Router){}
+  constructor(
+    private router: Router,
+    private languageService: LanguageService
+  ){
+    this.languageService.init();
+  }
 }

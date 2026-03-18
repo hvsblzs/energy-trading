@@ -1,25 +1,22 @@
 <div class="min-h-screen bg-gray-950 p-6">
   <div class="max-w-3xl mx-auto">
 
-    <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-2xl font-bold text-white">Profil</h1>
-      <p class="text-gray-400 text-sm mt-1">Fiók és cég adatok</p>
+      <h1 class="text-2xl font-bold text-white">{{ 'profile.title' | translate }}</h1>
+      <p class="text-gray-400 text-sm mt-1">{{ 'profile.subtitle' | translate }}</p>
     </div>
 
-    <!-- Loading -->
     @if (isLoading) {
       <div class="flex items-center justify-center h-64">
-        <div class="text-gray-400 text-sm">Betöltés...</div>
+        <div class="text-gray-400 text-sm">{{ 'profile.loading' | translate }}</div>
       </div>
     }
 
     @if (!isLoading && currentUser) {
 
-      <!-- Fiók adatok -->
       <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 mb-6">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-white font-semibold text-lg">Fiók adatok</h2>
+          <h2 class="text-white font-semibold text-lg">{{ 'profile.account.title' | translate }}</h2>
           <span class="text-xs font-semibold px-3 py-1 rounded-full border" [class]="getRoleBadgeClass()">
             {{ getRoleLabel() }}
           </span>
@@ -27,55 +24,63 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <p class="text-gray-500 text-xs mb-1">Felhasználónév</p>
+            <p class="text-gray-500 text-xs mb-1">{{ 'profile.account.username' | translate }}</p>
             <p class="text-white font-medium">{{ currentUser.username }}</p>
           </div>
           <div>
-            <p class="text-gray-500 text-xs mb-1">Email cím</p>
+            <p class="text-gray-500 text-xs mb-1">{{ 'profile.account.email' | translate }}</p>
             <p class="text-white font-medium">{{ currentUser.email }}</p>
           </div>
           <div>
-            <p class="text-gray-500 text-xs mb-1">Regisztráció dátuma</p>
+            <p class="text-gray-500 text-xs mb-1">{{ 'profile.account.createdAt' | translate }}</p>
             <p class="text-white font-medium">{{ currentUser.createdAt | date:'yyyy.MM.dd HH:mm' }}</p>
           </div>
           <div>
-            <p class="text-gray-500 text-xs mb-1">Státusz</p>
+            <p class="text-gray-500 text-xs mb-1">{{ 'profile.account.status' | translate }}</p>
             <span class="text-xs font-semibold px-2 py-1 rounded-full"
               [class]="currentUser.active ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'">
-              {{ currentUser.active ? 'Aktív' : 'Inaktív' }}
+              {{ currentUser.active ? ('profile.account.active' | translate) : ('profile.account.inactive' | translate) }}
             </span>
           </div>
         </div>
       </div>
 
-      <!-- Kredit egyenleg -->
-      <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 mb-6">
-        <h2 class="text-white font-semibold text-lg mb-4">Kredit egyenleg</h2>
-        <div class="flex items-end gap-2">
-          <span class="text-4xl font-bold text-yellow-400">{{ currentUser.creditBalance | number:'1.0-2' }}</span>
-          <span class="text-gray-400 text-lg mb-1">kredit</span>
+      <div class=" bg-gray-900 rounded-2xl border border-gray-800 p-6 mb-6">
+        <h2 class="text-white font-semibold text-lg mb-4">{{ 'profile.credits.title' | translate }}</h2>
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-end gap-2">
+            <span class="text-4xl font-bold text-yellow-400">{{ currentUser.creditBalance | number:'1.0-2' }}</span>
+            <span class="text-gray-400 text-lg mb-1">{{ 'profile.credits.unit' | translate }}</span>
+          </div>
+          @if (currentUser.role === 'COMPANY_USER') {
+            <button
+              (click)="openTopUpModal()"
+              class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl transition-colors">
+              <lucide-icon [img]="CreditCard" class="w-4 h-4"></lucide-icon>
+              {{ 'profile.credits.topUp' | translate }}
+            </button>
+          }
         </div>
       </div>
 
-      <!-- Cég adatok - csak COMPANY_USER-nek -->
       @if (currentUser.role === 'COMPANY_USER' && currentUser.companyName) {
         <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
-          <h2 class="text-white font-semibold text-lg mb-6">Cég adatok</h2>
+          <h2 class="text-white font-semibold text-lg mb-6">{{ 'profile.company.title' | translate }}</h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <p class="text-gray-500 text-xs mb-1">Cég neve</p>
+              <p class="text-gray-500 text-xs mb-1">{{ 'profile.company.name' | translate }}</p>
               <p class="text-white font-medium">{{ currentUser.companyName }}</p>
             </div>
             @if (currentUser.companyPhone) {
               <div>
-                <p class="text-gray-500 text-xs mb-1">Telefonszám</p>
+                <p class="text-gray-500 text-xs mb-1">{{ 'profile.company.phone' | translate }}</p>
                 <p class="text-white font-medium">{{ currentUser.companyPhone }}</p>
               </div>
             }
             @if (currentUser.companyAddress) {
               <div class="md:col-span-2">
-                <p class="text-gray-500 text-xs mb-1">Cím</p>
+                <p class="text-gray-500 text-xs mb-1">{{ 'profile.company.address' | translate }}</p>
                 <p class="text-white font-medium">{{ currentUser.companyAddress }}</p>
               </div>
             }

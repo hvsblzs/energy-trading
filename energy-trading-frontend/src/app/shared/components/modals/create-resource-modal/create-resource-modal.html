@@ -1,7 +1,7 @@
 <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-sm">
 
   <div class="flex items-center justify-between p-6 border-b border-gray-800">
-    <h2 class="text-white font-semibold">Új nyersanyag</h2>
+    <h2 class="text-white font-semibold">{{ 'modals.createResource.title' | translate }}</h2>
     <button (click)="cancel()" class="text-gray-500 hover:text-gray-300 transition-colors">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -11,19 +11,21 @@
 
   <div class="p-6 flex flex-col gap-4">
     <div class="flex flex-col gap-1.5">
-      <label class="text-gray-400 text-xs">Név *</label>
-      <input [(ngModel)]="form.name" type="text" placeholder="Pl. WATER"
+      <label class="text-gray-400 text-xs">{{ 'modals.createResource.nameLabel' | translate }}</label>
+      <input [(ngModel)]="form.name" type="text"
+        [placeholder]="'modals.createResource.namePlaceholder' | translate"
         class="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label class="text-gray-400 text-xs">Mértékegység *</label>
-      <input [(ngModel)]="form.unit" type="text" placeholder="Pl. m3"
+      <label class="text-gray-400 text-xs">{{ 'modals.createResource.unitLabel' | translate }}</label>
+      <input [(ngModel)]="form.unit" type="text"
+        [placeholder]="'modals.createResource.unitPlaceholder' | translate"
         class="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label class="text-gray-400 text-xs">Szín</label>
+      <label class="text-gray-400 text-xs">{{ 'modals.createResource.colorLabel' | translate }}</label>
       <div class="flex items-center gap-3">
         <label class="relative cursor-pointer">
           <input
@@ -40,12 +42,12 @@
 
     <div class="grid grid-cols-2 gap-3">
       <div class="flex flex-col gap-1.5">
-        <label class="text-gray-400 text-xs">Központ vételi ár *</label>
+        <label class="text-gray-400 text-xs">{{ 'modals.createResource.buyPriceLabel' | translate }}</label>
         <input [(ngModel)]="form.buyPrice" type="number" min="0" placeholder="0"
           class="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
       </div>
       <div class="flex flex-col gap-1.5">
-        <label class="text-gray-400 text-xs">Központ eladási ár *</label>
+        <label class="text-gray-400 text-xs">{{ 'modals.createResource.sellPriceLabel' | translate }}</label>
         <input [(ngModel)]="form.sellPrice" type="number" min="0" placeholder="0"
           class="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"/>
       </div>
@@ -55,13 +57,13 @@
   <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-800">
     <button (click)="cancel()"
       class="px-4 py-2 text-gray-400 hover:text-white text-sm transition-colors">
-      Mégse
+      {{ 'modals.cancel' | translate }}
     </button>
     <button
       (click)="submit()"
       [disabled]="isSubmitting || !form.name || !form.unit || !form.buyPrice || !form.sellPrice"
       class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors">
-      {{ isSubmitting ? 'Létrehozás...' : 'Létrehozás' }}
+      {{ isSubmitting ? ('modals.createResource.submitting' | translate) : ('modals.createResource.submit' | translate) }}
     </button>
   </div>
 
