@@ -382,6 +382,8 @@
       "titleExpired": "Munkamenet lejárt",
       "inactivityMessage": "5 perc inaktivitás miatt automatikusan kijelentkeztünk.",
       "expiredMessage": "A munkamenete lejárt. Kérjük, jelentkezzen be újra.",
+      "passwordChangedMessage": "A jelszavát megváltoztatták, kérjük jelentkezzen be újra.",
+      "titlePasswordChanged": "Jelszó megváltoztatva",
       "ok": "Rendben"
     }
   },

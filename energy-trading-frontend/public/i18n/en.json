@@ -382,6 +382,8 @@
       "titleExpired": "Session expired",
       "inactivityMessage": "You were automatically logged out due to 5 minutes of inactivity.",
       "expiredMessage": "Your session has expired. Please sign in again.",
+      "passwordChangedMessage": "Your password has been changed. Please sign in again.",
+      "titlePasswordChanged": "Password changed",
       "ok": "OK"
     }
   },

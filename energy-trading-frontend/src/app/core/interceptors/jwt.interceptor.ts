@@ -17,7 +17,10 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
         catchError((error) => {
             if (error.status === 401) {
                 authService.logout();
-                router.navigate(['/login'], { queryParams: { reason: 'session_expired' } });
+                const reason = error.error?.error === 'password_changed'
+                        ? 'password_changed'
+                        : 'session_expired';
+                router.navigate(['/login'], { queryParams: { reason } });
             }
             return throwError(() => error);
         })

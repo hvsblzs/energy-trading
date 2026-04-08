@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ActivatedRoute } from '@angular/router';
-import { LucideAngularModule, Clock, Eye, EyeOff } from 'lucide-angular';
+import { LucideAngularModule, Clock, Eye, EyeOff, Lock } from 'lucide-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LanguageService } from '../../../core/services/language.service';
 import { ErrorService } from '../../../core/services/error.service';
@@ -19,6 +19,7 @@ export class LoginComponent implements OnInit {
   readonly Clock = Clock;
   readonly Eye = Eye;
   readonly EyeOff = EyeOff;
+  readonly Lock = Lock;
 
   email: string = '';
   password: string = '';
@@ -26,7 +27,7 @@ export class LoginComponent implements OnInit {
   inactivityMessage: string = '';
   isLoading: boolean = false;
   showInactivityModal: boolean = false;
-  inactivityReason: 'inactivity' | 'session_expired' | null = null;
+  inactivityReason: 'inactivity' | 'session_expired' | 'password_changed' | null = null;
   showPassword: boolean = false;
 
   constructor(
@@ -49,6 +50,10 @@ export class LoginComponent implements OnInit {
         this.inactivityReason = 'session_expired';
         this.showInactivityModal = true;
         this.inactivityMessage = this.translate.instant('login.inactivityModal.expiredMessage');
+      } else if (params['reason'] === 'password_changed') {
+        this.inactivityReason = 'password_changed';
+        this.showInactivityModal = true;
+        this.inactivityMessage = this.translate.instant('login.inactivityModal.passwordChangedMessage');
       }
     });
   }

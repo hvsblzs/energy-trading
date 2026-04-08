@@ -58,14 +58,27 @@
 @if (showInactivityModal) {
   <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
     <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 max-w-sm w-full mx-4 text-center">
-      <div class="w-12 h-12 rounded-full bg-yellow-500/15 border border-yellow-500/30 flex items-center justify-center mx-auto mb-4">
-        <lucide-icon [img]="Clock" class="w-6 h-6 text-yellow-400"></lucide-icon>
+      
+      <!-- Ikon - password_changed esetén piros/lakat, egyébként sárga/óra -->
+      <div class="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
+        [class]="inactivityReason === 'password_changed' 
+          ? 'bg-red-500/15 border border-red-500/30' 
+          : 'bg-yellow-500/15 border border-yellow-500/30'">
+        <lucide-icon 
+          [img]="inactivityReason === 'password_changed' ? Lock : Clock" 
+          [class]="inactivityReason === 'password_changed' ? 'w-6 h-6 text-red-400' : 'w-6 h-6 text-yellow-400'">
+        </lucide-icon>
       </div>
+
+      <!-- Title -->
       <h3 class="text-white font-semibold text-lg mb-2">
-        {{ inactivityReason === 'session_expired'
+        {{ inactivityReason === 'password_changed'
+            ? ('login.inactivityModal.titlePasswordChanged' | translate)
+            : inactivityReason === 'session_expired'
             ? ('login.inactivityModal.titleExpired' | translate)
             : ('login.inactivityModal.titleInactivity' | translate) }}
       </h3>
+
       <p class="text-gray-400 text-sm mb-6">{{ inactivityMessage }}</p>
       <button
         (click)="showInactivityModal = false"

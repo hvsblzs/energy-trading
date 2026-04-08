@@ -9,7 +9,7 @@ import { ErrorService } from '../../../../core/services/error.service';
 import {loadStripe, Stripe, StripeElements, StripeCardElement} from '@stripe/stripe-js';
 import { firstValueFrom } from 'rxjs';
 
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TCK9dPFFK2E7d9UrYu4I3Bsyu5ROCoBbqLRHpJ7Cg9xXF2Ujo79nffZmnCGiR5mvpYvPzAtJJE3B9lvDPltXKQ600hSEAI7ON';
+const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TCK9dPFFK2E7d9UuIQWuXE570GzyxeWYh94fVfWUAn2ojbETw5taHl8LVPXUANI7VXw1deRHyQqmSGHBJeqeH64001WGudqni';
 
 @Component({
   selector: 'app-top-up-modal',

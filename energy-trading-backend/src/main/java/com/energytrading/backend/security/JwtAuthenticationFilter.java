@@ -45,6 +45,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+
+                boolean isPasswordChanged = jwtService.isInvalidDueToPasswordChange(jwt, userDetails);
+                String reason = isPasswordChanged ? "password_changed" : "session_expired";
+                response.getWriter().write("{\"error\": \"" + reason + "\"}");
+                return;
             }
         }
 
