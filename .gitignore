@@ -1,0 +1,37 @@
+# Environment variables - SOHA ne kerüljön fel!
+.env
+*.env
+.env.*
+
+# Docker
+logs/
+
+# Spring Boot
+energy-trading-backend/target/
+energy-trading-backend/.mvn/wrapper/maven-wrapper.jar
+
+# Angular
+energy-trading-frontend/node_modules/
+energy-trading-frontend/dist/
+energy-trading-frontend/.angular/
+
+# .NET - pricing-logger
+energy-trading-price-logger/pricing-logger-dotnet/bin/
+energy-trading-price-logger/pricing-logger-dotnet/obj/
+energy-trading-price-logger/pricing-logger-dotnet.Tests/bin/
+energy-trading-price-logger/pricing-logger-dotnet.Tests/obj/
+energy-trading-price-logger/logs/
+
+# .NET - pricing-producer
+energy-trading-price-producer/pricing-producer-dotnet/bin/
+energy-trading-price-producer/pricing-producer-dotnet/obj/
+
+# IDE
+.idea/
+.vscode/
+*.suo
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
