@@ -32,7 +32,9 @@ jobs:
 
       - name: Run backend tests
         working-directory: energy-trading-backend
-        run: ./mvnw test
+        run: |
+          chmod +x mvnw
+          ./mvnw test
 
   # ── Angular tesztek ───────────────────────────────────
   frontend-tests:
@@ -73,9 +75,9 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore dependencies
-        working-directory: energy-trading-price-logger
+        working-directory: energy-trading-price-logger/pricing-logger-dotnet.Tests
         run: dotnet restore
 
       - name: Run .NET tests
-        working-directory: energy-trading-price-logger
+        working-directory: energy-trading-price-logger/pricing-logger-dotnet.Tests
         run: dotnet test --no-restore --verbosity normal
