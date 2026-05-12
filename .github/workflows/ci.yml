@@ -1,0 +1,81 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+
+  # ── Spring Boot tesztek ───────────────────────────────
+  backend-tests:
+    name: Backend Tests (Spring Boot)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      - name: Run backend tests
+        working-directory: energy-trading-backend
+        run: ./mvnw test
+
+  # ── Angular tesztek ───────────────────────────────────
+  frontend-tests:
+    name: Frontend Tests (Angular)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: energy-trading-frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: energy-trading-frontend
+        run: npm ci
+
+      - name: Run frontend tests
+        working-directory: energy-trading-frontend
+        run: npx ng test --watch=false
+
+  # ── .NET tesztek ──────────────────────────────────────
+  dotnet-tests:
+    name: .NET Tests (pricing-logger)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        working-directory: energy-trading-price-logger
+        run: dotnet restore
+
+      - name: Run .NET tests
+        working-directory: energy-trading-price-logger
+        run: dotnet test --no-restore --verbosity normal
