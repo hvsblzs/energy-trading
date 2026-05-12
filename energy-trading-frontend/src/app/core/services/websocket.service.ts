@@ -19,8 +19,10 @@ export class WebSocketService {
       return;
     }
 
+    const wsUrl = `${window.location.protocol}//${window.location.host}/ws`;
+
     this.client = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+      webSocketFactory: () => new SockJS(wsUrl),
       reconnectDelay: 5000,
       onConnect: () => {
         this.connected = true;
@@ -45,6 +47,7 @@ export class WebSocketService {
 
   disconnect() {
     this.connectionCount--;
+    if (this.connectionCount < 0) this.connectionCount = 0;
     if (this.connectionCount <= 0 && this.client?.active) {
       this.client.deactivate();
       this.connected = false;

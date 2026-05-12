@@ -218,7 +218,7 @@ public class TradeOfferService {
                 "creditBalance", company.getCreditBalance()
         ));
 
-        webSocketService.sendCreditUpdate(dispatcher.getId(), Map.of(
+        webSocketService.sendDispatcherCreditUpdate(dispatcher.getId(), Map.of(
                 "creditBalance", dispatcher.getCreditBalance()
         ));
         System.out.println("Sending credit update to dispatcher id: " + dispatcher.getId());
@@ -239,6 +239,12 @@ public class TradeOfferService {
         tradeOffer.setResolvedAt(LocalDateTime.now());
         tradeOffer.setNotes(notes);
         TradeOffers saved = this.tradeOffersRepository.save(tradeOffer);
+
+        webSocketService.sendTradeOfferUpdate(Map.of(
+                "action", "REJECTED",
+                "tradeOfferId", saved.getId()
+        ));
+
         return mapToResponse(saved);
     }
 

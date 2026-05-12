@@ -1,11 +1,12 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject } from "rxjs";
+import { environment } from '../../../environments/environment'; 
 
 @Injectable({providedIn: 'root'})
 export class UserService {
     
-    private apiUrl = 'http://localhost:8080/api';
+    private apiUrl = environment.apiUrl;
     creditBalance$ = new BehaviorSubject<number | null>(null);
 
     constructor(private http: HttpClient){}

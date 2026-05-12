@@ -74,7 +74,7 @@ export class NavbarComponent implements OnInit, OnDestroy{
         this.userService.updateCreditBalance(parseFloat(message.creditBalance));
       });
     } else if (isDispatcher && userId) {
-      this.webSocketService.subscribe(`/topic/credits/${userId}`, (message) => {
+      this.webSocketService.subscribe(`/topic/dispatcher-credits/${userId}`, (message) => {
         this.userService.updateCreditBalance(parseFloat(message.creditBalance));
       });
     }

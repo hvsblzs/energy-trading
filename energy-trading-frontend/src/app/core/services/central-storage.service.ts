@@ -1,12 +1,13 @@
 import { Injectable, resource } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { environment } from '../../../environments/environment'; 
 
 @Injectable({
     providedIn: 'root'
 })
 export class CentralStorageService {
 
-    private apiUrl = 'http://localhost:8080/api';
+    private apiUrl = environment.apiUrl;
 
     constructor(private http: HttpClient){}
 

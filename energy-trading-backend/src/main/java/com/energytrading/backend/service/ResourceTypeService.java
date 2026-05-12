@@ -28,6 +28,7 @@ public class ResourceTypeService {
     private final TransactionsRepository transactionsRepository;
     private final TradeOffersRepository tradeOffersRepository;
     private final DispatcherBalanceService dispatcherBalanceService;
+    private final ResourceTypeKafkaProducer resourceTypeKafkaProducer;
 
     public List<ResourceTypeResponse> getAllResourceTypes(){
         return resourceTypeRepository.findAll()
@@ -75,6 +76,8 @@ public class ResourceTypeService {
                 .build();
         pricingRepository.save(pricing);
 
+        resourceTypeKafkaProducer.sendCreated(saved);
+
         return mapToResponse(saved);
     }
 
@@ -91,6 +94,8 @@ public class ResourceTypeService {
         tradeOffersRepository.deleteAll(tradeOffersRepository.findByResourceType(resourceType));
 
         resourceTypeRepository.delete(resourceType);
+
+        resourceTypeKafkaProducer.sendDeleted(resourceType);
 
         dispatcherBalanceService.recalculate();
     }

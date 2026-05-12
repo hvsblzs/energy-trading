@@ -43,6 +43,6 @@ public class DispatcherBalanceService {
         dispatcher.setCreditBalance(totalValue);
         userRepository.save(dispatcher);
 
-        webSocketService.sendCreditUpdate(dispatcher.getId(), Map.of("creditBalance", dispatcher.getCreditBalance()));
+        webSocketService.sendDispatcherCreditUpdate(dispatcher.getId(), Map.of("creditBalance", dispatcher.getCreditBalance()));
     }
 }

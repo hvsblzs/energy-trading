@@ -19,6 +19,23 @@ server.port=8080
 jwt.secret=YOUR_BASE64_JWT_SECRET
 jwt.expiration=86400000
 
+# RabbitMQ kapcsolat
+spring.rabbitmq.host=localhost
+spring.rabbitmq.port=5672
+spring.rabbitmq.username=guest
+spring.rabbitmq.password=guest
+
+# Exchange és queue nevek
+nav.rabbitmq.exchange=nav.exchange
+nav.rabbitmq.queue.transactions=nav.transactions
+nav.rabbitmq.queue.revenue=nav.revenue
+nav.rabbitmq.routing-key.transactions=nav.transactions
+nav.rabbitmq.routing-key.revenue=nav.revenue
+
+# Scheduled job időközök (millisec)
+nav.schedule.transactions=60000
+nav.schedule.revenue=300000
+
 stripe.secret-key=sk_test_YOUR_STRIPE_SECRET_KEY
 stripe.publishable-key=pk_test_YOUR_STRIPE_PUBLISHABLE_KEY
 stripe.webhook-secret=whsec_YOUR_WEBHOOK_SECRET

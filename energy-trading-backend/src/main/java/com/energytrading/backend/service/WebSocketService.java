@@ -21,4 +21,8 @@ public class WebSocketService {
     public void sendCreditUpdate(Long companyId, Object payload){
         messagingTemplate.convertAndSend("/topic/credits/" + companyId, payload);
     }
+
+    public void sendDispatcherCreditUpdate(Long userId, Object payload) {
+        messagingTemplate.convertAndSend("/topic/dispatcher-credits/" + userId, payload);
+    }
 }
