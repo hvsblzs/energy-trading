@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: energy-trading-config
+  namespace: energy-trading
+data:
+  MYSQL_HOST: mysql
+  MYSQL_PORT: "3306"
+  MYSQL_DATABASE: energy_trading
+  KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+  RABBITMQ_HOST: rabbitmq
+  RABBITMQ_PORT: "5672"
+  SPRING_PROFILES_ACTIVE: default

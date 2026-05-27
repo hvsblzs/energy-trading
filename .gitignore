@@ -26,6 +26,9 @@ energy-trading-price-logger/logs/
 energy-trading-price-producer/pricing-producer-dotnet/bin/
 energy-trading-price-producer/pricing-producer-dotnet/obj/
 
+# Kubernetes
+k8s/secrets.yaml
+
 # IDE
 .idea/
 .vscode/

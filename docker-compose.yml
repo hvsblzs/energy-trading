@@ -10,7 +10,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      # Az adatbázis adatai itt tárolódnak a gépeden
+      # Az adatbázis adatai itt tárolódnak a gépen
       # Újraindítás után sem vesznek el
       - mysql_data:/var/lib/mysql
     healthcheck:

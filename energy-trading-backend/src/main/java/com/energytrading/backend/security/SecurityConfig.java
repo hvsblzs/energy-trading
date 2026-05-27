@@ -81,6 +81,10 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:4200",
+                "http://localhost:8081",
+                "http://localhost:80",
+                "http://localhost",
+                "http://energy-trading.local",
                 "http://10.0.2.2",
                 "http://10.0.2.2:8080"
         ));

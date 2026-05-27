@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: energy-trading
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: energytradingproject-backend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql:3306/energy_trading?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: energy-trading-secrets
+                  key: mysql-root-password
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: energy-trading-secrets
+                  key: jwt-secret
+            - name: SPRING_RABBITMQ_HOST
+              value: rabbitmq
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672"
+            - name: SPRING_RABBITMQ_USERNAME
+              value: guest
+            - name: SPRING_RABBITMQ_PASSWORD
+              value: guest
+            - name: SPRING_APPLICATION_JSON
+              value: '{"spring":{"autoconfigure":{"exclude":"org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration"},"kafka":{"listener":{"auto-startup":false}}}}'
+            - name: SPRING_AUTOCONFIGURE_EXCLUDE
+              value: "org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: energy-trading
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 8080
+      targetPort: 8080
